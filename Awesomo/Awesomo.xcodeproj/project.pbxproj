@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E10DE862699EF55001613D5 /* CoreMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 0E10DE852699EF55001613D5 /* CoreMessaging */; };
 		0ED5D7212698E3EC00265C2A /* AwesomoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */; };
 		0ED5D7232698E3EC00265C2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7222698E3EC00265C2A /* ContentView.swift */; };
 		0ED5D7252698E3ED00265C2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0ED5D7242698E3ED00265C2A /* Assets.xcassets */; };
@@ -33,6 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E45EDED2699E68E00E53265 /* CoreMessaging */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CoreMessaging; sourceTree = "<group>"; };
 		0ED5D71D2698E3EC00265C2A /* Awesomo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Awesomo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwesomoApp.swift; sourceTree = "<group>"; };
 		0ED5D7222698E3EC00265C2A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -49,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E10DE862699EF55001613D5 /* CoreMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,13 +72,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E10DE842699EF55001613D5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		0ED5D7142698E3EC00265C2A = {
 			isa = PBXGroup;
 			children = (
+				0E45EDED2699E68E00E53265 /* CoreMessaging */,
 				0ED5D71F2698E3EC00265C2A /* Awesomo */,
 				0ED5D7302698E3ED00265C2A /* AwesomoTests */,
 				0ED5D73A2698E3ED00265C2A /* AwesomoUITests */,
 				0ED5D71E2698E3EC00265C2A /* Products */,
+				0E10DE842699EF55001613D5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -140,6 +152,9 @@
 			dependencies = (
 			);
 			name = Awesomo;
+			packageProductDependencies = (
+				0E10DE852699EF55001613D5 /* CoreMessaging */,
+			);
 			productName = Awesomo;
 			productReference = 0ED5D71D2698E3EC00265C2A /* Awesomo.app */;
 			productType = "com.apple.product-type.application";
@@ -597,6 +612,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0E10DE852699EF55001613D5 /* CoreMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0ED5D7152698E3EC00265C2A /* Project object */;
 }
