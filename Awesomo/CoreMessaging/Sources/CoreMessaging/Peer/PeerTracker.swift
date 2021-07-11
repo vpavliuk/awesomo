@@ -23,16 +23,16 @@ final class PeerTracker<ConcretePeer: Peer> where ConcretePeer.ID == String {
 
    public func trackPeers<
       ServiceEvent: AvailabilityEvent,
-      ServiceBrowser: FocusedEventStreamer
+      ServiceEventPublisher: Publisher
    >(
-      serviceBrowser: ServiceBrowser
+      publisher: ServiceEventPublisher
    ) where
          ServiceEvent.Object == ConcretePeer.Service,
-         ServiceBrowser.Output == Set<ServiceEvent> {
+         ServiceEventPublisher.Output == Set<ServiceEvent>,
+         ServiceEventPublisher.Failure == Never {
 
-      let serviceEventsPublisher = serviceBrowser.publisher
-      let peerEventsPublisher = serviceEventsPublisher
-            .map{$0.compactMap(self.convertServiceEventToPeerEvent)}
+      let peerEventsPublisher = publisher
+            .map { $0.compactMap(self.convertServiceEventToPeerEvent) }
 
       subscription = peerEventsPublisher.sink{ peerEvents in
          // Filter out local peer

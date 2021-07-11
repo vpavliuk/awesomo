@@ -9,7 +9,7 @@
 import CoreMessaging
 import Combine
 
-struct TestNetworkReceiver: FocusedEventStreamer {
+struct TestNetworkReceiver {
    typealias Output = NetworkMessage<TestPeer, TestMessage.Payload>
    let publisher = PassthroughSubject<Output, Never>()
 

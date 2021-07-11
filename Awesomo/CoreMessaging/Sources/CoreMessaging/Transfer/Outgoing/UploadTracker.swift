@@ -18,11 +18,14 @@ final class UploadTracker<User: Peer, OutboxMessage: Message> {
 
    public typealias Input = Upload<User, OutboxMessage>.ID
 
-   public func trackUploads<N: FocusedEventStreamer>(notifier: N)
-         where N.Output == Input {
+   public func trackUploads<UploadPublisher: Publisher>(
+      publisher: UploadPublisher
+   ) where
+         UploadPublisher.Output == Input,
+         UploadPublisher.Failure == Never {
 
       uploadSubscription?.cancel()
-      uploadSubscription = notifier.publisher.sink{ uploadId in
+      uploadSubscription = publisher.sink { uploadId in
          self.state.onUploadComplete(id: uploadId)
       }
    }

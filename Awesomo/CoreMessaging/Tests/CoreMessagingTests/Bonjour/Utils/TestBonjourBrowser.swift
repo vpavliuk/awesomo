@@ -9,7 +9,7 @@
 import CoreMessaging
 import Combine
 
-struct TestBonjourBrowser: FocusedEventStreamer {
+struct TestBonjourBrowser {
    typealias Output = Set<TestServiceEvent>
    let publisher = PassthroughSubject<Output, Never>()
 

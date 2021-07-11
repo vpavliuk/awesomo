@@ -21,7 +21,7 @@ final class PeerTrackerTest: XCTestCase {
       browser = TestBonjourBrowser()
       state = PeersState()
       sut = PeerTracker(localPeerId: localId, state: state)
-      sut.trackPeers(serviceBrowser: browser)
+      sut.trackPeers(publisher: browser.publisher)
    }
 
    func testInitialState() {

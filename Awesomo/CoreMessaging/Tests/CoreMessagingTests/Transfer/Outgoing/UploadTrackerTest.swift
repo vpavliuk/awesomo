@@ -21,7 +21,7 @@ final class UploadTrackerTest: XCTestCase {
       networkSender = TestNetworkSender()
       state = State()
       sut = UploadTracker(state: state)
-      sut.trackUploads(notifier: networkSender)
+      sut.trackUploads(publisher: networkSender.publisher)
    }
 
    func testInitialState() {

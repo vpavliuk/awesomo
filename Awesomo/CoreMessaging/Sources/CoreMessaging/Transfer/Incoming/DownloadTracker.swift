@@ -19,11 +19,12 @@ final class DownloadTracker<ConcretePeer: Peer, InboxMessage: Message> {
 
    public typealias Input = NetworkMessage<ConcretePeer, InboxMessage.Payload>
 
-   public func trackDownloads<N: FocusedEventStreamer>(notifier: N)
-         where N.Output == Input {
+   public func trackDownloads<DownloadPublisher: Publisher>(
+      publisher: DownloadPublisher
+   ) where DownloadPublisher.Output == Input, DownloadPublisher.Failure == Never {
 
       downloadSubscription?.cancel()
-      downloadSubscription = notifier.publisher.sink { [weak self] tcpMessage in
+      downloadSubscription = publisher.sink { [weak self] tcpMessage in
          guard let self = self else { return }
 
          var messages = self.state.inbox[tcpMessage.sender] ?? Set()

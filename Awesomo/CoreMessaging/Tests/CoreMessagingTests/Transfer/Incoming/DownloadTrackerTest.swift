@@ -21,7 +21,7 @@ final class DownloadTrackerTest: XCTestCase {
       networkReceiver = TestNetworkReceiver()
       state = State()
       sut = DownloadTracker(state: state)
-      sut.trackDownloads(notifier: networkReceiver)
+      sut.trackDownloads(publisher: networkReceiver.publisher)
    }
 
    func testInitialState() {

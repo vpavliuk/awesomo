@@ -17,4 +17,5 @@ public protocol Peer: Identifiable where Self.ID: Codable {
 
    var displayName: String { get }
    var bonjourService: Service { get }
+   #warning("Add availability state?")
 }

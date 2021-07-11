@@ -29,9 +29,9 @@ final class StateTrackerTest: XCTestCase {
       networkSender = TestNetworkSender()
       networkReceiver = TestNetworkReceiver()
       sut.trackEvents(
-         serviceNotifier: serviceBrowser,
-         uploadNotifier: networkSender,
-         downloadNotifier: networkReceiver
+         servicePublisher: serviceBrowser.publisher,
+         uploadPublisher: networkSender.publisher,
+         downloadPublisher: networkReceiver.publisher
       )
    }
 

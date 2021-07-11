@@ -9,7 +9,7 @@
 import CoreMessaging
 import Combine
 
-struct TestNetworkSender: FocusedEventStreamer {
+struct TestNetworkSender {
    typealias ConcreteUpload = Upload<TestPeer, TestMessage>
    typealias Output = ConcreteUpload.ID
    let publisher = PassthroughSubject<Output, Never>()

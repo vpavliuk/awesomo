@@ -6,6 +6,8 @@
 //  Copyright © 2020 Volodymyr Pavliuk. All rights reserved.
 //
 
+import Combine
+
 /// A facade object that hides PeerTracker, UploadTracker, and DownloadTracker behind itself.
 public struct StateTracker<
    ConcretePeer: Peer,
@@ -26,22 +28,25 @@ public struct StateTracker<
 
    public func trackEvents<
       ServiceEvent: AvailabilityEvent,
-      ServiceNotifier: FocusedEventStreamer,
-      UploadNotifier: FocusedEventStreamer,
-      DownloadNotifier: FocusedEventStreamer
+      ServicePublisher: Publisher,
+      UploadPublisher: Publisher,
+      DownloadPublisher: Publisher
    >(
-      serviceNotifier: ServiceNotifier,
-      uploadNotifier: UploadNotifier,
-      downloadNotifier: DownloadNotifier
+      servicePublisher: ServicePublisher,
+      uploadPublisher: UploadPublisher,
+      downloadPublisher: DownloadPublisher
    ) where
          ServiceEvent.Object == ConcretePeer.Service,
-         ServiceNotifier.Output == Set<ServiceEvent>,
-         UploadNotifier.Output == Upload<ConcretePeer, ConcreteMessage>.ID,
-         DownloadNotifier.Output == NetworkMessage<ConcretePeer, ConcreteMessage.Payload> {
+         ServicePublisher.Output == Set<ServiceEvent>,
+         ServicePublisher.Failure == Never,
+         UploadPublisher.Output == Upload<ConcretePeer, ConcreteMessage>.ID,
+         UploadPublisher.Failure == Never,
+         DownloadPublisher.Output == NetworkMessage<ConcretePeer, ConcreteMessage.Payload>,
+         DownloadPublisher.Failure == Never {
 
-      peerTracker.trackPeers(serviceBrowser: serviceNotifier)
-      uploadTracker.trackUploads(notifier: uploadNotifier)
-      downloadTracker.trackDownloads(notifier: downloadNotifier)
+      peerTracker.trackPeers(publisher: servicePublisher)
+      uploadTracker.trackUploads(publisher: uploadPublisher)
+      downloadTracker.trackDownloads(publisher: downloadPublisher)
    }
 
    private var peerTracker: PeerTracker<ConcretePeer>
