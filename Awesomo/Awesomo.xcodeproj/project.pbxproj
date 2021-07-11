@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0E10DE862699EF55001613D5 /* CoreMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 0E10DE852699EF55001613D5 /* CoreMessaging */; };
+		0EAEA683269B4697000B5B47 /* AppliedMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 0EAEA682269B4697000B5B47 /* AppliedMessaging */; };
 		0ED5D7212698E3EC00265C2A /* AwesomoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */; };
 		0ED5D7232698E3EC00265C2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7222698E3EC00265C2A /* ContentView.swift */; };
 		0ED5D7252698E3ED00265C2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0ED5D7242698E3ED00265C2A /* Assets.xcassets */; };
@@ -35,6 +35,7 @@
 
 /* Begin PBXFileReference section */
 		0E45EDED2699E68E00E53265 /* CoreMessaging */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CoreMessaging; sourceTree = "<group>"; };
+		0EAEA681269B3AD7000B5B47 /* AppliedMessaging */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppliedMessaging; sourceTree = "<group>"; };
 		0ED5D71D2698E3EC00265C2A /* Awesomo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Awesomo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwesomoApp.swift; sourceTree = "<group>"; };
 		0ED5D7222698E3EC00265C2A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -51,7 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0E10DE862699EF55001613D5 /* CoreMessaging in Frameworks */,
+				0EAEA683269B4697000B5B47 /* AppliedMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +83,7 @@
 		0ED5D7142698E3EC00265C2A = {
 			isa = PBXGroup;
 			children = (
+				0EAEA681269B3AD7000B5B47 /* AppliedMessaging */,
 				0E45EDED2699E68E00E53265 /* CoreMessaging */,
 				0ED5D71F2698E3EC00265C2A /* Awesomo */,
 				0ED5D7302698E3ED00265C2A /* AwesomoTests */,
@@ -153,7 +155,7 @@
 			);
 			name = Awesomo;
 			packageProductDependencies = (
-				0E10DE852699EF55001613D5 /* CoreMessaging */,
+				0EAEA682269B4697000B5B47 /* AppliedMessaging */,
 			);
 			productName = Awesomo;
 			productReference = 0ED5D71D2698E3EC00265C2A /* Awesomo.app */;
@@ -614,9 +616,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0E10DE852699EF55001613D5 /* CoreMessaging */ = {
+		0EAEA682269B4697000B5B47 /* AppliedMessaging */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = CoreMessaging;
+			productName = AppliedMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
