@@ -17,7 +17,7 @@ public protocol TwoWayInterface {
    var output: OutputPublisher { get }
 }
 
-extension TwoWayInterface {
+public extension TwoWayInterface {
    func eraseToAny() -> AnyTwoWayInterface<
       InputSubject.Output,
       OutputPublisher.Output,
