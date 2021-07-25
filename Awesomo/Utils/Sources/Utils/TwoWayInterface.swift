@@ -17,6 +17,15 @@ public protocol TwoWayInterface {
    var output: OutputPublisher { get }
 }
 
+extension TwoWayInterface {
+   func eraseToAny() -> AnyTwoWayInterface<
+      InputSubject.Output,
+      OutputPublisher.Output,
+      OutputPublisher.Failure
+   > { AnyTwoWayInterface(self) }
+}
+
+// Type-erased version of TwoWayInterface
 public struct AnyTwoWayInterface<Input, Output, OutputFailure: Error> {
 
    init<Base: TwoWayInterface>(_ base: Base) where
@@ -30,12 +39,4 @@ public struct AnyTwoWayInterface<Input, Output, OutputFailure: Error> {
 
    public let input: AnySubscriber<Input, Never>
    public let output: AnyPublisher<Output, OutputFailure>
-}
-
-extension TwoWayInterface {
-   func eraseToAny() -> AnyTwoWayInterface<
-      InputSubject.Output,
-      OutputPublisher.Output,
-      OutputPublisher.Failure
-   > { AnyTwoWayInterface(self) }
 }
