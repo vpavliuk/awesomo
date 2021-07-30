@@ -24,6 +24,7 @@ public extension TwoWayInterface {
 }
 
 // Type-erased version of TwoWayInterface
+#warning("Doesn't actually conform to TwoWayInterface due to Input device type mismatch")
 public struct AnyTwoWayInterface<Input, Output> {
 
    init<Base: TwoWayInterface>(_ base: Base) where
@@ -36,4 +37,10 @@ public struct AnyTwoWayInterface<Input, Output> {
 
    public let input: AnySubscriber<Input, Never>
    public let output: AnyPublisher<Output, Never>
+}
+
+public struct PassthroughTwoWayInterface<Input, Output>: TwoWayInterface {
+   public init() {}
+   public let input = PassthroughSubject<Input, Never>()
+   public let output = PassthroughSubject<Output, Never>()
 }
