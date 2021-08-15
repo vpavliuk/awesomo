@@ -3,12 +3,20 @@ import Combine
 import TransportAdapter
 import MessagingApp
 import Domain
+import Utils
 
 final class CoreMessagingTest: XCTestCase {
    var sut: TransportAdapter!
+   var tcpTransfer: TCPTransferMock!
+
    override func setUp() {
       sut = TransportAdapter()
       sut.wireUp()
+
+      tcpTransfer = TCPTransferMock()
+      tcpTransfer.wireUp()
+
+      sut.tcpInterface.connect(to: tcpTransfer.interface)
    }
 
 //   func testSendOneChatMessageSuccessfully() {
@@ -24,7 +32,35 @@ final class CoreMessagingTest: XCTestCase {
 //      wait(for: [expectation], timeout: 0.01)
 //   }
 
-   func testSendChatRequestSuccess() {
+//   func testSendChatRequestSuccess() {
+//      // Arrange
+//      let r = SendRequest(
+//         receiver: "best_friend",
+//         message: .chatRequest(ChatRequest())
+//      )
+//
+//      let appOutput = PassthroughSubject<SendRequest, Never>()
+//      appOutput.subscribe(sut.appInterface.input)
+//
+//      let e = expectation(description: "Expectation for TCP Out")
+//      let tcpInput = PassthroughSubject<String, Never>()
+//      let canceller2: AnyCancellable = sut.tcpInterface.output.subscribe(tcpInput)
+//
+//      let canceller = tcpInput
+//         .map { $0 + "  ======================= Emitted ========================" }
+//         .print()
+//         .sink { s in e.fulfill() }
+//
+//
+//      // Act
+//      appOutput.send(r)
+//
+//      wait(for: [e], timeout: 0.01)
+//      canceller2.cancel()
+//      canceller.cancel()
+//   }
+
+   func testSendChatMessage() {
       // Arrange
       let r = SendRequest(
          receiver: "best_friend",
@@ -34,21 +70,26 @@ final class CoreMessagingTest: XCTestCase {
       let appOutput = PassthroughSubject<SendRequest, Never>()
       appOutput.subscribe(sut.appInterface.input)
 
-      let e = expectation(description: "Expectation for TCP Out")
-      let tcpInput = PassthroughSubject<String, Never>()
-      let canceller2: AnyCancellable = sut.tcpInterface.output.subscribe(tcpInput)
+      let e = expectation(description: "Expectation for Transport Out")
 
-      let canceller = tcpInput
-         .map { $0 + "  ======================= Emitted ========================" }
+      let subscription = sut.appInterface.output
+         .map { transportOutput in
+            switch transportOutput {
+            case .incomingMessage:
+               return "******* Message Received *******"
+            case .sendSuccess(let reqId):
+               return "******* Sent Successfully: \(reqId) *******"
+            case .sendFailure(let reqId):
+               return "******* Failed Sending: \(reqId) *******"
+            }
+         }
          .print()
-         .sink { s in e.fulfill() }
-
+         .sink { (s: String) in e.fulfill() }
       
       // Act
       appOutput.send(r)
       
-      wait(for: [e], timeout: 0.01)
-      canceller2.cancel()
-      canceller.cancel()
+      wait(for: [e], timeout: 2)
+      subscription.cancel()
    }
 }

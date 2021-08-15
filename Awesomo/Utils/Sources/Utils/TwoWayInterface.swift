@@ -37,6 +37,11 @@ public struct AnyTwoWayInterface<Input, Output> {
 
    public let input: AnySubscriber<Input, Never>
    public let output: AnyPublisher<Output, Never>
+
+   public func connect(to other: AnyTwoWayInterface<Output, Input>) {
+      output.subscribe(other.input)
+      other.output.subscribe(input)
+   }
 }
 
 public struct PassthroughTwoWayInterface<Input, Output>: TwoWayInterface {

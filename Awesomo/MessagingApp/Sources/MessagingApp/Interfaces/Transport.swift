@@ -28,6 +28,12 @@ public struct SendRequest: Identifiable {
    public let message: NetworkMessage
 }
 
+public enum TransportOutput {
+   case incomingMessage(NetworkMessage)
+   case sendSuccess(SendRequest.ID)
+   case sendFailure(SendRequest.ID)
+}
+
 public enum NetworkMessage {
    case chatRequest(ChatRequest)
    case chatMessage(ChatMessage)

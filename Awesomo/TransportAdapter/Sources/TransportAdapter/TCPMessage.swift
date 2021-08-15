@@ -7,28 +7,28 @@
 //
 
 import Foundation
-import Utils
+import TCPTransfer
 import Domain
-import MessagingApp
+import Utils
 
-struct Upload: Identifiable {
-   struct ID: IDType {
-      init(value: UUID = UUID()) {
+public struct TCPUpload: Upload {
+   public struct ID: IDType {
+      public init(value: UUID = UUID()) {
          self.value = value
       }
       private let value: UUID
    }
-   let id = ID()
-   let receiver: String
-   let payload: TCPMessagePayload
+   public let id = ID()
+   public let receiverServiceName: String
+   public let message: TCPMessage
 }
 
-enum TCPMessagePayload: Codable {
-   case completeMessage(DomainMessageTCPFormat)
-   case contentChunk(ContentChunkTCPFormat)
+public enum TCPMessage: Codable {
+   case completeDomainMessage(DomainMessageTCPRepresentation)
+   case contentChunk(ContentChunkTCPRepresentation)
 }
 
-struct DomainMessageTCPFormat: Codable {
+public struct DomainMessageTCPRepresentation: Codable {
    struct ID: IDType, Codable {
       init(value: UUID = UUID()) {
          self.value = value
@@ -45,14 +45,15 @@ struct DomainMessageTCPFormat: Codable {
 
 #warning("Store MessageType in Domain?")
 struct DomainMessageType: Codable, Equatable {
+   static let chatMessage = Self(value: "CHAT_MESSAGE")
    private let value: String
 }
 
-struct ContentChunkTCPFormat: Codable {
+public struct ContentChunkTCPRepresentation: Codable {
    struct ChunkInfo: Codable {
       let chunkIndex: Int
       let totalChunks: Int
-      let chatMessageId: DomainMessageTCPFormat.ID
+      let chatMessageId: DomainMessageTCPRepresentation.ID
    }
    let contentType: ChatMessageContentType
    let payload: Data

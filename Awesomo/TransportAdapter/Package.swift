@@ -18,6 +18,7 @@ let package = Package(
    dependencies: [
       .package(path: "../Domain"),
       .package(path: "../MessagingApp"),
+      .package(path: "../TCPTransfer"),
       .package(path: "../Utils"),
       // Combine
       // Foundation
@@ -28,6 +29,7 @@ let package = Package(
          dependencies: [
             "Domain",
             "MessagingApp",
+            "TCPTransfer",
             "Utils",
          ]
       ),
