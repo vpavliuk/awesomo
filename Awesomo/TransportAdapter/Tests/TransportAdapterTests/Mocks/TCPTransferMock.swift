@@ -17,10 +17,10 @@ final class TCPTransferMock {
    private let interfaceInternal = PassthroughTwoWayInterface<TCPUpload, TCPTransfer<TCPUpload>.Output>()
 
    func wireUp() {
-      subscription = interfaceInternal.input
+      subscription = interfaceInternal.input.publisher
          .map { .sent($0.id) }
          .delay(for: .seconds(1), scheduler: RunLoop.main, options: .none)
-         .subscribe(interfaceInternal.output)
+         .subscribe(interfaceInternal.outputUpstream)
    }
 
    private var subscription: AnyCancellable?

@@ -27,7 +27,7 @@ extension ChatMessage: NetworkDispatchable {
    public static let contentType = "message"
 }
 
-public struct ChatMessageContentType: Codable {
+public struct ChatMessageContentType: Equatable, Codable {
    public init(_ value: String) {
       self.value = value
    }

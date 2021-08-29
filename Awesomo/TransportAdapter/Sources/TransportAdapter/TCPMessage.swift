@@ -12,6 +12,10 @@ import Domain
 import Utils
 
 public struct TCPUpload: Upload {
+   public init(receiverServiceName: String, message: TCPMessage) {
+      self.receiverServiceName = receiverServiceName
+      self.message = message
+   }
    public struct ID: IDType {
       public init(value: UUID = UUID()) {
          self.value = value
@@ -29,8 +33,14 @@ public enum TCPMessage: Codable {
 }
 
 public struct DomainMessageTCPRepresentation: Codable {
-   struct ID: IDType, Codable {
-      init(value: UUID = UUID()) {
+   public init(id: ID?, messageType: DomainMessageType, payload: Data) {
+      self.id = id
+      self.messageType = messageType
+      self.payload = payload
+   }
+
+   public struct ID: IDType, Codable {
+      public init(value: UUID = UUID()) {
          self.value = value
       }
       private let value: UUID
@@ -38,23 +48,23 @@ public struct DomainMessageTCPRepresentation: Codable {
 
    // Only messages with linked content chunks will have a non-nil id.
    // Nil indicates that no content chunks are going to be linked to this message.
-   let id: ID?
-   let messageType: DomainMessageType
-   let payload: Data
+   public let id: ID?
+   public let messageType: DomainMessageType
+   public let payload: Data
 }
 
 #warning("Store MessageType in Domain?")
-struct DomainMessageType: Codable, Equatable {
-   static let chatMessage = Self(value: "CHAT_MESSAGE")
+public struct DomainMessageType: Codable, Equatable {
+   public static let chatMessage = Self(value: "CHAT_MESSAGE")
    private let value: String
 }
 
 public struct ContentChunkTCPRepresentation: Codable {
-   struct ChunkInfo: Codable {
+   public struct ChunkInfo: Codable {
       let chunkIndex: Int
       let totalChunks: Int
       let chatMessageId: DomainMessageTCPRepresentation.ID
    }
-   let contentType: ChatMessageContentType
-   let payload: Data
+   public let contentType: ChatMessageContentType
+   public let payload: Data
 }

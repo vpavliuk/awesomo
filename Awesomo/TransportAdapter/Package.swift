@@ -20,6 +20,7 @@ let package = Package(
       .package(path: "../MessagingApp"),
       .package(path: "../TCPTransfer"),
       .package(path: "../Utils"),
+      .package(path: "../TestUtils"),
       // Combine
       // Foundation
    ],
@@ -39,6 +40,7 @@ let package = Package(
             "TransportAdapter",
             "Domain",
             "MessagingApp",
+            "TestUtils",
          ]
       ),
    ]
