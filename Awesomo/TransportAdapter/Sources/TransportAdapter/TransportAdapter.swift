@@ -13,17 +13,23 @@ import TCPTransfer
 import Utils
 
 public final class TransportAdapter {
-   public init() {}
+   public init() {
+      appInterfaceInternal = PassthroughTwoWayInterface()
+      appInterface = appInterfaceInternal.eraseToAny()
 
-   public lazy var appInterface: AnyTwoWayInterface<SendRequest, TransportOutput> = appInterfaceInternal.eraseToAny()
-   private let appInterfaceInternal = PassthroughTwoWayInterface<SendRequest, TransportOutput>()
+      tcpInterfaceInternal = PassthroughTwoWayInterface()
+      tcpInterface = tcpInterfaceInternal.eraseToAny()
+   }
 
-   public lazy var tcpInterface: AnyTwoWayInterface<TCPTransfer<TCPUpload>.Output, TCPUpload> = tcpInterfaceInternal.eraseToAny()
-   private let tcpInterfaceInternal = PassthroughTwoWayInterface<TCPTransfer<TCPUpload>.Output, TCPUpload>()
+   public let appInterface: AnyTwoWayInterface<SendRequest, TransportOutput>
+   private let appInterfaceInternal: PassthroughTwoWayInterface<SendRequest, TransportOutput>
+
+   public let tcpInterface: AnyTwoWayInterface<TCPTransfer<TCPUpload>.Output, TCPUpload>
+   private let tcpInterfaceInternal: PassthroughTwoWayInterface<TCPTransfer<TCPUpload>.Output, TCPUpload>
 
    public func wireUp() {
    #warning("Can this be put in init?")
-      appInterfaceInternal.input
+      appInterfaceInternal.input.publisher
          .map { _ in
             TCPUpload(
                receiverServiceName: "best_friend",
@@ -36,12 +42,12 @@ public final class TransportAdapter {
                )
             )
          }
-         .subscribe(tcpInterfaceInternal.output)
+         .subscribe(tcpInterfaceInternal.outputUpstream)
          .store(in: &subscriptions)
 
-      tcpInterfaceInternal.input
+      tcpInterfaceInternal.input.publisher
          .map { _ in .sendSuccess(SendRequest.ID()) }
-         .subscribe(appInterfaceInternal.output)
+         .subscribe(appInterfaceInternal.outputUpstream)
          .store(in: &subscriptions)
    }
 

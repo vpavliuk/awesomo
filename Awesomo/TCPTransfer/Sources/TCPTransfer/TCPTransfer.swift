@@ -13,10 +13,13 @@ public final class TCPTransfer<ConcreteUpload: Upload> {
    public init(localServiceName: String, serviceType: String) {
       self.localServiceName = localServiceName
       self.serviceType = serviceType
+      interfaceInternal = PassthroughTwoWayInterface()
+      interface = interfaceInternal.eraseToAny()
    }
-   public lazy var interface: AnyTwoWayInterface<ConcreteUpload, Output> = interfaceInternal.eraseToAny()
 
-   private let interfaceInternal = PassthroughTwoWayInterface<ConcreteUpload, Output>()
+   public let interface: AnyTwoWayInterface<ConcreteUpload, Output>
+
+   private let interfaceInternal: PassthroughTwoWayInterface<ConcreteUpload, Output>
 
    public enum Output {
       case received(ConcreteUpload.Message)
@@ -27,11 +30,11 @@ public final class TCPTransfer<ConcreteUpload: Upload> {
    public func wireUp() throws {
       client.wireUp()
 
-      interfaceInternal.input.subscribe(client.interface.input)
+      interfaceInternal.input.publisher.subscribe(client.interface.input)
 
       subscription = client.interface.output
          .merge(with: listener.output)
-         .subscribe(interfaceInternal.output)
+         .subscribe(interfaceInternal.outputUpstream)
 
       try listener.startListening()
    }

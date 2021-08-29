@@ -20,9 +20,9 @@ final class TCPClient<ConcreteUpload: Upload> {
    lazy var interface: AnyTwoWayInterface = interfaceInternal.eraseToAny()
 
    func wireUp() {
-      interfaceSubscription = interfaceInternal.input.sink { upload in
+      interfaceSubscription = interfaceInternal.input.publisher.sink { upload in
          self.performUpload(upload) {
-            self.interfaceInternal.output.send(.sent(upload.id))
+            self.interfaceInternal.outputUpstream.send(.sent(upload.id))
          }
       }
    }
