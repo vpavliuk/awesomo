@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import Domain
 import MessagingApp
 import TCPTransfer
 import Utils
@@ -21,11 +22,14 @@ public final class TransportAdapter {
       tcpInterface = tcpInterfaceInternal.eraseToAny()
    }
 
-   public let appInterface: AnyTwoWayInterface<SendRequest, TransportOutput>
-   private let appInterfaceInternal: PassthroughTwoWayInterface<SendRequest, TransportOutput>
+   public let appInterface: AnyTwoWayInterface<InputFromApp, OutputForApp>
+   private let appInterfaceInternal: PassthroughTwoWayInterface<InputFromApp, OutputForApp>
+   public typealias InputFromApp = TransportSendRequest<String>
+   public typealias OutputForApp = InputFromTransport<String>
 
-   public let tcpInterface: AnyTwoWayInterface<TCPTransfer<TCPUpload>.Output, TCPUpload>
-   private let tcpInterfaceInternal: PassthroughTwoWayInterface<TCPTransfer<TCPUpload>.Output, TCPUpload>
+   public let tcpInterface: AnyTwoWayInterface<TCPInterfaceInput, TCPUpload>
+   private let tcpInterfaceInternal: PassthroughTwoWayInterface<TCPInterfaceInput, TCPUpload>
+   public typealias TCPInterfaceInput = TCPTransfer<TCPUpload>.Output
 
    public func wireUp() {
    #warning("Can this be put in init?")
@@ -46,7 +50,7 @@ public final class TransportAdapter {
          .store(in: &subscriptions)
 
       tcpInterfaceInternal.input.publisher
-         .map { _ in .sendSuccess(SendRequest.ID()) }
+         .map { _ in .sendSuccess(TransportSendRequest(receiver: "", message: .chatRequest(ChatRequest())).id) }
          .subscribe(appInterfaceInternal.outputUpstream)
          .store(in: &subscriptions)
    }

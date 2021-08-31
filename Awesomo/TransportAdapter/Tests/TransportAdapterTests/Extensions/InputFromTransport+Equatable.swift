@@ -1,5 +1,5 @@
 //
-//  TransportOutput+Equatable.swift
+//  InputFromTransport+Equatable.swift
 //  
 //
 //  Created by Volodymyr Pavliuk on 29.08.2021.
@@ -7,9 +7,9 @@
 
 import MessagingApp
 
-extension TransportOutput: Equatable {
+extension InputFromTransport: Equatable {
    #warning("Dummy implementation")
-   public static func == (lhs: TransportOutput, rhs: TransportOutput) -> Bool {
+   public static func == (lhs: InputFromTransport, rhs: InputFromTransport) -> Bool {
       switch (lhs, rhs) {
       case (.incomingMessage(_), .incomingMessage(_)):
          return true

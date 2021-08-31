@@ -8,10 +8,10 @@ import TestUtils
 
 final class TransportAdapterTests: XCTestCase {
    var sut: TransportAdapter!
-   var appOutput: PassthroughSubject<SendRequest, Never>!
+   var appOutput: PassthroughSubject<TransportSendRequest<String>, Never>!
    var tcpTransfer: TCPTransferMock!
    var sutTCPOutputStorage: InMemoryTestEventStorage<TCPUpload>!
-   var sutAppOutputStorage: InMemoryTestEventStorage<TransportOutput>!
+   var sutAppOutputStorage: InMemoryTestEventStorage<InputFromTransport<String>>!
 
    override func setUp() {
       sut = TransportAdapter()
@@ -30,13 +30,13 @@ final class TransportAdapterTests: XCTestCase {
       sut.appInterface.output.record(storage: sutAppOutputStorage)
    }
 
-   func testSendChatMessage() {
+   func testSendChatRequestSuccess() {
       // Arrange
-      let request = SendRequest(
-         receiver: "user_1",
+      let request = TransportSendRequest(
+         receiver: "test_receiver",
          message: .chatRequest(ChatRequest())
       )
-      let expectedAppOutputEvent = TransportOutput.sendFailure(SendRequest.ID())
+      let expectedAppOutputEvent = InputFromTransport.sendSuccess(request.id)
       let expectedTCPOutputEvent = TCPUpload(
          receiverServiceName: "fake_receiver",
          message: .completeDomainMessage(

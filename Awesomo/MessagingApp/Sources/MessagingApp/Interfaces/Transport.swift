@@ -10,28 +10,29 @@ import Foundation
 import Utils
 import Domain
 
-public struct SendRequest: Identifiable {
-   public init(receiver: String, message: NetworkMessage) {
+public struct TransportSendRequest<NetworkAddress>: Identifiable {
+   public init(receiver: NetworkAddress, message: NetworkMessage) {
       self.receiver = receiver
       self.message = message
    }
    
-   public struct ID: IDType {
-      public init(value: UUID = UUID()) {
+   public struct ID: Hashable {
+      fileprivate init(value: UUID = UUID()) {
          self.value = value
       }
       private let value: UUID
    }
 
    public let id = ID()
-   public let receiver: String
+
+   public let receiver: NetworkAddress
    public let message: NetworkMessage
 }
 
-public enum TransportOutput {
+public enum InputFromTransport<NetworkAddress> {
    case incomingMessage(NetworkMessage)
-   case sendSuccess(SendRequest.ID)
-   case sendFailure(SendRequest.ID)
+   case sendSuccess(TransportSendRequest<NetworkAddress>.ID)
+   case sendFailure(TransportSendRequest<NetworkAddress>.ID)
 }
 
 public enum NetworkMessage {

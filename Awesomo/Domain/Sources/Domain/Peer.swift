@@ -6,15 +6,24 @@
 //  Copyright © 2021 Volodymyr Pavliuk. All rights reserved.
 //
 
-public protocol Peer: Identifiable where Self.ID: Codable {
+import Foundation
 
-   init(
-      id: Self.ID,
-      displayName: String,
-      networkServiceName: String
-   )
+public struct Peer<NetworkAddress>: Identifiable {
 
-   var displayName: String { get }
-   var networkServiceName: String { get }
+   public init(displayName: String, networkAddress: NetworkAddress) {
+      self.displayName = displayName
+      self.networkAddress = networkAddress
+   }
+
+   public struct ID: Hashable {
+      fileprivate init(value: UUID = UUID()) {
+         self.value = value
+      }
+      private let value: UUID
+   }
+
+   public let id = ID()
+   public let displayName: String
+   public let networkAddress: NetworkAddress
    #warning("Add availability state?")
 }
