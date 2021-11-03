@@ -40,7 +40,7 @@ public final class InMemoryTestEventStorage<Event>: EventStorage where Event: Eq
       line: UInt = #line
    ) {
       guard !isComplete else {
-         assertEqualEvents(expected: expectedEvents, file: file, line: line)
+         XCTAssertEqual(events, expectedEvents, file: file, line: line)
          return
       }
 
@@ -55,11 +55,7 @@ public final class InMemoryTestEventStorage<Event>: EventStorage where Event: Eq
          return
       }
 
-      assertEqualEvents(expected: expectedEvents, file: file, line: line)
-   }
-
-   private func assertEqualEvents(expected: [Event], file: StaticString, line: UInt) {
-      XCTAssertEqual(events, expected, file: file, line: line)
+      XCTAssertEqual(events, expectedEvents, file: file, line: line)
    }
 
    private var eventsInternal: [Event] = []

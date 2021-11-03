@@ -32,12 +32,6 @@ extension XCTestCase {
       waitForExpectations(timeout: timeout)
       cancellable.cancel()
 
-      if actualOutput != output {
-         XCTFail(
-            "Outputs don't match",
-            file: file,
-            line: line
-         )
-      }
+      XCTAssertEqual(actualOutput, output, file: file, line: line)
    }
 }
