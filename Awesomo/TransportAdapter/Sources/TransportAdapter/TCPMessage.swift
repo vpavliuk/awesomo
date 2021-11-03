@@ -46,6 +46,7 @@ public struct DomainMessageTCPRepresentation: Codable {
       private let value: UUID
    }
 
+   #warning("Should be revised")
    // Only messages with linked content chunks will have a non-nil id.
    // Nil indicates that no content chunks are going to be linked to this message.
    public let id: ID?

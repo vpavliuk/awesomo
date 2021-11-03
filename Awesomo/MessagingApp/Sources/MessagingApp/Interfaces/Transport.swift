@@ -31,6 +31,7 @@ public struct TransportSendRequest<NetworkAddress>: Identifiable {
 
 public enum InputFromTransport<NetworkAddress> {
    case incomingMessage(NetworkMessage)
+   #warning("Use Result for success and failure?")
    case sendSuccess(TransportSendRequest<NetworkAddress>.ID)
    case sendFailure(TransportSendRequest<NetworkAddress>.ID)
 }

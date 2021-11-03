@@ -23,6 +23,7 @@ public final class TCPTransfer<ConcreteUpload: Upload> {
 
    public enum Output {
       case received(ConcreteUpload.Message)
+      #warning("Use result for sent/failure?")
       case sent(ConcreteUpload.ID)
       case failedSending(ConcreteUpload.ID)
    }
