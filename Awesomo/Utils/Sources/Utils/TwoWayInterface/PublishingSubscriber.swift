@@ -9,16 +9,16 @@
 import Combine
 
 public final class PublishingSubscriber<Input, Failure: Error>: Subscriber {
-
    private var subscription: Subscription? = nil
 
    private lazy var sink = Subscribers.Sink { [weak self] completion in
-      self?.publisher.send(completion: completion)
+      self?.publisherInternal.send(completion: completion)
    } receiveValue: { [weak self] input in
-      self?.publisher.send(input)
+      self?.publisherInternal.send(input)
    }
 
-   public let publisher = PassthroughSubject<Input, Failure>()
+   private let publisherInternal = PassthroughSubject<Input, Failure>()
+   public lazy var publisher = publisherInternal.share()
 
    public func receive(subscription: Subscription) {
       sink.receive(subscription: subscription)
