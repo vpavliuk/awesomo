@@ -8,15 +8,14 @@
 import MessagingApp
 
 extension InputFromTransport: Equatable {
-   #warning("Dummy implementation")
    public static func == (lhs: InputFromTransport, rhs: InputFromTransport) -> Bool {
       switch (lhs, rhs) {
-      case (.incomingMessage(_), .incomingMessage(_)):
-         return true
-      case (.sendSuccess(_), .sendSuccess(_)):
-         return true
-      case (.sendFailure(_), .sendFailure(_)):
-         return true
+      case (.incomingMessage(let lhsNetworkMessage), .incomingMessage(let rhsNetworkMessage)):
+         return lhsNetworkMessage == rhsNetworkMessage
+      case (.sendSuccess(let lhsSendRequestId), .sendSuccess(let rhsSendRequestId)):
+         return lhsSendRequestId == rhsSendRequestId
+      case (.sendFailure(let lhsSendRequestId), .sendFailure(let rhsSendRequestId)):
+         return lhsSendRequestId == rhsSendRequestId
       default:
          return false
       }

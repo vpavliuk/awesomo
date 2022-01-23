@@ -56,6 +56,7 @@ public struct DomainMessageTCPRepresentation: Codable {
 
 #warning("Store MessageType in Domain?")
 public struct DomainMessageType: Codable, Equatable {
+   public static let chatRequest = Self(value: "CHAT_REQUEST")
    public static let chatMessage = Self(value: "CHAT_MESSAGE")
    private let value: String
 }

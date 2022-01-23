@@ -33,14 +33,20 @@ public final class TransportAdapter {
 
    public func wireUp() {
    #warning("Can this be put in init?")
-      appInterfaceInternal.input.publisher
-         .map { _ in
+      let appInputShare = appInterfaceInternal.input.publisher
+      subscriptions.insert(
+         appInputShare.sink { [weak self] sendRequest in
+            self?.pendingSendRequest = sendRequest
+         }
+      )
+      appInputShare
+         .map { sendRequest in
             TCPUpload(
-               receiverServiceName: "best_friend",
+               receiverServiceName: sendRequest.receiver,
                message: .completeDomainMessage(
                   DomainMessageTCPRepresentation(
                      id: nil,
-                     messageType: .chatMessage,
+                     messageType: self.messageType(from: sendRequest.message),
                      payload: Data()
                   )
                )
@@ -50,10 +56,21 @@ public final class TransportAdapter {
          .store(in: &subscriptions)
 
       tcpInterfaceInternal.input.publisher
-         .map { _ in .sendSuccess(TransportSendRequest(receiver: "", message: .chatRequest(ChatRequest())).id) }
+         .map { [weak self] _ in .sendSuccess(self!.pendingSendRequest!.id) }
          .subscribe(appInterfaceInternal.outputUpstream)
          .store(in: &subscriptions)
    }
 
    private var subscriptions = Set<AnyCancellable>()
+
+   private func messageType(from message: NetworkMessage) -> DomainMessageType {
+      switch message {
+      case .chatRequest(_):
+         return .chatRequest
+      case .chatMessage(_):
+         return .chatMessage
+      }
+   }
+
+   private var pendingSendRequest: InputFromApp?
 }

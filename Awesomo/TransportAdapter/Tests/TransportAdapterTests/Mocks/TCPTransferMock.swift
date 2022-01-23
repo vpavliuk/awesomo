@@ -19,7 +19,7 @@ final class TCPTransferMock {
    func wireUp() {
       subscription = interfaceInternal.input.publisher
          .map { .sent($0.id) }
-         .delay(for: .seconds(1), scheduler: RunLoop.main, options: .none)
+         .delay(for: .zero, scheduler: RunLoop.main, options: .none)
          .subscribe(interfaceInternal.outputUpstream)
    }
 
