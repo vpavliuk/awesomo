@@ -18,7 +18,9 @@ public final class PublishingSubscriber<Input, Failure: Error>: Subscriber {
    }
 
    private let publisherInternal = PassthroughSubject<Input, Failure>()
-   public lazy var publisher = publisherInternal.share()
+   public lazy var publisher = publisherInternal
+      .share()
+      .eraseToAnyPublisher()
 
    public func receive(subscription: Subscription) {
       sink.receive(subscription: subscription)
