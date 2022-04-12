@@ -12,7 +12,8 @@ import Domain
 import Utils
 
 public struct TCPUpload: Upload {
-   public init(receiverServiceName: String, message: TCPMessage) {
+   init(id: ID, receiverServiceName: String, message: TCPMessage) {
+      self.id = id
       self.receiverServiceName = receiverServiceName
       self.message = message
    }
@@ -22,7 +23,7 @@ public struct TCPUpload: Upload {
       }
       private let value: UUID
    }
-   public let id = ID()
+   public let id: ID
    public let receiverServiceName: String
    public let message: TCPMessage
 }

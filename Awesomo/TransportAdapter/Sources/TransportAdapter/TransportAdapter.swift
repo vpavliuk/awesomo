@@ -14,7 +14,9 @@ import TCPTransfer
 import Utils
 
 public final class TransportAdapter {
-   public init() {
+   init(messageIDGenerator: TransportAdapterMessageIDGenerator) {
+      self.messageIDGenerator = messageIDGenerator
+
       appInterfaceInternal = PassthroughTwoWayInterface()
       appInterface = appInterfaceInternal.eraseToAny()
 
@@ -24,46 +26,75 @@ public final class TransportAdapter {
 
    public let appInterface: AnyTwoWayInterface<InputFromApp, OutputForApp>
    private let appInterfaceInternal: PassthroughTwoWayInterface<InputFromApp, OutputForApp>
-   public typealias InputFromApp = TransportSendRequest<String>
-   public typealias OutputForApp = InputFromTransport<String>
+   public typealias InputFromApp = TransportSendRequest<String> // MessagingApp.TransportSendRequest
+   public typealias OutputForApp = InputFromTransport<String> // MessagingApp.InputFromTransport
 
    public let tcpInterface: AnyTwoWayInterface<TCPInterfaceInput, TCPUpload>
    private let tcpInterfaceInternal: PassthroughTwoWayInterface<TCPInterfaceInput, TCPUpload>
    public typealias TCPInterfaceInput = TCPTransfer<TCPUpload>.Output
 
    public func wireUp() {
-   #warning("Can this be put in init?")
-      let appInputShare = appInterfaceInternal.input.publisher
       subscriptions.insert(
          appInputShare.sink { [weak self] sendRequest in
             self?.pendingSendRequest = sendRequest
          }
       )
+
+      wireUpAppToTCP()
+      wireUpTCPToApp()
+   }
+
+   private func wireUpAppToTCP() {
       appInputShare
-         .map { sendRequest in
-            TCPUpload(
-               receiverServiceName: sendRequest.receiver,
-               message: .completeDomainMessage(
-                  DomainMessageTCPRepresentation(
-                     id: nil,
-                     messageType: self.messageType(from: sendRequest.message),
-                     payload: Data()
-                  )
-               )
-            )
+         .zip((0...Int.max).publisher)
+         // Magic to avoid memory explosion
+         .flatMap(maxPublishers: .max(1)) { pair in
+            Just(pair)
          }
+         .map(tcpUploadFromAppSendRequest)
          .subscribe(tcpInterfaceInternal.outputUpstream)
          .store(in: &subscriptions)
+   }
 
+   private func tcpUploadFromAppSendRequest(
+      requestSeqNumberPair: (InputFromApp, Int)
+   ) -> TCPUpload {
+      let appSendRequest = requestSeqNumberPair.0
+      let requestSequenceNumber = requestSeqNumberPair.1
+      return TCPUpload(
+         id: messageIDGenerator.tcpOutputID(seqNumber: requestSequenceNumber),
+         receiverServiceName: appSendRequest.receiver,
+         message: .completeDomainMessage(
+            DomainMessageTCPRepresentation(
+               id: nil,
+               messageType: Self.messageType(from: appSendRequest.message),
+               payload: Data()
+            )
+         )
+      )
+   }
+
+   private func wireUpTCPToApp() {
       tcpInterfaceInternal.input.publisher
-         .map { [weak self] _ in .sendSuccess(self!.pendingSendRequest!.id) }
+         .compactMap { [weak self] _ in
+            guard let self = self else { return nil }
+            return .sendSuccess(self.pendingSendRequest!.id)
+         }
          .subscribe(appInterfaceInternal.outputUpstream)
          .store(in: &subscriptions)
    }
 
    private var subscriptions = Set<AnyCancellable>()
 
-   private func messageType(from message: NetworkMessage) -> DomainMessageType {
+   private var appInputShare: AnyPublisher<InputFromApp, Never> {
+      appInterfaceInternal.input.publisher
+   }
+
+   private var pendingSendRequest: InputFromApp?
+
+   private let messageIDGenerator: TransportAdapterMessageIDGenerator
+
+   private static func messageType(from message: NetworkMessage) -> DomainMessageType {
       switch message {
       case .chatRequest(_):
          return .chatRequest
@@ -71,6 +102,4 @@ public final class TransportAdapter {
          return .chatMessage
       }
    }
-
-   private var pendingSendRequest: InputFromApp?
 }

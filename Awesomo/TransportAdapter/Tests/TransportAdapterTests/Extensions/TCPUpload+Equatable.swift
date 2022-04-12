@@ -9,8 +9,8 @@ import TransportAdapter
 
 extension TCPUpload: Equatable {
    public static func == (lhs: TCPUpload, rhs: TCPUpload) -> Bool {
-      #warning("Use matchers instead of broken equality")
-      return lhs.receiverServiceName == rhs.receiverServiceName &&
+      return lhs.id == rhs.id &&
+            lhs.receiverServiceName == rhs.receiverServiceName &&
             lhs.message == rhs.message
    }
 }

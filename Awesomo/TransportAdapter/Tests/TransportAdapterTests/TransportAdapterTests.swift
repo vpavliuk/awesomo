@@ -1,19 +1,22 @@
 import XCTest
 import Combine
-import TransportAdapter
 import MessagingApp
 import Domain
 import Utils
 import TestUtils
 
+@testable import TransportAdapter
+
 final class TransportAdapterTests: XCTestCase {
    var sut: TransportAdapter!
-   var appOutput: PassthroughSubject<TransportSendRequest<String>, Never>!
+   var inputFromApp: PassthroughSubject<TransportSendRequest<String>, Never>!
    var tcpTransfer: TCPTransferMock!
    var sutTCPOutputStorage: InMemoryTestEventStorage<TCPUpload>!
+   var messageIDGenerator: TransportAdapterMessageIDGenerator!
 
    override func setUp() {
-      sut = TransportAdapter()
+      messageIDGenerator = MessageIDGeneratorMock()
+      sut = TransportAdapter(messageIDGenerator: messageIDGenerator)
       sut.wireUp()
 
       tcpTransfer = TCPTransferMock()
@@ -23,19 +26,27 @@ final class TransportAdapterTests: XCTestCase {
       sut.tcpInterface.startSavingOutput(in: sutTCPOutputStorage)
       sut.tcpInterface.connect(to: tcpTransfer.interface)
 
-      appOutput = PassthroughSubject()
-      appOutput.subscribe(sut.appInterface.input)
+      inputFromApp = PassthroughSubject()
+      inputFromApp.subscribe(sut.appInterface.input)
+   }
+
+   override func tearDown() {
+      weak var weakSut = sut
+      sut = nil
+      XCTAssertNil(weakSut)
    }
 
    func testSendChatRequestSuccess() {
       // Arrange
+      let receiverName = "test_receiver"
       let request = TransportSendRequest(
-         receiver: "test_receiver",
+         receiver: receiverName,
          message: .chatRequest(ChatRequest())
       )
-      let expectedAppOutputEvent = InputFromTransport.sendSuccess(request.id)
+      let expectedAppOutputEvent = TransportAdapter.OutputForApp.sendSuccess(request.id)
       let expectedTCPOutputEvent = TCPUpload(
-         receiverServiceName: "test_receiver",
+         id: messageIDGenerator.tcpOutputID(seqNumber: 0),
+         receiverServiceName: receiverName,
          message: .completeDomainMessage(
             DomainMessageTCPRepresentation(
                id: nil,
@@ -46,8 +57,8 @@ final class TransportAdapterTests: XCTestCase {
       )
 
       // Act
-      appOutput.send(request)
-      appOutput.send(completion: .finished)
+      inputFromApp.send(request)
+      inputFromApp.send(completion: .finished)
 
       // Assert
       sutTCPOutputStorage.expectEvents([expectedTCPOutputEvent])
