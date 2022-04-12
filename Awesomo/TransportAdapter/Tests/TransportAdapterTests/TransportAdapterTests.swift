@@ -43,7 +43,8 @@ final class TransportAdapterTests: XCTestCase {
          receiver: receiverName,
          message: .chatRequest(ChatRequest())
       )
-      let expectedAppOutputEvent = TransportAdapter.OutputForApp.sendSuccess(request.id)
+      let expectedSendResult: OutputForApp.SendResult = .success(request.id)
+      let expectedAppOutputEvent = OutputForApp.sendResult(expectedSendResult)
       let expectedTCPOutputEvent = TCPUpload(
          id: messageIDGenerator.tcpOutputID(seqNumber: 0),
          receiverServiceName: receiverName,

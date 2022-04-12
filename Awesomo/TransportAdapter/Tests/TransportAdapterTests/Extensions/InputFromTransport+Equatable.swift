@@ -12,10 +12,9 @@ extension InputFromTransport: Equatable {
       switch (lhs, rhs) {
       case (.incomingMessage(let lhsNetworkMessage), .incomingMessage(let rhsNetworkMessage)):
          return lhsNetworkMessage == rhsNetworkMessage
-      case (.sendSuccess(let lhsSendRequestId), .sendSuccess(let rhsSendRequestId)):
-         return lhsSendRequestId == rhsSendRequestId
-      case (.sendFailure(let lhsSendRequestId), .sendFailure(let rhsSendRequestId)):
-         return lhsSendRequestId == rhsSendRequestId
+      case (.sendResult(let lhsSendResult), .sendResult(let rhsSendResult)):
+         return lhsSendResult == rhsSendResult
+
       default:
          return false
       }

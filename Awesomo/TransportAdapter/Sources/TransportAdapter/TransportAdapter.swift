@@ -13,6 +13,11 @@ import MessagingApp
 import TCPTransfer
 import Utils
 
+public typealias InputFromApp = TransportSendRequest<String> // MessagingApp.TransportSendRequest
+public typealias OutputForApp = InputFromTransport<String> // MessagingApp.InputFromTransport
+
+public typealias TCPInterfaceInput = TCPTransfer<TCPUpload>.Output
+
 public final class TransportAdapter {
    init(messageIDGenerator: TransportAdapterMessageIDGenerator) {
       self.messageIDGenerator = messageIDGenerator
@@ -26,12 +31,9 @@ public final class TransportAdapter {
 
    public let appInterface: AnyTwoWayInterface<InputFromApp, OutputForApp>
    private let appInterfaceInternal: PassthroughTwoWayInterface<InputFromApp, OutputForApp>
-   public typealias InputFromApp = TransportSendRequest<String> // MessagingApp.TransportSendRequest
-   public typealias OutputForApp = InputFromTransport<String> // MessagingApp.InputFromTransport
 
    public let tcpInterface: AnyTwoWayInterface<TCPInterfaceInput, TCPUpload>
    private let tcpInterfaceInternal: PassthroughTwoWayInterface<TCPInterfaceInput, TCPUpload>
-   public typealias TCPInterfaceInput = TCPTransfer<TCPUpload>.Output
 
    public func wireUp() {
       subscriptions.insert(
@@ -78,7 +80,8 @@ public final class TransportAdapter {
       tcpInterfaceInternal.input.publisher
          .compactMap { [weak self] _ in
             guard let self = self else { return nil }
-            return .sendSuccess(self.pendingSendRequest!.id)
+            let success = OutputForApp.SendResult.success(self.pendingSendRequest!.id)
+            return .sendResult(success)
          }
          .subscribe(appInterfaceInternal.outputUpstream)
          .store(in: &subscriptions)
