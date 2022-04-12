@@ -78,13 +78,25 @@ public final class TransportAdapter {
 
    private func wireUpTCPToApp() {
       tcpInterfaceInternal.input.publisher
-         .compactMap { [weak self] _ in
-            guard let self = self else { return nil }
-            let success = OutputForApp.SendResult.success(self.pendingSendRequest!.id)
-            return .sendResult(success)
-         }
+         .map(transportOutputFromTCPInput)
          .subscribe(appInterfaceInternal.outputUpstream)
          .store(in: &subscriptions)
+   }
+
+   private func transportOutputFromTCPInput(_ tcpInput: TCPInterfaceInput) -> OutputForApp {
+      switch tcpInput {
+      case .sent(_):
+         let success = OutputForApp.SendResult.success(self.pendingSendRequest!.id)
+         return .sendResult(success)
+      case .failedSending(_):
+         let requestID = self.pendingSendRequest!.id
+         let error = OutputForApp.SendError(requestID: requestID)
+         let failure = OutputForApp.SendResult.failure(error)
+         return .sendResult(failure)
+      case .received(_):
+         let success = OutputForApp.SendResult.success(self.pendingSendRequest!.id)
+         return .sendResult(success)
+      }
    }
 
    private var subscriptions = Set<AnyCancellable>()

@@ -37,6 +37,10 @@ public enum InputFromTransport<NetworkAddress> {
    public typealias SendResult = Result<SendRequest.ID, SendError>
 
    public struct SendError: Error, Equatable {
+      public init(requestID: InputFromTransport<NetworkAddress>.SendRequest.ID) {
+         self.requestID = requestID
+      }
+
       let requestID: SendRequest.ID
    }
 }
