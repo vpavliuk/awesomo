@@ -10,6 +10,12 @@ import Foundation
 import Utils
 import Domain
 
+public enum NetworkMessage {
+   case chatRequest
+   case chatMessage(ChatMessage)
+}
+
+// MARK: - Output
 public struct TransportSendRequest<NetworkAddress>: Identifiable {
    public init(receiver: NetworkAddress, message: NetworkMessage) {
       self.receiver = receiver
@@ -29,6 +35,7 @@ public struct TransportSendRequest<NetworkAddress>: Identifiable {
    public let message: NetworkMessage
 }
 
+// MARK: - Input
 public enum InputFromTransport<NetworkAddress> {
    case incomingMessage(NetworkMessage)
    case sendResult(SendResult)
@@ -43,9 +50,4 @@ public enum InputFromTransport<NetworkAddress> {
 
       let requestID: SendRequest.ID
    }
-}
-
-public enum NetworkMessage {
-   case chatRequest(ChatRequest)
-   case chatMessage(ChatMessage)
 }

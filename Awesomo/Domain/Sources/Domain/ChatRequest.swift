@@ -6,10 +6,6 @@
 //  Copyright © 2021 Volodymyr Pavliuk. All rights reserved.
 //
 
-public struct ChatRequest {
-   public init() {}
-}
-
 //extension ChatRequest: NetworkDispatchable {
 //   static let contentType = "chat/request"
 //   

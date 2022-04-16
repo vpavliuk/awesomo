@@ -40,10 +40,7 @@ final class TransportAdapterTests: XCTestCase {
       // Arrange
       tcpTransfer.predefinedSendResult = .success
       let receiverName = "test_receiver"
-      let request = TransportSendRequest(
-         receiver: receiverName,
-         message: .chatRequest(ChatRequest())
-      )
+      let request = TransportSendRequest(receiver: receiverName, message: .chatRequest)
       let expectedSendResult: OutputForApp.SendResult = .success(request.id)
       let expectedAppOutputEvent = OutputForApp.sendResult(expectedSendResult)
       let expectedTCPOutputEvent = TCPUpload(
@@ -71,10 +68,7 @@ final class TransportAdapterTests: XCTestCase {
       // Arrange
       tcpTransfer.predefinedSendResult = .failure
       let receiverName = "test_receiver"
-      let request = TransportSendRequest(
-         receiver: receiverName,
-         message: .chatRequest(ChatRequest())
-      )
+      let request = TransportSendRequest(receiver: receiverName, message: .chatRequest)
       let sendError = OutputForApp.SendError(requestID: request.id)
       let expectedSendResult: OutputForApp.SendResult = .failure(sendError)
       let expectedAppOutputEvent = OutputForApp.sendResult(expectedSendResult)

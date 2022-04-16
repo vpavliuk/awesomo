@@ -111,7 +111,7 @@ public final class TransportAdapter {
 
    private static func messageType(from message: NetworkMessage) -> DomainMessageType {
       switch message {
-      case .chatRequest(_):
+      case .chatRequest:
          return .chatRequest
       case .chatMessage(_):
          return .chatMessage

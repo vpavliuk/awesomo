@@ -10,8 +10,8 @@ import MessagingApp
 extension NetworkMessage: Equatable {
    public static func == (lhs: NetworkMessage, rhs: NetworkMessage) -> Bool {
       switch (lhs, rhs) {
-      case (.chatRequest(let lhsChatRequest), .chatRequest(let rhsChatRequest)):
-         return lhsChatRequest == rhsChatRequest
+      case (.chatRequest, .chatRequest):
+         return true
       case (.chatMessage(let lhsChatMessage), .chatMessage(let rhsChatMessage)):
          return lhsChatMessage == rhsChatMessage
       default:
