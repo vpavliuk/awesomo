@@ -11,6 +11,7 @@ import Combine
 
 public struct ChatMessage {
    let timestamp = Date()
+   #warning("Why just NetworkDispatchable? What about UIPresentable?")
    let content: NetworkDispatchable
 }
 

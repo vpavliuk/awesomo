@@ -53,6 +53,7 @@ public final class TCPTransfer<ConcreteUpload: Upload> {
 }
 
 #warning("Make a struct")
+#warning("Investigate possibility of using a stream of data")
 public protocol Upload: Identifiable {
    associatedtype Message: Codable
    var message: Message { get }
