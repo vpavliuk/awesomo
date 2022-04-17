@@ -9,32 +9,26 @@
 import Foundation
 import Combine
 
-public struct ChatMessage {
+public struct ChatMessage<ContentNetworkRepresentation> {
+   public typealias MessageContent = ChatMessageContent<ContentNetworkRepresentation>
+   public init(content: MessageContent) {
+      self.content = content
+   }
+
    let timestamp = Date()
-   #warning("Why just NetworkDispatchable? What about UIPresentable?")
-   let content: NetworkDispatchable
+   let content: MessageContent
 }
 
-extension ChatMessage: NetworkDispatchable {
-#warning("Do not include contentType!")
-   public var tcpChunks: AnyPublisher<Data, Never> {
-      Just(
-         try! "<message;"
-            .data(using: .utf8)! +
-            JSONEncoder().encode(timestamp)
-      ).eraseToAnyPublisher()
+public struct ChatMessageContent<NetworkRepresentation> {
+   public struct ContentType: Equatable {
+      public init(_ value: String) {
+         self.value = value
+      }
+      private let value: String
    }
-   
-   public static let contentType = "message"
-}
 
-public struct ChatMessageContentType: Equatable, Codable {
-   public init(_ value: String) {
-      self.value = value
-   }
-   private let value: String
-}
+   public let contentType: ContentType
 
-public protocol ChatMessageContent {
-   static var contentType: ChatMessageContentType { get }
+   #warning("Don't forget about errors")
+   public let networkPublisher: AnyPublisher<NetworkRepresentation, Never>
 }

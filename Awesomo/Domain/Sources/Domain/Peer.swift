@@ -25,5 +25,4 @@ public struct Peer<NetworkAddress>: Identifiable {
    public let id = ID()
    public let displayName: String
    public let networkAddress: NetworkAddress
-   #warning("Add availability state?")
 }
