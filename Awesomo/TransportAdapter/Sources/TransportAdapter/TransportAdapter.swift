@@ -13,8 +13,8 @@ import MessagingApp
 import TCPTransfer
 import Utils
 
-public typealias InputFromApp = TransportSendRequest<String> // MessagingApp.TransportSendRequest
-public typealias OutputForApp = InputFromTransport<String> // MessagingApp.InputFromTransport
+public typealias InputFromApp = TransportSendRequest<String, UInt8> // MessagingApp.TransportSendRequest
+public typealias OutputForApp = InputFromTransport<String, UInt8> // MessagingApp.InputFromTransport
 
 public typealias TCPInterfaceInput = TCPTransfer<TCPUpload>.Output
 
@@ -66,13 +66,7 @@ public final class TransportAdapter {
       return TCPUpload(
          id: messageIDGenerator.tcpOutputID(seqNumber: requestSequenceNumber),
          receiverServiceName: appSendRequest.receiver,
-         message: .completeDomainMessage(
-            DomainMessageTCPRepresentation(
-               id: nil,
-               messageType: Self.messageType(from: appSendRequest.message),
-               payload: Data()
-            )
-         )
+         message: Data()
       )
    }
 
@@ -109,12 +103,13 @@ public final class TransportAdapter {
 
    private let messageIDGenerator: TransportAdapterMessageIDGenerator
 
-   private static func messageType(from message: NetworkMessage) -> DomainMessageType {
-      switch message {
-      case .chatRequest:
-         return .chatRequest
-      case .chatMessage(_):
-         return .chatMessage
-      }
-   }
+#warning("Revise")
+//   private static func messageType(from message: NetworkMessage) -> DomainMessageType {
+//      switch message {
+//      case .chatRequest:
+//         return .chatRequest
+//      case .chatMessage(_):
+//         return .chatMessage
+//      }
+//   }
 }

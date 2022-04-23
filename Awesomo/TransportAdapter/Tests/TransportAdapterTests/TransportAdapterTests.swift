@@ -4,15 +4,20 @@ import MessagingApp
 import Domain
 import Utils
 import TestUtils
+import Foundation
 
 @testable import TransportAdapter
 
 final class TransportAdapterTests: XCTestCase {
+   typealias TCPElement = UInt8
+   typealias SendRequestFromApp = TransportSendRequest<String, TCPElement>
+
    var sut: TransportAdapter!
-   var inputFromApp: PassthroughSubject<TransportSendRequest<String>, Never>!
+   var inputFromApp: PassthroughSubject<SendRequestFromApp, Never>!
    var tcpTransfer: TCPTransferMock!
    var sutTCPOutputStorage: InMemoryTestEventStorage<TCPUpload>!
    var messageIDGenerator: TransportAdapterMessageIDGenerator!
+   let peer = "test_peer"
 
    override func setUp() {
       messageIDGenerator = MessageIDGeneratorMock()
@@ -36,23 +41,18 @@ final class TransportAdapterTests: XCTestCase {
       XCTAssertNil(weakSut)
    }
 
+   func testDoingNothing() {}
+
    func testSendChatRequestSuccess() {
       // Arrange
       tcpTransfer.predefinedSendResult = .success
-      let receiverName = "test_receiver"
-      let request = TransportSendRequest(receiver: receiverName, message: .chatRequest)
+      let request = SendRequestFromApp(receiver: peer, message: .chatRequest)
       let expectedSendResult: OutputForApp.SendResult = .success(request.id)
       let expectedAppOutputEvent = OutputForApp.sendResult(expectedSendResult)
       let expectedTCPOutputEvent = TCPUpload(
          id: messageIDGenerator.tcpOutputID(seqNumber: 0),
-         receiverServiceName: receiverName,
-         message: .completeDomainMessage(
-            DomainMessageTCPRepresentation(
-               id: nil,
-               messageType: .chatRequest,
-               payload: Data()
-            )
-         )
+         receiverServiceName: peer,
+         message: Data()
       )
 
       // Act
@@ -67,21 +67,14 @@ final class TransportAdapterTests: XCTestCase {
    func testSendChatRequestFailure() {
       // Arrange
       tcpTransfer.predefinedSendResult = .failure
-      let receiverName = "test_receiver"
-      let request = TransportSendRequest(receiver: receiverName, message: .chatRequest)
+      let request = SendRequestFromApp(receiver: peer, message: .chatRequest)
       let sendError = OutputForApp.SendError(requestID: request.id)
       let expectedSendResult: OutputForApp.SendResult = .failure(sendError)
       let expectedAppOutputEvent = OutputForApp.sendResult(expectedSendResult)
       let expectedTCPOutputEvent = TCPUpload(
          id: messageIDGenerator.tcpOutputID(seqNumber: 0),
-         receiverServiceName: receiverName,
-         message: .completeDomainMessage(
-            DomainMessageTCPRepresentation(
-               id: nil,
-               messageType: .chatRequest,
-               payload: Data()
-            )
-         )
+         receiverServiceName: peer,
+         message: Data()
       )
 
       // Act
@@ -92,4 +85,51 @@ final class TransportAdapterTests: XCTestCase {
       sutTCPOutputStorage.expectEvents([expectedTCPOutputEvent])
       expectLater(sut.appInterface.output, output: [expectedAppOutputEvent])
    }
+
+   func testSendMessageSuccess() {
+      // Arrange
+      var collectedData = Data()
+      let messageContent = TestPlainText(text: "Test Message").eraseToAny()
+      let chatMessage = ChatMessage(content: messageContent)
+      let request = SendRequestFromApp(
+         receiver: peer,
+         message: .chatMessage(chatMessage)
+      )
+      let expectedSendResult: OutputForApp.SendResult = .success(request.id)
+      let expectedAppOutputEvent = OutputForApp.sendResult(expectedSendResult)
+      let dataExpectation = expectation(description: "Expectation for content data")
+      let sub = messageContent.networkPublisher.sink { _ in
+         dataExpectation.fulfill()
+      } receiveValue: { element in
+         collectedData.append(element)
+      }
+      wait(for: [dataExpectation], timeout: 0.01)
+      sub.cancel()
+      let expectedTCPOutputEvent = TCPUpload(
+         id: messageIDGenerator.tcpOutputID(seqNumber: 0),
+         receiverServiceName: peer,
+         message: collectedData
+      )
+
+      // Act
+      inputFromApp.send(request)
+      inputFromApp.send(completion: .finished)
+
+      // Assert
+      expectLater(sut.appInterface.output, output: [expectedAppOutputEvent])
+      expectLater(sut.tcpInterface.output, output: [expectedTCPOutputEvent])
+   }
+}
+
+private struct TestPlainText: MessageContent {
+   internal init(text: String) {
+      self.text = text
+      self.networkPublisher =
+            text.data(using: .utf8)!.publisher.eraseToAnyPublisher()
+   }
+
+   typealias NetworkRepresentation = TransportAdapterTests.TCPElement
+   let networkPublisher: AnyPublisher<NetworkRepresentation, Never>
+
+   private let text: String
 }
