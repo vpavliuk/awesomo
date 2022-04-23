@@ -6,6 +6,7 @@
 //  Copyright © 2021 Volodymyr Pavliuk. All rights reserved.
 //
 
+#warning("Remove as useless")
 public protocol IDType: Hashable {
    associatedtype Value
    init(value: Value)
