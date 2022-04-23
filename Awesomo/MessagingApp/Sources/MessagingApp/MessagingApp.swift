@@ -2,7 +2,7 @@ import Utils
 import Domain
 import Combine
 
-public struct MessagingApp<NetworkAddress> {
+public struct MessagingApp<NetworkAddress, ContentNetworkRepresentation> {
    public init() {
       transportInterfaceInternal = PassthroughTwoWayInterface()
       transportInterface = transportInterfaceInternal.eraseToAny()
@@ -10,6 +10,6 @@ public struct MessagingApp<NetworkAddress> {
 
    public let transportInterface: AnyTwoWayInterface<TransportInterfaceInput, TransportInterfaceOutput>
    private let transportInterfaceInternal: PassthroughTwoWayInterface<TransportInterfaceInput, TransportInterfaceOutput>
-   public typealias TransportInterfaceInput = InputFromTransport<NetworkAddress>
-   public typealias TransportInterfaceOutput = TransportSendRequest<NetworkAddress>
+   public typealias TransportInterfaceInput = InputFromTransport<NetworkAddress, ContentNetworkRepresentation>
+   public typealias TransportInterfaceOutput = TransportSendRequest<NetworkAddress, ContentNetworkRepresentation>
 }

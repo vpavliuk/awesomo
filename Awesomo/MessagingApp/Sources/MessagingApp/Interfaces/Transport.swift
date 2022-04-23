@@ -10,14 +10,16 @@ import Foundation
 import Utils
 import Domain
 
-public enum NetworkMessage {
+public enum NetworkMessage<ContentNetworkRepresentation> {
    case chatRequest
-   case chatMessage(ChatMessage)
+   case chatMessage(ChatMessage<ContentNetworkRepresentation>)
 }
 
 // MARK: - Output
-public struct TransportSendRequest<NetworkAddress>: Identifiable {
-   public init(receiver: NetworkAddress, message: NetworkMessage) {
+public struct TransportSendRequest
+      <NetworkAddress, ContentNetworkRepresentation>: Identifiable {
+   public typealias ConcreteNetworkMessage = NetworkMessage<ContentNetworkRepresentation>
+   public init(receiver: NetworkAddress, message: ConcreteNetworkMessage) {
       self.receiver = receiver
       self.message = message
    }
@@ -32,19 +34,19 @@ public struct TransportSendRequest<NetworkAddress>: Identifiable {
    public let id = ID()
 
    public let receiver: NetworkAddress
-   public let message: NetworkMessage
+   public let message: ConcreteNetworkMessage
 }
 
 // MARK: - Input
-public enum InputFromTransport<NetworkAddress> {
-   case incomingMessage(NetworkMessage)
+public enum InputFromTransport<NetworkAddress, ContentNetworkRepresentation> {
+   case incomingMessage(NetworkMessage<ContentNetworkRepresentation>)
    case sendResult(SendResult)
 
-   public typealias SendRequest = TransportSendRequest<NetworkAddress>
+   public typealias SendRequest = TransportSendRequest<NetworkAddress, ContentNetworkRepresentation>
    public typealias SendResult = Result<SendRequest.ID, SendError>
 
    public struct SendError: Error, Equatable {
-      public init(requestID: InputFromTransport<NetworkAddress>.SendRequest.ID) {
+      public init(requestID: InputFromTransport<NetworkAddress, ContentNetworkRepresentation>.SendRequest.ID) {
          self.requestID = requestID
       }
 
