@@ -9,8 +9,8 @@
 import Foundation
 
 public struct Peer<NetworkAddress>: Identifiable {
-
-   public init(displayName: String, networkAddress: NetworkAddress) {
+   public init(id: ID, displayName: String, networkAddress: NetworkAddress) {
+      self.id = id
       self.displayName = displayName
       self.networkAddress = networkAddress
    }
@@ -22,7 +22,7 @@ public struct Peer<NetworkAddress>: Identifiable {
       private let value: UUID
    }
 
-   public let id = ID()
+   public let id: ID
    public let displayName: String
    public let networkAddress: NetworkAddress
 }
