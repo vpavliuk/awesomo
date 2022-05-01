@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Utils
 import Domain
 
 public enum NetworkMessage<ContentNetworkRepresentation> {
