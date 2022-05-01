@@ -16,7 +16,7 @@ public struct Peer<NetworkAddress>: Identifiable {
    }
 
    public struct ID: Hashable {
-      fileprivate init(value: UUID = UUID()) {
+      public init(value: UUID = UUID()) {
          self.value = value
       }
       private let value: UUID
@@ -25,4 +25,12 @@ public struct Peer<NetworkAddress>: Identifiable {
    public let id = ID()
    public let displayName: String
    public let networkAddress: NetworkAddress
+}
+
+extension Peer: Equatable where NetworkAddress: Equatable {
+   public static func == (lhs: Self, rhs: Self) -> Bool {
+      lhs.id == rhs.id
+         && lhs.displayName == rhs.displayName
+         && lhs.networkAddress == rhs.networkAddress
+   }
 }
