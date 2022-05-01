@@ -10,11 +10,12 @@ final class PeerDiscoveryTests: XCTestCase {
 
    var sut: PeerDiscovery!
    var inputFromServiceBrowser: PassthroughSubject<NetServiceAvailabilityEvent, Never>!
-   var bonjourNameComposer: BonjourNameComposer!
+   var bonjourNameComposer: BonjourNameComposerMock!
 
    override func setUp() {
       bonjourNameComposer = BonjourNameComposerMock()
       sut = PeerDiscovery(bonjourNameComposer: bonjourNameComposer)
+      sut.wireUp()
       inputFromServiceBrowser = PassthroughSubject()
       inputFromServiceBrowser.subscribe(sut.input)
    }
@@ -22,9 +23,10 @@ final class PeerDiscoveryTests: XCTestCase {
    func testOneServiceFound() {
       // Arrange
       let peerName = "peer_1"
-      let peerIdString = UUID().uuidString
+      let peerIDUUID = UUID()
+      let peerIDString = peerIDUUID.uuidString
       let foundService = makeNetService(
-         peerIdString: peerIdString,
+         peerIdString: peerIDString,
          peerName: peerName
       )
       let networkAddress = foundService.name
@@ -32,7 +34,12 @@ final class PeerDiscoveryTests: XCTestCase {
          eventType: .found,
          services: [foundService]
       )
-      let expectedPeer = Peer(displayName: peerName, networkAddress: networkAddress)
+      let expectedPeerId = Peer.ID(value: peerIDUUID)
+      let expectedPeer = Peer(
+         id: expectedPeerId,
+         displayName: peerName,
+         networkAddress: networkAddress
+      )
       let expectedOutput = PeerEvent(
          peers: [expectedPeer],
          availabilityChange: .found
@@ -49,7 +56,10 @@ final class PeerDiscoveryTests: XCTestCase {
    private func makeNetService(peerIdString: String, peerName: String)
          -> NetService {
 
-      let serviceName = peerIdString + "~" + peerName
+      let serviceName = bonjourNameComposer.serviceName(
+         fromIdString: peerIdString,
+         displayName: peerName
+      )
       return NetService(
          domain: bonjourDomain,
          type: bonjourServiceType,

@@ -6,6 +6,9 @@
 //  Copyright © 2022 Volodymyr Pavliuk. All rights reserved.
 //
 
-public protocol BonjourNameComposer {
+import Domain
 
+public protocol BonjourNameComposer {
+   func peerAttributesFromServiceName(_ name: String)
+         -> (id: Peer<String>.ID, displayName: String)
 }
