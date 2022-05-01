@@ -53,6 +53,39 @@ final class PeerDiscoveryTests: XCTestCase {
       expectLater(sut.output, output: [expectedOutput])
    }
 
+   func testOneServiceLost() {
+      // Arrange
+      let peerName = "peer_1"
+      let peerIDUUID = UUID()
+      let peerIDString = peerIDUUID.uuidString
+      let foundService = makeNetService(
+         peerIdString: peerIDString,
+         peerName: peerName
+      )
+      let networkAddress = foundService.name
+      let serviceBrowserEvent = NetServiceAvailabilityEvent(
+         eventType: .lost,
+         services: [foundService]
+      )
+      let expectedPeerId = Peer.ID(value: peerIDUUID)
+      let expectedPeer = Peer(
+         id: expectedPeerId,
+         displayName: peerName,
+         networkAddress: networkAddress
+      )
+      let expectedOutput = PeerEvent(
+         peers: [expectedPeer],
+         availabilityChange: .lost
+      )
+
+      // Act
+      inputFromServiceBrowser.send(serviceBrowserEvent)
+      inputFromServiceBrowser.send(completion: .finished)
+
+      // Assert
+      expectLater(sut.output, output: [expectedOutput])
+   }
+
    private func makeNetService(peerIdString: String, peerName: String)
          -> NetService {
 
