@@ -8,7 +8,6 @@
 
 import Foundation
 import TCPTransfer
-import Utils
 
 public struct TCPUpload: Upload {
    init(id: ID, receiverServiceName: String, message: Data) {
