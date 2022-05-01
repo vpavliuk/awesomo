@@ -9,6 +9,8 @@
 import Combine
 
 public final class PublishingSubscriber<Input, Failure: Error>: Subscriber {
+   public init() {}
+
    private var subscription: Subscription? = nil
 
    private lazy var sink = Subscribers.Sink { [weak self] completion in
