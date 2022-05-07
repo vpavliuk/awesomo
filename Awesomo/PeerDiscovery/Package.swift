@@ -17,6 +17,7 @@ let package = Package(
    ],
    dependencies: [
       .package(path: "../MessagingApp"),
+      .package(path: "../BonjourBrowser"),
       .package(path: "../TestUtils"),
       // Combine
    ],
@@ -25,6 +26,7 @@ let package = Package(
          name: "PeerDiscovery",
          dependencies: [
             "MessagingApp",
+            "BonjourBrowser",
          ]
       ),
       .testTarget(
