@@ -11,7 +11,6 @@ import Domain
 // MARK: - Input
 public struct PeerAvailabilityEvent<NetworkAddress> {
    public typealias Peer = Domain.Peer<NetworkAddress>
-   #warning("frozen?")
    public enum AvailabilityChange { case found, lost }
 
    public init(peers: [Peer], availabilityChange: AvailabilityChange) {

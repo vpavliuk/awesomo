@@ -22,7 +22,7 @@ public struct TransportSendRequest
       self.receiver = receiver
       self.message = message
    }
-   
+
    public struct ID: Hashable {
       fileprivate init(value: UUID = UUID()) {
          self.value = value
