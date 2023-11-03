@@ -9,6 +9,7 @@
 import Foundation
 
 public struct ChatMessage<ContentNetworkRepresentation> {
+#warning("TODO: Switch to use any MessageContent")
    public typealias Content = AnyMessageContent<ContentNetworkRepresentation>
 
    public init(content: Content) {

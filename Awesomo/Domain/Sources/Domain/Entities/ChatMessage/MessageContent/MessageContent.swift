@@ -8,7 +8,7 @@
 
 import Combine
 
-public protocol MessageContent {
+public protocol MessageContent<NetworkRepresentationElement> {
    associatedtype NetworkRepresentationElement
 
    #warning("Potential violation of Single Responsibility")

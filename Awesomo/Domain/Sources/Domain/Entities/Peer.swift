@@ -8,6 +8,7 @@
 
 import Foundation
 
+#warning("Revise whether NetworkAddress belongs here from cohesion perspective")
 public struct Peer<NetworkAddress>: Identifiable {
    public init(id: ID, displayName: String, networkAddress: NetworkAddress) {
       self.id = id
@@ -16,21 +17,13 @@ public struct Peer<NetworkAddress>: Identifiable {
    }
 
    public struct ID: Hashable {
-      public init(value: UUID = UUID()) {
+      public init(value: String) {
          self.value = value
       }
-      private let value: UUID
+      private let value: String
    }
 
    public let id: ID
    public let displayName: String
    public let networkAddress: NetworkAddress
-}
-
-extension Peer: Equatable where NetworkAddress: Equatable {
-   public static func == (lhs: Self, rhs: Self) -> Bool {
-      lhs.id == rhs.id
-         && lhs.displayName == rhs.displayName
-         && lhs.networkAddress == rhs.networkAddress
-   }
 }
