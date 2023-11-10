@@ -11,9 +11,9 @@ import Foundation
 #warning("Revise whether NetworkAddress belongs here from cohesion perspective")
 // Maybe a protocol will be enough for Domain
 public final class Peer<NetworkAddress: Hashable>: Identifiable {
-   convenience init(peerEmergence: PeerEmergence<NetworkAddress>) {
+   convenience init(id: ID, peerEmergence: PeerEmergence<NetworkAddress>) {
       self.init(
-         id: peerEmergence.peerID,
+         id: id,
          status: .online,
          relation: .stranger,
          name: peerEmergence.peerName,

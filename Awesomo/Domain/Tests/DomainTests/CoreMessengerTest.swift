@@ -26,22 +26,18 @@ final class CoreMessengerTest: XCTestCase {
 
    func testStrangerPeerEmerged() {
       // Arrange
-      let peerId = "1"
+      let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
       let networkAddress = "123"
       let expectedPeer = Peer(
-         id: Peer.ID(value: peerId),
+         id: peerID,
          status: .online,
          relation: .stranger,
          name: peerName,
          networkAddress: networkAddress
       )
-      let emergence = PeerEmergence(
-         peerID: Peer.ID(value: peerId),
-         peerName: peerName,
-         peerAddress: networkAddress
-      )
-      let event = DomainInput.peersDidAppear([emergence])
+      let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
+      let event = DomainInput.peersDidAppear([peerID: emergence])
 
       // Act
       eventPublisher.send(event)
@@ -52,23 +48,19 @@ final class CoreMessengerTest: XCTestCase {
 
    func testStrangerPeerDidDisappear() throws {
       // Arrange
-      let peerId = "1"
+      let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
       let networkAddress = "123"
       let offlineStrangerPeer = Peer(
-         id: Peer.ID(value: peerId),
+         id: peerID,
          status: .offline,
          relation: .stranger,
          name: peerName,
          networkAddress: networkAddress
       )
-      let emergence = PeerEmergence(
-         peerID: Peer.ID(value: peerId),
-         peerName: peerName,
-         peerAddress: networkAddress
-      )
-      let emergenceEvent = DomainInput.peersDidAppear([emergence])
-      let disappearEvent = DomainInput.peersDidDisappear([Peer.ID(value: peerId)])
+      let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
+      let emergenceEvent = DomainInput.peersDidAppear([peerID: emergence])
+      let disappearEvent = DomainInput.peersDidDisappear([peerID])
 
       // Act
       eventPublisher.send(emergenceEvent)
@@ -82,22 +74,18 @@ final class CoreMessengerTest: XCTestCase {
 
    func testFriendPeerEmerged() {
       // Arrange
-      let peerId = "1"
+      let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
       let networkAddress = "123"
       let expectedPeer = Peer(
-         id: Peer.ID(value: peerId),
+         id: peerID,
          status: .online,
          relation: .stranger,
          name: peerName,
          networkAddress: networkAddress
       )
-      let emergence = PeerEmergence(
-         peerID: Peer.ID(value: peerId),
-         peerName: peerName,
-         peerAddress: networkAddress
-      )
-      let event = DomainInput.peersDidAppear([emergence])
+      let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
+      let event = DomainInput.peersDidAppear([peerID: emergence])
       eventPublisher.send(event)
    }
 }

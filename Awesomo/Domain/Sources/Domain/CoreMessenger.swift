@@ -40,25 +40,16 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
       receiveValue: { [weak self] v in self?.handleInput(v) }
    )
 
-   private func handleEmergedPeers(_ emergences: [PeerEmergence<NetworkAddress>]) throws {
-      func validate(_ emergences: [PeerEmergence<NetworkAddress>]) throws {
-         let emergedPeerIDs = Set(emergences.map(\.peerID))
-         if emergedPeerIDs.count < emergences.count {
-            throw DomainError.invalidPeerEmergence
-         }
-      }
 
-      try validate(emergences)
-
-      let emergencesByPeerID = Dictionary(uniqueKeysWithValues: emergences.map { ($0.peerID, $0) })
-      var remainingEmergences = Set(emergences)
+   public typealias Emergence = PeerEmergence<NetworkAddress>
+   private func handleEmergedPeers(_ emergences: [ConcretePeer.ID: Emergence]) throws {
+      var remaining = emergences
       for knownPeer in allPeers {
-         if let e = emergencesByPeerID[knownPeer.id] {
+         if let e = remaining.removeValue(forKey: knownPeer.id) {
             try knownPeer.emerge(e)
-            remainingEmergences.remove(e)
          }
       }
-      allPeers += remainingEmergences.map(Peer.init)
+      allPeers += remaining.map(Peer.init)
    }
 
    private func handleDisappearedPeers(_ peerIDs: Set<ConcretePeer.ID>) throws {
