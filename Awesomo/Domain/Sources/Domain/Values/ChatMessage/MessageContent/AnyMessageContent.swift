@@ -8,9 +8,9 @@
 
 import Combine
 
-public struct AnyMessageContent<NetworkRepresentationElement>: MessageContent {
+public struct AnyMessageContent<NetworkRepresentationElement>: MessageContentReserved {
 
-   public init<Base: MessageContent>(_ base: Base)
+   public init<Base: MessageContentReserved>(_ base: Base)
          where Base.NetworkRepresentationElement == NetworkRepresentationElement {
 
       networkPublisher = base.networkPublisher
@@ -19,7 +19,7 @@ public struct AnyMessageContent<NetworkRepresentationElement>: MessageContent {
    public let networkPublisher: AnyPublisher<NetworkRepresentationElement, Never>
 }
 
-public extension MessageContent {
+public extension MessageContentReserved {
    func eraseToAny() ->
          AnyMessageContent<NetworkRepresentationElement> { AnyMessageContent(self) }
 }
