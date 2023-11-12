@@ -9,9 +9,8 @@
 import Foundation
 
 #warning("Revise whether NetworkAddress belongs here from cohesion perspective")
-// Maybe a protocol will be enough for Domain
-public final class Peer<NetworkAddress: Hashable>: Identifiable {
-   convenience init(id: ID, peerEmergence: PeerEmergence<NetworkAddress>) {
+public final class Peer<NetworkAddress: Hashable>: Entity {
+   internal convenience init(id: ID, peerEmergence: PeerEmergence<NetworkAddress>) {
       self.init(
          id: id,
          status: .online,
@@ -27,10 +26,8 @@ public final class Peer<NetworkAddress: Hashable>: Identifiable {
       relation: Relation,
       name: String,
       networkAddress: NetworkAddress,
-      incomingMessages: [ChatMessage] = [],
-      pendingOutgoingMessages: [ChatMessage] = [],
-      sentMessages: [ChatMessage] = [],
-      failedToSendMessages: [ChatMessage] = []
+      incomingMessages: [IncomingChatMessage] = [],
+      outgoingMessages: [OutgoingChatMessage] = []
    ) {
       self.id = id
       self.status = status
@@ -38,28 +35,22 @@ public final class Peer<NetworkAddress: Hashable>: Identifiable {
       self.name = name
       self.networkAddress = networkAddress
       self.incomingMessages = incomingMessages
-      self.pendingOutgoingMessages = pendingOutgoingMessages
-      self.sentMessages = sentMessages
-      self.failedToSendMessages = failedToSendMessages
+      self.outgoingMessages = outgoingMessages
    }
 
    public let id: EntityID<Peer, String>
 
-   public enum Status { case online, offline }
-   public private(set) var status: Status
+   public enum Status: Hashable { case online, offline }
+   private var status: Status
 
-   public enum Relation { case stranger, friend, didInviteUs, wasInvited }
-   public private(set) var relation: Relation
+   public enum Relation: Hashable { case stranger, friend, didInviteUs, wasInvited }
+   private var relation: Relation
 
-   public private(set) var name: String
-   public let networkAddress: NetworkAddress
+   private var name: String
+   private let networkAddress: NetworkAddress
 
-   // Messages {
-   public private(set) var incomingMessages: [ChatMessage]
-   public private(set) var pendingOutgoingMessages: [ChatMessage]
-   public private(set) var sentMessages: [ChatMessage]
-   public private(set) var failedToSendMessages: [ChatMessage]
-   // }
+   private var incomingMessages: [IncomingChatMessage]
+   private var outgoingMessages: [OutgoingChatMessage]
 
    internal func emerge(_ emergence: PeerEmergence<NetworkAddress>) throws {
       guard status == .offline else {
@@ -85,5 +76,29 @@ public final class Peer<NetworkAddress: Hashable>: Identifiable {
 
    internal var isIrrelevant: Bool {
       status == .offline && relation == .stranger
+   }
+}
+
+extension Peer {
+   public struct Snapshot: Hashable {
+      public let peerID: ID
+      public let status: Status
+      public let relation: Relation
+      public let name: String
+      public let networkAddress: NetworkAddress
+      public let incomingMessages: [IncomingChatMessage]
+      public let outgoingMessages: [OutgoingChatMessage.Snapshot]
+   }
+
+   func snapshot() -> Snapshot {
+      Snapshot(
+         peerID: id,
+         status: status,
+         relation: relation,
+         name: name,
+         networkAddress: networkAddress,
+         incomingMessages: incomingMessages,
+         outgoingMessages: outgoingMessages.map { $0.snapshot() }
+      )
    }
 }

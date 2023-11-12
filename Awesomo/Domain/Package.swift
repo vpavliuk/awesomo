@@ -16,8 +16,7 @@ let package = Package(
       ),
    ],
    dependencies: [
-      // Foundation
-      // Combine
+      .package(path: "../TestUtils"),
    ],
    targets: [
       .target(
@@ -26,7 +25,7 @@ let package = Package(
       ),
       .testTarget(
          name: "DomainTests",
-         dependencies: ["Domain"]
+         dependencies: ["Domain", "TestUtils"]
       ),
    ]
 )

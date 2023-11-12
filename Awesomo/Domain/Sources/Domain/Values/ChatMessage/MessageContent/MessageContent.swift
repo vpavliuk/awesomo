@@ -9,21 +9,25 @@
 import Foundation
 import Combine
 
-public protocol MessageContentReserved<NetworkRepresentationElement> {
-   associatedtype NetworkRepresentationElement
-
-   #warning("Potential violation of Single Responsibility")
-   #warning("Don't forget about errors")
-   var networkPublisher: AnyPublisher<NetworkRepresentationElement, Never> { get }
-}
-
 public struct MessageContent {
    public struct ContentID: Hashable {
       private let value: String
    }
    public let contentID: ContentID
-   public let dataPublisher: AnyPublisher<Data, Never> = "Hello"
+   public let dataPublisher: some Publisher<Data, Never> = "Hello"
       .data(using: .utf8)
       .publisher
-      .eraseToAnyPublisher()
+}
+
+#warning("Equatable problem with MessageContent")
+extension MessageContent: Equatable {
+   public static func == (lhs: MessageContent, rhs: MessageContent) -> Bool {
+      return lhs.contentID == rhs.contentID
+   }
+}
+
+extension MessageContent: Hashable {
+   public func hash(into hasher: inout Hasher) {
+      hasher.combine(contentID)
+   }
 }

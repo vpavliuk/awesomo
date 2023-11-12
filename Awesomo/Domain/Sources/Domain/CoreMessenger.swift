@@ -6,13 +6,14 @@
 //
 
 import Combine
+import Foundation
 
 public final class CoreMessenger<NetworkAddress: Hashable> {
    public init() {}
 
    public typealias ConcretePeer = Peer<NetworkAddress>
    // 'All peers' means currently active peers + offline peers related to the user
-   public private(set) var allPeers: [ConcretePeer] = []
+   private var allPeers: [ConcretePeer] = []
 
    private func handleInput(_ value: Input) {
       switch value {
@@ -32,13 +33,23 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
          // store message
          break
       }
+      updateSnapshot()
    }
 
    public typealias Input = InputEvent<NetworkAddress>
-   lazy public var inputInterface: some Subscriber<Input, Never> = Subscribers.Sink<Input, Never>(
-      receiveCompletion: { _ in },
-      receiveValue: { [weak self] v in self?.handleInput(v) }
+   lazy public var input: some Subscriber<Input, Never> = Subscribers.Sink<Input, Never>(
+      receiveCompletion: { [weak self] completion in
+         guard let self else { return }
+         outputInternal.send(completion: .finished)
+      },
+      receiveValue: { [weak self] v in
+         self?.handleInput(v)
+      }
    )
+
+   public typealias Snapshot = [ConcretePeer.Snapshot]
+   private let outputInternal = PassthroughSubject<Snapshot, Never>()
+   public var output: some Publisher<Snapshot, Never> { outputInternal }
 
 
    public typealias Emergence = PeerEmergence<NetworkAddress>
@@ -67,5 +78,17 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
       }
 
       allPeers.removeAll { $0.isIrrelevant }
+   }
+
+   private func updateSnapshot() {
+      snapshot = allPeers.snapshot()
+   }
+
+   private var snapshot: Snapshot = [] {
+      didSet {
+         if snapshot != oldValue {
+            outputInternal.send(snapshot)
+         }
+      }
    }
 }

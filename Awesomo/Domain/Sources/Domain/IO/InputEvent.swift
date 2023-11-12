@@ -13,7 +13,7 @@ public enum InputEvent<NetworkAddress: Hashable> {
    case peersDidDisappear(Set<ConcretePeer.ID>)
 //   case peerDidInvite(ConcretePeer.ID)
 //   case peerDidAcceptInvitation(ConcretePeer.ID)
-   case messageArrived(ConcretePeer.ID, ChatMessage)
-   case userAttemptedSendMessage(ConcretePeer.ID, ChatMessage)
-   case outgoingMessageWasSentOverNetwork(ChatMessage.ID)
+   case messageArrived(ConcretePeer.ID, IncomingChatMessage)
+   case userAttemptedSendMessage(ConcretePeer.ID, OutgoingChatMessage)
+   case outgoingMessageWasSentOverNetwork(OutgoingChatMessage.ID)
 }
