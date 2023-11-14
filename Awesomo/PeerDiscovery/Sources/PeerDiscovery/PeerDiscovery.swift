@@ -30,7 +30,7 @@ public struct PeerDiscovery {
          let emergencesByID = Dictionary(uniqueKeysWithValues: emergences)
          return OutputForApp(event: .peersDidAppear(emergencesByID))
       case .lost:
-         let peerIDs = Set(emergences.map { $0.id })
+         let peerIDs = Set(emergences.map(\.id))
          return OutputForApp(event: .peersDidDisappear(peerIDs))
       }
    }
