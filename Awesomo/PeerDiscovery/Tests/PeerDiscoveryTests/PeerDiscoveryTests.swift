@@ -1,12 +1,14 @@
 import XCTest
 import Combine
 import PeerDiscovery
+import BonjourBrowser
+import Domain
 import MessagingApp
 import TestUtils
 
 final class PeerDiscoveryTests: XCTestCase {
    typealias PeerEvent = PeerAvailabilityEvent<String>
-   typealias Peer = PeerEvent.Peer
+   typealias Peer = Domain.Peer<String>
 
    var sut: PeerDiscovery!
    var inputFromServiceBrowser: PassthroughSubject<NetServiceAvailabilityEvent, Never>!
@@ -31,18 +33,16 @@ final class PeerDiscoveryTests: XCTestCase {
       )
       let networkAddress = foundService.name
       let serviceBrowserEvent = NetServiceAvailabilityEvent(
-         eventType: .found,
+         availabilityChange: .found,
          services: [foundService]
       )
-      let expectedPeerId = Peer.ID(value: peerIDUUID)
-      let expectedPeer = Peer(
-         id: expectedPeerId,
-         displayName: peerName,
-         networkAddress: networkAddress
+      let expectedPeerId = Peer.ID(value: peerIDUUID.uuidString)
+      let expectedPeer = PeerEmergence(
+         peerName: peerName,
+         peerAddress: networkAddress
       )
       let expectedOutput = PeerEvent(
-         peers: [expectedPeer],
-         availabilityChange: .found
+         event: .peersDidAppear([expectedPeerId: expectedPeer])
       )
 
       // Act
@@ -62,20 +62,14 @@ final class PeerDiscoveryTests: XCTestCase {
          peerIdString: peerIDString,
          peerName: peerName
       )
-      let networkAddress = foundService.name
+
       let serviceBrowserEvent = NetServiceAvailabilityEvent(
-         eventType: .lost,
+         availabilityChange: .lost,
          services: [foundService]
       )
-      let expectedPeerId = Peer.ID(value: peerIDUUID)
-      let expectedPeer = Peer(
-         id: expectedPeerId,
-         displayName: peerName,
-         networkAddress: networkAddress
-      )
+      let expectedPeerId = Peer.ID(value: peerIDUUID.uuidString)
       let expectedOutput = PeerEvent(
-         peers: [expectedPeer],
-         availabilityChange: .lost
+         event: .peersDidDisappear([expectedPeerId])
       )
 
       // Act
@@ -91,7 +85,7 @@ final class PeerDiscoveryTests: XCTestCase {
 
       let serviceName = bonjourNameComposer.serviceName(
          fromIdString: peerIdString,
-         displayName: peerName
+         peerName: peerName
       )
       return NetService(
          domain: bonjourDomain,

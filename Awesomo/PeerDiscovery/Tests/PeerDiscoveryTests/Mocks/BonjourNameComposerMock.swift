@@ -12,26 +12,26 @@ import Domain
 
 struct BonjourNameComposerMock: BonjourNameComposer {
 
-   static let separator: Character = "."
-
    func peerAttributesFromServiceName(_ name: String)
-         -> (id: Peer<String>.ID, displayName: String) {
+         -> (id: Peer<String>.ID, peerName: String) {
 
       let components = name.split(
-         separator: Self.separator,
+         separator: separator,
          maxSplits: 1,
          omittingEmptySubsequences: false
       )
 
       let idString = String(components[0])
-      let peerId = Peer<String>.ID(value: UUID(uuidString: idString)!)
+      let peerId = Peer<String>.ID(value: idString)
       return (
          id: peerId,
-         displayName: String(components[1])
+         peerName: String(components[1])
       )
    }
 
-   func serviceName(fromIdString id: String, displayName: String) -> String {
-      id + String(Self.separator) + displayName
+   func serviceName(fromIdString id: String, peerName: String) -> String {
+      id + String(separator) + peerName
    }
+
+   private let separator: Character = "."
 }

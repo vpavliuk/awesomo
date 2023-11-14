@@ -11,7 +11,7 @@ import Foundation
 public struct NetServiceAvailabilityEvent {
    public enum AvailabilityChange { case found, lost }
 
-   init(availabilityChange: AvailabilityChange, services: [NetService]) {
+   public init(availabilityChange: AvailabilityChange, services: [NetService]) {
       self.change = availabilityChange
       self.services = services
    }
