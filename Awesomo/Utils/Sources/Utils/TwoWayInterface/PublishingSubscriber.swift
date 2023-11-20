@@ -12,13 +12,13 @@ public final class PublishingSubscriber<Input, Failure: Error>: Subscriber {
    public init() {}
 
    private lazy var sink = Subscribers.Sink { [weak self] completion in
-      self?.publisherInternal.send(completion: completion)
+      self?.subject.send(completion: completion)
    } receiveValue: { [weak self] input in
-      self?.publisherInternal.send(input)
+      self?.subject.send(input)
    }
 
-   private let publisherInternal = PassthroughSubject<Input, Failure>()
-   public lazy var publisher: some Publisher<Input, Failure> = publisherInternal.share()
+   private let subject: some Subject<Input, Failure> = PassthroughSubject()
+   public lazy var publisher: some Publisher<Input, Failure> = subject.share()
 
    public func receive(subscription: Subscription) {
       sink.receive(subscription: subscription)
