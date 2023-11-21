@@ -83,7 +83,7 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
    #warning("CQS violation")
    public func add(_ input: Input...) -> Snapshot {
       var state: Snapshot = []
-      inputQueue.sync {
+      queue.sync {
          for event in input {
             handleInput(event)
          }
@@ -145,7 +145,7 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
    }
 
    #warning("Use actor?")
-   private let inputQueue = DispatchQueue(label: "com.domainQueue", qos: .userInitiated)
+   private let queue = DispatchQueue(label: "com.domainQueue", qos: .userInitiated)
 
    private var receivedInitialEvent = false
 }
