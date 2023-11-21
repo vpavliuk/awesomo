@@ -6,12 +6,9 @@ final class CoreMessengerTest: XCTestCase {
    private typealias DomainInput = InputEvent<String>
    private typealias Peer = Domain.Peer<String>
    private var sut: CoreMessenger<String>!
-   private var eventPublisher: PassthroughSubject<DomainInput, Never>!
 
    override func setUp() {
-      eventPublisher = PassthroughSubject()
       sut = CoreMessenger()
-      eventPublisher.subscribe(sut.inputInterface)
    }
 
    override func tearDown() {
@@ -21,7 +18,11 @@ final class CoreMessengerTest: XCTestCase {
    }
 
    func testInitial() {
-      XCTAssert(sut.allPeers.isEmpty)
+      // Act
+      let state = sut.add(.initial)
+
+      // Assert
+      XCTAssert(state.isEmpty)
    }
 
    func testStrangerPeerEmerged() {
@@ -29,21 +30,16 @@ final class CoreMessengerTest: XCTestCase {
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
       let networkAddress = "123"
-      let expectedPeer = Peer(
-         id: peerID,
-         status: .online,
-         relation: .stranger,
-         name: peerName,
-         networkAddress: networkAddress
-      )
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let event = DomainInput.peersDidAppear([peerID: emergence])
+      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
 
       // Act
-      eventPublisher.send(event)
+      let state = sut.add(.initial, emergenceEvent)
 
       // Assert
-      XCTAssertEqual(sut.allPeers, [expectedPeer])
+      XCTAssertEqual(state, [
+         .makeOnlineStranger(id: peerID, name: peerName, address: networkAddress)
+      ])
    }
 
    func testStrangerPeerDidDisappear() throws {
@@ -51,41 +47,114 @@ final class CoreMessengerTest: XCTestCase {
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
       let networkAddress = "123"
-      let offlineStrangerPeer = Peer(
-         id: peerID,
-         status: .offline,
-         relation: .stranger,
-         name: peerName,
-         networkAddress: networkAddress
-      )
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent = DomainInput.peersDidAppear([peerID: emergence])
-      let disappearEvent = DomainInput.peersDidDisappear([peerID])
+      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
+      let disappearEvent: DomainInput = .peersDidDisappear([peerID])
 
       // Act
-      eventPublisher.send(emergenceEvent)
-      let actualPeer = try XCTUnwrap(sut.allPeers.last)
-      eventPublisher.send(disappearEvent)
+      let peersAfterDisappear = sut.add(.initial, emergenceEvent, disappearEvent)
 
       // Assert
-      XCTAssertEqual(actualPeer, offlineStrangerPeer)
-      XCTAssert(sut.allPeers.isEmpty)
+      XCTAssert(peersAfterDisappear.isEmpty)
    }
 
-   func testFriendPeerEmerged() {
+   func testInvitePeer() {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
       let networkAddress = "123"
-      let expectedPeer = Peer(
-         id: peerID,
+      let expectedPeer = Peer.Snapshot(
+         peerID: peerID,
          status: .online,
-         relation: .stranger,
+         relation: .wasInvited,
          name: peerName,
-         networkAddress: networkAddress
+         networkAddress: networkAddress,
+         incomingMessages: [],
+         outgoingMessages: []
       )
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let event = DomainInput.peersDidAppear([peerID: emergence])
-      eventPublisher.send(event)
+      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
+      let friendRequest: DomainInput = .userDidInvitePeer(peerID)
+
+      // Act
+      let state = sut.add(.initial, emergenceEvent, friendRequest)
+
+      // Assert
+      XCTAssertEqual(state, [expectedPeer])
+   }
+
+   func testPeerAcceptedInvitation() {
+      // Arrange
+      let peerID = Peer.ID(value: "1")
+      let peerName = "Unknown peer"
+      let networkAddress = "123"
+      let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
+      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
+      let friendRequest: DomainInput = .userDidInvitePeer(peerID)
+      let confirmation: DomainInput = .peerDidAcceptInvitation(peerID)
+
+      // Act
+      let state = sut.add(.initial, emergenceEvent, friendRequest, confirmation)
+
+      // Assert
+      XCTAssertEqual(state, [
+         .makeOnlineFriend(id: peerID, name: peerName, address: networkAddress)
+      ])
+   }
+
+   func testFriendPeerDidDisappear() {
+      // Arrange
+      let peerID = Peer.ID(value: "1")
+      let peerName = "Unknown peer"
+      let networkAddress = "123"
+      let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
+      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
+      let friendRequest: DomainInput = .userDidInvitePeer(peerID)
+      let confirmation: DomainInput = .peerDidAcceptInvitation(peerID)
+      let disappearEvent: DomainInput = .peersDidDisappear([peerID])
+
+      // Act
+      let state = sut.add(
+         .initial,
+         emergenceEvent,
+         friendRequest,
+         confirmation,
+         disappearEvent
+      )
+
+      // Assert
+      XCTAssertEqual(state, [
+         .makeOfflineFriend(id: peerID, name: peerName, address: networkAddress)
+      ])
+   }
+
+   func testFriendPeerEmergedWithChangedName() {
+      // Arrange
+      let peerID = Peer.ID(value: "1")
+      let peerName = "Unknown peer"
+      let changedName = "Changed Name"
+      let networkAddress = "123"
+      let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
+      let firstEmergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
+      let friendRequest: DomainInput = .userDidInvitePeer(peerID)
+      let confirmation: DomainInput = .peerDidAcceptInvitation(peerID)
+      let disappearEvent: DomainInput = .peersDidDisappear([peerID])
+      let emergenceWithChangedName = PeerEmergence(peerName: changedName, peerAddress: networkAddress)
+      let secondEmergenceEvent: DomainInput = .peersDidAppear([peerID: emergenceWithChangedName])
+
+      // Act
+      let state = sut.add(
+         .initial,
+         firstEmergenceEvent,
+         friendRequest,
+         confirmation,
+         disappearEvent,
+         secondEmergenceEvent
+      )
+
+      // Assert
+      XCTAssertEqual(state, [
+         .makeOnlineFriend(id: peerID, name: changedName, address: networkAddress)
+      ])
    }
 }

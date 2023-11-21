@@ -70,34 +70,56 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
       try peer.invite()
    }
 
+   private func handlePeerDidAcceptInvitation(_ peerID: PeerID) throws {
+      guard let peer = allPeers.first(where: { $0.id == peerID }) else {
+         throw ConcreteError.unknownPeerCannotAcceptInvitation(peerID)
+      }
+      try peer.acceptInvitation()
+   }
+
    public typealias Input = InputEvent<NetworkAddress>
    public typealias Snapshot = [ConcretePeer.Snapshot]
 
    #warning("CQS violation")
-   public func add(_ input: Input) -> Snapshot {
+   public func add(_ input: Input...) -> Snapshot {
+      var state: Snapshot = []
       inputQueue.sync {
-         handleInput(input)
+         for event in input {
+            handleInput(event)
+         }
+         state = snapshot()
       }
-      return snapshot()
+      return state
    }
 
    private func handleInput(_ value: Input) {
+      func validateInitial(_ value: Input) throws {
+         if case .initial = value {
+            if receivedInitialEvent {
+               throw ConcreteError.receivedInitialEventTwice
+            }
+         } else if !receivedInitialEvent {
+            throw ConcreteError.didNotReceiveInitialEvent
+         }
+      }
+
       func removeIrrelevantPeers() {
          allPeers.removeAll { $0.isIrrelevant }
       }
       defer { removeIrrelevantPeers() }
 
       do {
+         try validateInitial(value)
+
          switch value {
+         case .initial:
+            receivedInitialEvent = true
          case .peersDidAppear(let emergences):
             try takePeersOnline(emergences)
-            break
          case .peersDidDisappear(let peerIDs):
             try takePeersOffline(peerIDs)
-            break
          case .userDidInvitePeer(let peerID):
             try invitePeer(peerID)
-            break
          case .messageArrived(_, _):
             // store message
             break
@@ -107,6 +129,8 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
          case .outgoingMessageWasSentOverNetwork(_):
             // store message
             break
+         case .peerDidAcceptInvitation(let peerID):
+            try handlePeerDidAcceptInvitation(peerID)
          }
       } catch let error as ConcreteError {
          errorsInternal.send(error)
@@ -120,5 +144,8 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
       allPeers.snapshot()
    }
 
+   #warning("Use actor?")
    private let inputQueue = DispatchQueue(label: "com.domainQueue", qos: .userInitiated)
+
+   private var receivedInitialEvent = false
 }

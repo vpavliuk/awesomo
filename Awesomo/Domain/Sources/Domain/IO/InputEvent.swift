@@ -9,11 +9,12 @@
 #warning("Revise NetworkAddress")
 public enum InputEvent<NetworkAddress: Hashable> {
    public typealias PeerID = Peer<NetworkAddress>.ID
+   case initial
    case peersDidAppear([PeerID: PeerEmergence<NetworkAddress>])
    case peersDidDisappear(Set<PeerID>)
    case userDidInvitePeer(PeerID)
 //   case peerDidInvite(ConcretePeer.ID)
-//   case peerDidAcceptInvitation(ConcretePeer.ID)
+   case peerDidAcceptInvitation(PeerID)
    case messageArrived(PeerID, IncomingChatMessage)
    case userAttemptedSendMessage(PeerID, OutgoingChatMessage)
    case outgoingMessageWasSentOverNetwork(OutgoingChatMessage.ID)

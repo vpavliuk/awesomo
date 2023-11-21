@@ -77,6 +77,13 @@ public final class Peer<NetworkAddress: Hashable>: Entity {
       relation = .wasInvited
    }
 
+   internal func acceptInvitation() throws {
+      guard relation == .wasInvited else {
+         throw DomainError.nonInvitedPeerCannotAcceptInvitation(id)
+      }
+      relation = .friend
+   }
+
    internal var isIrrelevant: Bool {
       status == .offline && relation == .stranger
    }
