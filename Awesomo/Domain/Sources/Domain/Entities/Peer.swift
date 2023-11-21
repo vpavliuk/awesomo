@@ -49,29 +49,32 @@ public final class Peer<NetworkAddress: Hashable>: Entity {
    private var name: String
    private let networkAddress: NetworkAddress
 
+   // Messages from this peer to us
    private var incomingMessages: [IncomingChatMessage]
+
+   // Messages from us to this peer
    private var outgoingMessages: [OutgoingChatMessage]
 
-   internal func emerge(_ emergence: PeerEmergence<NetworkAddress>) throws {
+   internal func takeOnline(_ emergence: PeerEmergence<NetworkAddress>) throws {
       guard status == .offline else {
-         throw DomainError.invalidPeerEmergence
+         throw DomainError.cannotTakeOnlineAlreadyOnlinePeer(id)
       }
       status = .online
       name = emergence.peerName
    }
 
-   internal func invite() throws {
-      guard relation == .stranger else {
-         throw DomainError.invalidPeerEmergence
-      }
-      relation = .wasInvited
-   }
-
-   internal func disappear() throws {
+   internal func takeOffline() throws {
       guard status != .offline else {
-         throw DomainError.invalidPeerDidDisappearEvent
+         throw DomainError.cannotTakeOfflineAlreadyOfflinePeer(id)
       }
       status = .offline
+   }
+
+   internal func invite() throws {
+      guard relation == .stranger else {
+         throw DomainError.cannotInviteNonStranger(id)
+      }
+      relation = .wasInvited
    }
 
    internal var isIrrelevant: Bool {

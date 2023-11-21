@@ -5,90 +5,120 @@
 //  Created by Vova on 03.11.2023.
 //
 
-import Combine
 import Foundation
+import Combine
 
 public final class CoreMessenger<NetworkAddress: Hashable> {
    public init() {}
 
    public typealias ConcretePeer = Peer<NetworkAddress>
+   public typealias PeerID = ConcretePeer.ID
+   public typealias ConcreteError = DomainError<NetworkAddress>
+
    // 'All peers' means currently active peers + offline peers related to the user
    private var allPeers: [ConcretePeer] = []
 
-   private func handleInput(_ value: Input) {
-      switch value {
-      case .peersDidAppear(let emergences):
-         try! handleEmergedPeers(emergences)
-         break
-      case .peersDidDisappear(let peerIDs):
-         try! handleDisappearedPeers(peerIDs)
-         break
-      case .messageArrived(let peerId, let message):
-         // store message
-         break
-      case .userAttemptedSendMessage(let sendRequest):
-         // store message
-         break
-      case .outgoingMessageWasSentOverNetwork(_):
-         // store message
-         break
-      }
-      updateSnapshot()
-   }
-
-   public typealias Input = InputEvent<NetworkAddress>
-   lazy public var input: some Subscriber<Input, Never> = Subscribers.Sink<Input, Never>(
-      receiveCompletion: { [weak self] completion in
-         guard let self else { return }
-         outputInternal.send(completion: .finished)
-      },
-      receiveValue: { [weak self] v in
-         self?.handleInput(v)
-      }
-   )
-
-   public typealias Snapshot = [ConcretePeer.Snapshot]
-   private let outputInternal = PassthroughSubject<Snapshot, Never>()
-   public var output: some Publisher<Snapshot, Never> { outputInternal }
-
+   public lazy var errors: some Publisher<ConcreteError, Never> = errorsInternal
+   private let errorsInternal: some Subject<ConcreteError, Never> = PassthroughSubject()
 
    public typealias Emergence = PeerEmergence<NetworkAddress>
-   private func handleEmergedPeers(_ emergences: [ConcretePeer.ID: Emergence]) throws {
+
+   #warning("TODO: Should not throw after typed throws is added to Swift")
+   private func takePeersOnline(_ emergences: [PeerID: Emergence]) throws {
       var remaining = emergences
       for knownPeer in allPeers {
          if let e = remaining.removeValue(forKey: knownPeer.id) {
-            try knownPeer.emerge(e)
+            do {
+               try knownPeer.takeOnline(e)
+            } catch let error as ConcreteError {
+               errorsInternal.send(error)
+            }
          }
       }
       allPeers += remaining.map(Peer.init)
    }
 
-   private func handleDisappearedPeers(_ peerIDs: Set<ConcretePeer.ID>) throws {
-      func validate(_ peerIDs: Set<ConcretePeer.ID>) throws {
+   #warning("TODO: Should not throw after typed throws is added to Swift")
+   private func takePeersOffline(_ peerIDs: Set<PeerID>) throws {
+      func validate(_ peerIDs: Set<PeerID>) throws {
          let knownPeerIDs = Set(allPeers.map(\.id))
-         if !peerIDs.isSubset(of: knownPeerIDs) {
-            throw DomainError.invalidPeerDidDisappearEvent
+         let unknownPeerIDs = peerIDs.subtracting(knownPeerIDs)
+         if !unknownPeerIDs.isEmpty {
+            throw ConcreteError.cannotTakeOfflineUnknownPeers(unknownPeerIDs)
          }
       }
 
-      try validate(peerIDs)
+      do {
+         try validate(peerIDs)
+      } catch let error as ConcreteError {
+         errorsInternal.send(error)
+      }
 
       for knownPeer in allPeers where peerIDs.contains(knownPeer.id) {
-         try knownPeer.disappear()
-      }
-
-      allPeers.removeAll { $0.isIrrelevant }
-   }
-
-   private func updateSnapshot() {
-      snapshot = allPeers.snapshot()
-   }
-
-   private var snapshot: Snapshot = [] {
-      didSet {
-         if snapshot != oldValue {
-            outputInternal.send(snapshot)
+         do {
+            try knownPeer.takeOffline()
+         } catch let error as ConcreteError {
+            errorsInternal.send(error)
          }
       }
    }
+
+   private func invitePeer(_ peerID: PeerID) throws {
+      guard let peer = allPeers.first(where: { $0.id == peerID }) else {
+         throw ConcreteError.cannotInviteUknownPeer(peerID)
+      }
+      try peer.invite()
+   }
+
+   public typealias Input = InputEvent<NetworkAddress>
+   public typealias Snapshot = [ConcretePeer.Snapshot]
+
+   #warning("CQS violation")
+   public func add(_ input: Input) -> Snapshot {
+      inputQueue.sync {
+         handleInput(input)
+      }
+      return snapshot()
+   }
+
+   private func handleInput(_ value: Input) {
+      func removeIrrelevantPeers() {
+         allPeers.removeAll { $0.isIrrelevant }
+      }
+      defer { removeIrrelevantPeers() }
+
+      do {
+         switch value {
+         case .peersDidAppear(let emergences):
+            try takePeersOnline(emergences)
+            break
+         case .peersDidDisappear(let peerIDs):
+            try takePeersOffline(peerIDs)
+            break
+         case .userDidInvitePeer(let peerID):
+            try invitePeer(peerID)
+            break
+         case .messageArrived(_, _):
+            // store message
+            break
+         case .userAttemptedSendMessage(_, _):
+            // store message
+            break
+         case .outgoingMessageWasSentOverNetwork(_):
+            // store message
+            break
+         }
+      } catch let error as ConcreteError {
+         errorsInternal.send(error)
+      } catch {
+         #warning("TODO: After typed throws are implemented in Swift, this catch clause can be removed")
+         fatalError("Unexpected error: \(error).")
+      }
+   }
+
+   private func snapshot() -> Snapshot {
+      allPeers.snapshot()
+   }
+
+   private let inputQueue = DispatchQueue(label: "com.domainQueue", qos: .userInitiated)
 }

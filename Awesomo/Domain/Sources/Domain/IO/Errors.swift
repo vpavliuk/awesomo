@@ -5,7 +5,11 @@
 //  Created by Vova on 06.11.2023.
 //
 
-enum DomainError: Error {
-   case invalidPeerEmergence
-   case invalidPeerDidDisappearEvent
+public enum DomainError<NetworkAddress: Hashable>: Error {
+   public typealias PeerID = Peer<NetworkAddress>.ID
+   case cannotTakeOnlineAlreadyOnlinePeer(PeerID)
+   case cannotTakeOfflineUnknownPeers(Set<PeerID>)
+   case cannotTakeOfflineAlreadyOfflinePeer(PeerID)
+   case cannotInviteUknownPeer(PeerID)
+   case cannotInviteNonStranger(PeerID)
 }
