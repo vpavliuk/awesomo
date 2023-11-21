@@ -29,9 +29,30 @@ extension XCTestCase {
          }
       )
 
-      waitForExpectations(timeout: timeout)
+      wait(for: [expectation], timeout: timeout)
       cancellable.cancel()
 
       XCTAssertEqual(actualOutput, output, file: file, line: line)
+   }
+
+   public func expectNever(
+      _ publisher: some Publisher,
+      timeout: TimeInterval = 1,
+      file: StaticString = #file,
+      line: UInt = #line
+   ) {
+      let expectation = expectation(description: "Awaiting publisher")
+
+      let cancellable = publisher.sink(
+         receiveCompletion: { _ in
+            expectation.fulfill()
+         },
+         receiveValue: { _ in
+            XCTFail("Publisher did emit unexpectedly", file: file, line: line)
+         }
+      )
+
+      wait(for: [expectation], timeout: timeout)
+      cancellable.cancel()
    }
 }
