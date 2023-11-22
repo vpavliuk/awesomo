@@ -43,7 +43,8 @@ public final class Peer<NetworkAddress: Hashable>: Entity {
    public enum Status: Hashable { case online, offline }
    private var status: Status
 
-   public enum Relation: Hashable { case stranger, friend, didInviteUs, wasInvited }
+   // Relation to the local user
+   public enum Relation: Hashable { case stranger, friend, didInviteUs, invitationInitiated, wasInvited, declinedInvitation }
    private var relation: Relation
 
    private var name: String
@@ -70,18 +71,39 @@ public final class Peer<NetworkAddress: Hashable>: Entity {
       status = .offline
    }
 
-   internal func invite() throws {
+   internal func initiateInvitation() throws {
       guard relation == .stranger else {
          throw DomainError.cannotInviteNonStranger(id)
+      }
+      relation = .invitationInitiated
+   }
+
+   internal func onInvitationSuccesfullySent() throws {
+      guard relation == .invitationInitiated else {
+         throw DomainError.cannotHandleSendingResultForInvitationWhichHadNotBeenPreviouslyInitiated(id)
       }
       relation = .wasInvited
    }
 
+   internal func onFailedToSendInvitation() throws {
+      guard relation == .invitationInitiated else {
+         throw DomainError.cannotHandleSendingResultForInvitationWhichHadNotBeenPreviouslyInitiated(id)
+      }
+      relation = .stranger
+   }
+
    internal func acceptInvitation() throws {
       guard relation == .wasInvited else {
-         throw DomainError.nonInvitedPeerCannotAcceptInvitation(id)
+         throw DomainError.nonInvitedPeerCannotRespondToInvitation(id)
       }
       relation = .friend
+   }
+
+   internal func declineInvitation() throws {
+      guard relation == .wasInvited else {
+         throw DomainError.nonInvitedPeerCannotRespondToInvitation(id)
+      }
+      relation = .declinedInvitation
    }
 
    internal var isIrrelevant: Bool {

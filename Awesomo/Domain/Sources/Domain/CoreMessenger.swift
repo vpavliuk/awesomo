@@ -63,18 +63,39 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
       }
    }
 
-   private func invitePeer(_ peerID: PeerID) throws {
-      guard let peer = allPeers.first(where: { $0.id == peerID }) else {
+   private func initiateInvitationForPeer(_ peerID: PeerID) throws {
+      guard let peer = findPeer(by: peerID) else {
          throw ConcreteError.cannotInviteUknownPeer(peerID)
       }
-      try peer.invite()
+      try peer.initiateInvitation()
    }
 
-   private func handlePeerDidAcceptInvitation(_ peerID: PeerID) throws {
-      guard let peer = allPeers.first(where: { $0.id == peerID }) else {
-         throw ConcreteError.unknownPeerCannotAcceptInvitation(peerID)
+   private func onInvitationSuccessfullySent(to peerID: PeerID) throws {
+      guard let peer = findPeer(by: peerID) else {
+         throw ConcreteError.cannotHandleInvitationSendingResultForUnknownPeer(peerID)
+      }
+      try peer.onInvitationSuccesfullySent()
+   }
+
+   private func onFailedToSendInvitation(to peerID: PeerID) throws {
+      guard let peer = findPeer(by: peerID) else {
+         throw ConcreteError.cannotHandleInvitationSendingResultForUnknownPeer(peerID)
+      }
+      try peer.onFailedToSendInvitation()
+   }
+
+   private func onPeerAcceptedInvitation(_ peerID: PeerID) throws {
+      guard let peer = findPeer(by: peerID) else {
+         throw ConcreteError.unknownPeerCannotRespondToInvitation(peerID)
       }
       try peer.acceptInvitation()
+   }
+
+   private func onPeerDeclinedInvitation(_ peerID: PeerID) throws {
+      guard let peer = findPeer(by: peerID) else {
+         throw ConcreteError.unknownPeerCannotRespondToInvitation(peerID)
+      }
+      try peer.declineInvitation()
    }
 
    public typealias Input = InputEvent<NetworkAddress>
@@ -119,7 +140,11 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
          case .peersDidDisappear(let peerIDs):
             try takePeersOffline(peerIDs)
          case .userDidInvitePeer(let peerID):
-            try invitePeer(peerID)
+            try initiateInvitationForPeer(peerID)
+         case .invitationForPeerWasSentOverNetwork(let peerID):
+            try onInvitationSuccessfullySent(to: peerID)
+         case .failedToSendInvitationOverNetwork(let peerID):
+            try onFailedToSendInvitation(to: peerID)
          case .messageArrived(_, _):
             // store message
             break
@@ -129,8 +154,10 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
          case .outgoingMessageWasSentOverNetwork(_):
             // store message
             break
-         case .peerDidAcceptInvitation(let peerID):
-            try handlePeerDidAcceptInvitation(peerID)
+         case .peerAcceptedInvitation(let peerID):
+            try onPeerAcceptedInvitation(peerID)
+         case .peerDeclinedInvitation(let peerID):
+            try onPeerDeclinedInvitation(peerID)
          }
       } catch let error as ConcreteError {
          errorsInternal.send(error)
@@ -148,4 +175,8 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
    private let queue = DispatchQueue(label: "com.domainQueue", qos: .userInitiated)
 
    private var receivedInitialEvent = false
+
+   private func findPeer(by id: ConcretePeer.ID) -> ConcretePeer? {
+      allPeers.first { $0.id == id }
+   }
 }
