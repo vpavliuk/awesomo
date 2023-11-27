@@ -113,6 +113,24 @@ public final class Peer<NetworkAddress: Hashable>: Entity {
 
 extension Peer {
    public struct Snapshot: Hashable {
+      public init(
+         peerID: Peer<NetworkAddress>.ID,
+         status: Peer<NetworkAddress>.Status,
+         relation: Peer<NetworkAddress>.Relation,
+         name: String,
+         networkAddress: NetworkAddress,
+         incomingMessages: [IncomingChatMessage],
+         outgoingMessages: [OutgoingChatMessage.Snapshot]
+      ) {
+         self.peerID = peerID
+         self.status = status
+         self.relation = relation
+         self.name = name
+         self.networkAddress = networkAddress
+         self.incomingMessages = incomingMessages
+         self.outgoingMessages = outgoingMessages
+      }
+
       public let peerID: ID
       public let status: Status
       public let relation: Relation
