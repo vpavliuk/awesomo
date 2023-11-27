@@ -11,7 +11,7 @@ import Domain
 
 public enum NetworkMessage<ContentNetworkRepresentation> {
    case chatRequest
-   case chatMessage(ChatMessage<ContentNetworkRepresentation>)
+   case chatMessage//(ChatMessage<ContentNetworkRepresentation>)
 }
 
 // MARK: - Output
