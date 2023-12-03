@@ -6,19 +6,17 @@
 //  Copyright © 2022 Volodymyr Pavliuk. All rights reserved.
 //
 
-#warning("Revise NetworkAddress")
-public enum InputEvent<NetworkAddress: Hashable> {
-   public typealias PeerID = Peer<NetworkAddress>.ID
+public enum InputEvent {
    case initial
-   case peersDidAppear([PeerID: PeerEmergence<NetworkAddress>])
-   case peersDidDisappear(Set<PeerID>)
-   case userDidInvitePeer(PeerID)
-   case invitationForPeerWasSentOverNetwork(PeerID)
-   case failedToSendInvitationOverNetwork(PeerID)
+   case peersDidAppear([Peer.ID: PeerEmergence])
+   case peersDidDisappear(Set<Peer.ID>)
+   case userDidInvitePeer(Peer.ID)
+   case invitationForPeerWasSentOverNetwork(Peer.ID)
+   case failedToSendInvitationOverNetwork(Peer.ID)
 //   case peerDidInvite(ConcretePeer.ID)
-   case peerAcceptedInvitation(PeerID)
-   case peerDeclinedInvitation(PeerID)
-   case messageArrived(PeerID, IncomingChatMessage)
-   case userAttemptedSendMessage(PeerID, OutgoingChatMessage)
+   case peerAcceptedInvitation(Peer.ID)
+   case peerDeclinedInvitation(Peer.ID)
+   case messageArrived(Peer.ID, IncomingChatMessage)
+   case userAttemptedSendMessage(Peer.ID, OutgoingChatMessage)
    case outgoingMessageWasSentOverNetwork(OutgoingChatMessage.ID)
 }

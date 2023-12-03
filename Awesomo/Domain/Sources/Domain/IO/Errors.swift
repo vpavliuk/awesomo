@@ -6,17 +6,16 @@
 //
 
 // NOTE: A domain error always denotes a bug in the app
-public enum DomainError<NetworkAddress: Hashable>: Error, Equatable {
-   public typealias PeerID = Peer<NetworkAddress>.ID
+public enum DomainError: Error, Equatable {
    case didNotReceiveInitialEvent
    case receivedInitialEventTwice
-   case cannotTakeOnlineAlreadyOnlinePeer(PeerID)
-   case cannotTakeOfflineUnknownPeers(Set<PeerID>)
-   case cannotTakeOfflineAlreadyOfflinePeer(PeerID)
-   case cannotInviteUknownPeer(PeerID)
-   case cannotInviteNonStranger(PeerID)
-   case cannotHandleInvitationSendingResultForUnknownPeer(PeerID)
-   case cannotHandleSendingResultForInvitationWhichHadNotBeenPreviouslyInitiated(PeerID)
-   case unknownPeerCannotRespondToInvitation(PeerID)
-   case nonInvitedPeerCannotRespondToInvitation(PeerID)
+   case cannotTakeOnlineAlreadyOnlinePeer(Peer.ID)
+   case cannotTakeOfflineUnknownPeers(Set<Peer.ID>)
+   case cannotTakeOfflineAlreadyOfflinePeer(Peer.ID)
+   case cannotInviteUknownPeer(Peer.ID)
+   case cannotInviteNonStranger(Peer.ID)
+   case cannotHandleInvitationSendingResultForUnknownPeer(Peer.ID)
+   case cannotHandleSendingResultForInvitationWhichHadNotBeenPreviouslyInitiated(Peer.ID)
+   case unknownPeerCannotRespondToInvitation(Peer.ID)
+   case nonInvitedPeerCannotRespondToInvitation(Peer.ID)
 }

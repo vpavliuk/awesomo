@@ -8,29 +8,23 @@
 import Foundation
 import Combine
 
-public final class CoreMessenger<NetworkAddress: Hashable> {
+public final class CoreMessenger {
    public init() {}
 
-   public typealias ConcretePeer = Peer<NetworkAddress>
-   public typealias PeerID = ConcretePeer.ID
-   public typealias ConcreteError = DomainError<NetworkAddress>
-
    // 'All peers' means currently active peers + offline peers related to the user
-   private var allPeers: [ConcretePeer] = []
+   private var allPeers: [Peer] = []
 
-   public lazy var errors: some Publisher<ConcreteError, Never> = errorsInternal
-   private let errorsInternal: some Subject<ConcreteError, Never> = PassthroughSubject()
-
-   public typealias Emergence = PeerEmergence<NetworkAddress>
+   public lazy var errors: some Publisher<DomainError, Never> = errorsInternal
+   private let errorsInternal: some Subject<DomainError, Never> = PassthroughSubject()
 
    #warning("TODO: Should not throw after typed throws is added to Swift")
-   private func takePeersOnline(_ emergences: [PeerID: Emergence]) throws {
+   private func takePeersOnline(_ emergences: [Peer.ID: PeerEmergence]) throws {
       var remaining = emergences
       for knownPeer in allPeers {
          if let e = remaining.removeValue(forKey: knownPeer.id) {
             do {
                try knownPeer.takeOnline(e)
-            } catch let error as ConcreteError {
+            } catch let error as DomainError {
                errorsInternal.send(error)
             }
          }
@@ -39,70 +33,69 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
    }
 
    #warning("TODO: Should not throw after typed throws is added to Swift")
-   private func takePeersOffline(_ peerIDs: Set<PeerID>) throws {
-      func validate(_ peerIDs: Set<PeerID>) throws {
+   private func takePeersOffline(_ peerIDs: Set<Peer.ID>) throws {
+      func validate(_ peerIDs: Set<Peer.ID>) throws {
          let knownPeerIDs = Set(allPeers.map(\.id))
          let unknownPeerIDs = peerIDs.subtracting(knownPeerIDs)
          if !unknownPeerIDs.isEmpty {
-            throw ConcreteError.cannotTakeOfflineUnknownPeers(unknownPeerIDs)
+            throw DomainError.cannotTakeOfflineUnknownPeers(unknownPeerIDs)
          }
       }
 
       do {
          try validate(peerIDs)
-      } catch let error as ConcreteError {
+      } catch let error as DomainError {
          errorsInternal.send(error)
       }
 
       for knownPeer in allPeers where peerIDs.contains(knownPeer.id) {
          do {
             try knownPeer.takeOffline()
-         } catch let error as ConcreteError {
+         } catch let error as DomainError {
             errorsInternal.send(error)
          }
       }
    }
 
-   private func initiateInvitationForPeer(_ peerID: PeerID) throws {
+   private func initiateInvitationForPeer(_ peerID: Peer.ID) throws {
       guard let peer = findPeer(by: peerID) else {
-         throw ConcreteError.cannotInviteUknownPeer(peerID)
+         throw DomainError.cannotInviteUknownPeer(peerID)
       }
       try peer.initiateInvitation()
    }
 
-   private func onInvitationSuccessfullySent(to peerID: PeerID) throws {
+   private func onInvitationSuccessfullySent(to peerID: Peer.ID) throws {
       guard let peer = findPeer(by: peerID) else {
-         throw ConcreteError.cannotHandleInvitationSendingResultForUnknownPeer(peerID)
+         throw DomainError.cannotHandleInvitationSendingResultForUnknownPeer(peerID)
       }
       try peer.onInvitationSuccesfullySent()
    }
 
-   private func onFailedToSendInvitation(to peerID: PeerID) throws {
+   private func onFailedToSendInvitation(to peerID: Peer.ID) throws {
       guard let peer = findPeer(by: peerID) else {
-         throw ConcreteError.cannotHandleInvitationSendingResultForUnknownPeer(peerID)
+         throw DomainError.cannotHandleInvitationSendingResultForUnknownPeer(peerID)
       }
       try peer.onFailedToSendInvitation()
    }
 
-   private func onPeerAcceptedInvitation(_ peerID: PeerID) throws {
+   private func onPeerAcceptedInvitation(_ peerID: Peer.ID) throws {
       guard let peer = findPeer(by: peerID) else {
-         throw ConcreteError.unknownPeerCannotRespondToInvitation(peerID)
+         throw DomainError.unknownPeerCannotRespondToInvitation(peerID)
       }
       try peer.acceptInvitation()
    }
 
-   private func onPeerDeclinedInvitation(_ peerID: PeerID) throws {
+   private func onPeerDeclinedInvitation(_ peerID: Peer.ID) throws {
       guard let peer = findPeer(by: peerID) else {
-         throw ConcreteError.unknownPeerCannotRespondToInvitation(peerID)
+         throw DomainError.unknownPeerCannotRespondToInvitation(peerID)
       }
       try peer.declineInvitation()
    }
 
-   public typealias Input = InputEvent<NetworkAddress>
-   public typealias Snapshot = [ConcretePeer.Snapshot]
+   public typealias Snapshot = [Peer.Snapshot]
 
    #warning("CQS violation")
-   public func add(_ input: Input...) -> Snapshot {
+   public func add(_ input: InputEvent...) -> Snapshot {
       var state: Snapshot = []
       queue.sync {
          for event in input {
@@ -113,14 +106,14 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
       return state
    }
 
-   private func handleInput(_ value: Input) {
-      func validateInitial(_ value: Input) throws {
+   private func handleInput(_ value: InputEvent) {
+      func validateInitial(_ value: InputEvent) throws {
          if case .initial = value {
             if receivedInitialEvent {
-               throw ConcreteError.receivedInitialEventTwice
+               throw DomainError.receivedInitialEventTwice
             }
          } else if !receivedInitialEvent {
-            throw ConcreteError.didNotReceiveInitialEvent
+            throw DomainError.didNotReceiveInitialEvent
          }
       }
 
@@ -159,7 +152,7 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
          case .peerDeclinedInvitation(let peerID):
             try onPeerDeclinedInvitation(peerID)
          }
-      } catch let error as ConcreteError {
+      } catch let error as DomainError {
          errorsInternal.send(error)
       } catch {
          #warning("TODO: After typed throws are implemented in Swift, this catch clause can be removed")
@@ -176,7 +169,7 @@ public final class CoreMessenger<NetworkAddress: Hashable> {
 
    private var receivedInitialEvent = false
 
-   private func findPeer(by id: ConcretePeer.ID) -> ConcretePeer? {
+   private func findPeer(by id: Peer.ID) -> Peer? {
       allPeers.first { $0.id == id }
    }
 }

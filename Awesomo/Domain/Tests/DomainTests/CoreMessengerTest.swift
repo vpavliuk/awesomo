@@ -3,9 +3,7 @@ import Combine
 @testable import Domain
 
 final class CoreMessengerTest: XCTestCase {
-   private typealias DomainInput = InputEvent<String>
-   private typealias Peer = Domain.Peer<String>
-   private var sut: CoreMessenger<String>!
+   private var sut: CoreMessenger!
 
    override func setUp() {
       sut = CoreMessenger()
@@ -29,9 +27,9 @@ final class CoreMessengerTest: XCTestCase {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
 
       // Act
       let state = sut.add(.initial, emergenceEvent)
@@ -46,10 +44,10 @@ final class CoreMessengerTest: XCTestCase {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
-      let disappearEvent: DomainInput = .peersDidDisappear([peerID])
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let disappearEvent: InputEvent = .peersDidDisappear([peerID])
 
       // Act
       let peersAfterDisappear = sut.add(.initial, emergenceEvent, disappearEvent)
@@ -62,7 +60,7 @@ final class CoreMessengerTest: XCTestCase {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let expectedPeer = Peer.Snapshot(
          peerID: peerID,
          status: .online,
@@ -73,8 +71,8 @@ final class CoreMessengerTest: XCTestCase {
          outgoingMessages: []
       )
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
-      let invitation: DomainInput = .userDidInvitePeer(peerID)
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let invitation: InputEvent = .userDidInvitePeer(peerID)
 
       // Act
       let state = sut.add(.initial, emergenceEvent, invitation)
@@ -87,7 +85,7 @@ final class CoreMessengerTest: XCTestCase {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let expectedPeer = Peer.Snapshot(
          peerID: peerID,
          status: .online,
@@ -98,9 +96,9 @@ final class CoreMessengerTest: XCTestCase {
          outgoingMessages: []
       )
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
-      let invitation: DomainInput = .userDidInvitePeer(peerID)
-      let invitationSendSuccess: DomainInput = .invitationForPeerWasSentOverNetwork(peerID)
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let invitation: InputEvent = .userDidInvitePeer(peerID)
+      let invitationSendSuccess: InputEvent = .invitationForPeerWasSentOverNetwork(peerID)
 
       // Act
       let state = sut.add(.initial, emergenceEvent, invitation, invitationSendSuccess)
@@ -113,7 +111,7 @@ final class CoreMessengerTest: XCTestCase {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let expectedPeer = Peer.Snapshot(
          peerID: peerID,
          status: .online,
@@ -124,9 +122,9 @@ final class CoreMessengerTest: XCTestCase {
          outgoingMessages: []
       )
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
-      let invitation: DomainInput = .userDidInvitePeer(peerID)
-      let invitationSendFailure: DomainInput = .failedToSendInvitationOverNetwork(peerID)
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let invitation: InputEvent = .userDidInvitePeer(peerID)
+      let invitationSendFailure: InputEvent = .failedToSendInvitationOverNetwork(peerID)
 
       // Act
       let state = sut.add(.initial, emergenceEvent, invitation, invitationSendFailure)
@@ -139,12 +137,12 @@ final class CoreMessengerTest: XCTestCase {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
-      let invitation: DomainInput = .userDidInvitePeer(peerID)
-      let invitationSendSuccess: DomainInput = .invitationForPeerWasSentOverNetwork(peerID)
-      let confirmation: DomainInput = .peerAcceptedInvitation(peerID)
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let invitation: InputEvent = .userDidInvitePeer(peerID)
+      let invitationSendSuccess: InputEvent = .invitationForPeerWasSentOverNetwork(peerID)
+      let confirmation: InputEvent = .peerAcceptedInvitation(peerID)
 
       // Act
       let state = sut.add(.initial, emergenceEvent, invitation, invitationSendSuccess, confirmation)
@@ -159,7 +157,7 @@ final class CoreMessengerTest: XCTestCase {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let expectedPeer = Peer.Snapshot(
          peerID: peerID,
          status: .online,
@@ -170,10 +168,10 @@ final class CoreMessengerTest: XCTestCase {
          outgoingMessages: []
       )
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
-      let invitation: DomainInput = .userDidInvitePeer(peerID)
-      let invitationSendSuccess: DomainInput = .invitationForPeerWasSentOverNetwork(peerID)
-      let rejection: DomainInput = .peerDeclinedInvitation(peerID)
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let invitation: InputEvent = .userDidInvitePeer(peerID)
+      let invitationSendSuccess: InputEvent = .invitationForPeerWasSentOverNetwork(peerID)
+      let rejection: InputEvent = .peerDeclinedInvitation(peerID)
 
       // Act
       let state = sut.add(.initial, emergenceEvent, invitation, invitationSendSuccess, rejection)
@@ -186,13 +184,13 @@ final class CoreMessengerTest: XCTestCase {
       // Arrange
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
-      let invitation: DomainInput = .userDidInvitePeer(peerID)
-      let invitationSendSuccess: DomainInput = .invitationForPeerWasSentOverNetwork(peerID)
-      let confirmation: DomainInput = .peerAcceptedInvitation(peerID)
-      let disappearEvent: DomainInput = .peersDidDisappear([peerID])
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let invitation: InputEvent = .userDidInvitePeer(peerID)
+      let invitationSendSuccess: InputEvent = .invitationForPeerWasSentOverNetwork(peerID)
+      let confirmation: InputEvent = .peerAcceptedInvitation(peerID)
+      let disappearEvent: InputEvent = .peersDidDisappear([peerID])
 
       // Act
       let state = sut.add(
@@ -215,15 +213,15 @@ final class CoreMessengerTest: XCTestCase {
       let peerID = Peer.ID(value: "1")
       let peerName = "Unknown peer"
       let changedName = "Changed Name"
-      let networkAddress = "123"
+      let networkAddress = NetworkAddress(value: "123")
       let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let firstEmergenceEvent: DomainInput = .peersDidAppear([peerID: emergence])
-      let invitation: DomainInput = .userDidInvitePeer(peerID)
-      let invitationSendSuccess: DomainInput = .invitationForPeerWasSentOverNetwork(peerID)
-      let confirmation: DomainInput = .peerAcceptedInvitation(peerID)
-      let disappearEvent: DomainInput = .peersDidDisappear([peerID])
+      let firstEmergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let invitation: InputEvent = .userDidInvitePeer(peerID)
+      let invitationSendSuccess: InputEvent = .invitationForPeerWasSentOverNetwork(peerID)
+      let confirmation: InputEvent = .peerAcceptedInvitation(peerID)
+      let disappearEvent: InputEvent = .peersDidDisappear([peerID])
       let emergenceWithChangedName = PeerEmergence(peerName: changedName, peerAddress: networkAddress)
-      let secondEmergenceEvent: DomainInput = .peersDidAppear([peerID: emergenceWithChangedName])
+      let secondEmergenceEvent: InputEvent = .peersDidAppear([peerID: emergenceWithChangedName])
 
       // Act
       let state = sut.add(

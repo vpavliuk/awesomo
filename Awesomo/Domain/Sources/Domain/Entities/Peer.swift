@@ -6,11 +6,8 @@
 //  Copyright © 2021 Volodymyr Pavliuk. All rights reserved.
 //
 
-import Foundation
-
-#warning("Revise whether NetworkAddress belongs here from cohesion perspective")
-public final class Peer<NetworkAddress: Hashable>: Entity {
-   internal convenience init(id: ID, peerEmergence: PeerEmergence<NetworkAddress>) {
+public final class Peer: Entity {
+   internal convenience init(id: ID, peerEmergence: PeerEmergence) {
       self.init(
          id: id,
          status: .online,
@@ -48,6 +45,8 @@ public final class Peer<NetworkAddress: Hashable>: Entity {
    private var relation: Relation
 
    private var name: String
+
+   #warning("Revise whether NetworkAddress belongs here from cohesion perspective")
    private let networkAddress: NetworkAddress
 
    // Messages from this peer to us
@@ -56,7 +55,7 @@ public final class Peer<NetworkAddress: Hashable>: Entity {
    // Messages from us to this peer
    private var outgoingMessages: [OutgoingChatMessage]
 
-   internal func takeOnline(_ emergence: PeerEmergence<NetworkAddress>) throws {
+   internal func takeOnline(_ emergence: PeerEmergence) throws {
       guard status == .offline else {
          throw DomainError.cannotTakeOnlineAlreadyOnlinePeer(id)
       }
@@ -114,9 +113,9 @@ public final class Peer<NetworkAddress: Hashable>: Entity {
 extension Peer {
    public struct Snapshot: Hashable {
       public init(
-         peerID: Peer<NetworkAddress>.ID,
-         status: Peer<NetworkAddress>.Status,
-         relation: Peer<NetworkAddress>.Relation,
+         peerID: Peer.ID,
+         status: Peer.Status,
+         relation: Peer.Relation,
          name: String,
          networkAddress: NetworkAddress,
          incomingMessages: [IncomingChatMessage],
