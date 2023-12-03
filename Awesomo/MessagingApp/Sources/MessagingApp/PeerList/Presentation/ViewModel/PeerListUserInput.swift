@@ -7,6 +7,6 @@
 
 import Domain
 
-enum PeerListUserInput<NetworkAddress: Hashable> {
-   case didSelectPeer(Peer<NetworkAddress>.ID)
+enum PeerListUserInput {
+   case didSelectPeer(Peer.ID)
 }

@@ -6,7 +6,7 @@
 //
 
 public struct NetworkAddress: Hashable {
-   internal init(value: String) {
+   public init(value: String) {
       self.value = value
    }
    private let value: String

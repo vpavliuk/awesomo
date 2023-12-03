@@ -8,10 +8,9 @@
 import Domain
 import Combine
 
-final class PeerListViewModel<NetworkAddress: Hashable>: ViewModel<[Peer<NetworkAddress>.Snapshot], PeerListState<NetworkAddress>> {
-   typealias UserInput = PeerListUserInput<NetworkAddress>
+final class PeerListViewModel: ViewModel<[Peer.Snapshot], PeerListState> {
 
-   var selectedPeerID: Peer<NetworkAddress>.ID? {
+   var selectedPeerID: Peer.ID? {
       didSet {
          guard let selectedPeerID else { return }
          userInputInternal.send(.didSelectPeer(selectedPeerID))
@@ -19,6 +18,6 @@ final class PeerListViewModel<NetworkAddress: Hashable>: ViewModel<[Peer<Network
    }
 
    // An outgoing stream of app events
-   lazy var userInput: some Publisher<UserInput, Never> = userInputInternal
-   private let userInputInternal: some Subject<UserInput, Never> = PassthroughSubject<UserInput, Never>()
+   lazy var userInput: some Publisher<PeerListUserInput, Never> = userInputInternal
+   private let userInputInternal: some Subject<PeerListUserInput, Never> = PassthroughSubject()
 }

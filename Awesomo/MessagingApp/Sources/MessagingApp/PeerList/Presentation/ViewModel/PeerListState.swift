@@ -8,15 +8,14 @@
 import Domain
 import Utils
 
-enum PeerListState<NetworkAddress: Hashable> {
-   typealias DisplayModel = PeerDisplayModel<NetworkAddress>
+enum PeerListState {
    case loading
    case loadedEmpty
-   case loaded(NonEmpty<DisplayModel>)
+   case loaded(NonEmpty<PeerDisplayModel>)
 }
 
 extension PeerListState: DomainDerivable {
-   init(domainState: [Peer<NetworkAddress>.Snapshot]) {
+   init(domainState: [Peer.Snapshot]) {
       let peerDisplayModels = domainState.map(PeerDisplayModel.init)
       if let nonEmpty = NonEmpty(peerDisplayModels) {
          self = .loaded(nonEmpty)
@@ -27,13 +26,13 @@ extension PeerListState: DomainDerivable {
    static var defaultValue: Self { .loading }
 }
 
-struct PeerDisplayModel<NetworkAddress: Hashable>: Hashable, Identifiable {
-   let id: Peer<NetworkAddress>.ID
+struct PeerDisplayModel: Hashable, Identifiable {
+   let id: Peer.ID
    let name: String
 }
 
 extension PeerDisplayModel {
-   init(peer: Peer<NetworkAddress>.Snapshot) {
+   init(peer: Peer.Snapshot) {
       id = peer.peerID
       name = peer.name
    }

@@ -9,9 +9,9 @@ import SwiftUI
 import Domain
 import Utils
 
-struct PeerListView<NetworkAddress: Hashable>: View {
+struct PeerListView: View {
    @ObservedObject
-   var vm: PeerListViewModel<NetworkAddress>
+   var vm: PeerListViewModel
 
    var body: some View {
       switch vm.state {
@@ -37,11 +37,10 @@ private struct EmptyPeerList: View {
    }
 }
 
-private struct LoadedPeerList<NetworkAddress: Hashable>: View {
-   typealias DisplayModel = PeerDisplayModel<NetworkAddress>
+private struct LoadedPeerList: View {
 
-   var selection: Binding<Peer<NetworkAddress>.ID?>
-   let peers: NonEmpty<DisplayModel>
+   var selection: Binding<Peer.ID?>
+   let peers: NonEmpty<PeerDisplayModel>
    var body: some View {
       List(peers) { peer in
          Text(peer.name)
@@ -49,8 +48,8 @@ private struct LoadedPeerList<NetworkAddress: Hashable>: View {
    }
 }
 
-private struct PeerView<NetworkAddress: Hashable>: View {
-   let peer: PeerDisplayModel<NetworkAddress>
+private struct PeerView: View {
+   let peer: PeerDisplayModel
    var body: some View {
       Text(peer.name)
    }
@@ -59,7 +58,7 @@ private struct PeerView<NetworkAddress: Hashable>: View {
 // MARK: - Previews
 
 #Preview("Loading") {
-   PeerListView<Int>(
+   PeerListView(
       vm: PeerListViewModel(initialDomainState: nil)
    )
 }
@@ -68,12 +67,12 @@ private struct PeerView<NetworkAddress: Hashable>: View {
    PeerListView(
       vm: PeerListViewModel(
          initialDomainState: [
-            Peer<Int>.Snapshot(
+            Peer.Snapshot(
                peerID: EntityID(value: "1"),
                status: .online,
                relation: .friend,
                name: "John",
-               networkAddress: 123,
+               networkAddress: NetworkAddress(value: "123"),
                incomingMessages: [],
                outgoingMessages: []
             )
@@ -86,21 +85,21 @@ private struct PeerView<NetworkAddress: Hashable>: View {
    PeerListView(
       vm: PeerListViewModel(
          initialDomainState: [
-            Peer<Int>.Snapshot(
+            Peer.Snapshot(
                peerID: EntityID(value: "1"),
                status: .online,
                relation: .friend,
                name: "John",
-               networkAddress: 123,
+               networkAddress: NetworkAddress(value: "123"),
                incomingMessages: [],
                outgoingMessages: []
             ),
-            Peer<Int>.Snapshot(
+            Peer.Snapshot(
                peerID: EntityID(value: "2"),
                status: .online,
                relation: .friend,
                name: "Mary",
-               networkAddress: 123,
+               networkAddress: NetworkAddress(value: "123"),
                incomingMessages: [],
                outgoingMessages: []
             )
@@ -110,7 +109,7 @@ private struct PeerView<NetworkAddress: Hashable>: View {
 }
 
 #Preview("Loaded empty") {
-   PeerListView<Int>(
+   PeerListView(
       vm: PeerListViewModel(initialDomainState: [])
    )
 }

@@ -1,6 +1,6 @@
 import XCTest
 import Combine
-@testable import Domain
+import Domain
 
 final class CoreMessengerTest: XCTestCase {
    private var sut: CoreMessenger!

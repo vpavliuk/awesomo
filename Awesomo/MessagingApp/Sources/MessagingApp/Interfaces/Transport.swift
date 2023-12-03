@@ -16,7 +16,7 @@ public enum NetworkMessage<ContentNetworkRepresentation> {
 
 // MARK: - Output
 public struct TransportSendRequest
-      <NetworkAddress, ContentNetworkRepresentation>: Identifiable {
+      <ContentNetworkRepresentation>: Identifiable {
    public typealias ConcreteNetworkMessage = NetworkMessage<ContentNetworkRepresentation>
    public init(receiver: NetworkAddress, message: ConcreteNetworkMessage) {
       self.receiver = receiver
@@ -37,15 +37,15 @@ public struct TransportSendRequest
 }
 
 // MARK: - Input
-public enum InputFromTransport<NetworkAddress, ContentNetworkRepresentation> {
+public enum InputFromTransport<ContentNetworkRepresentation> {
    case incomingMessage(NetworkMessage<ContentNetworkRepresentation>)
    case sendResult(SendResult)
 
-   public typealias SendRequest = TransportSendRequest<NetworkAddress, ContentNetworkRepresentation>
+   public typealias SendRequest = TransportSendRequest<ContentNetworkRepresentation>
    public typealias SendResult = Result<SendRequest.ID, SendError>
 
    public struct SendError: Error, Equatable {
-      public init(requestID: InputFromTransport<NetworkAddress, ContentNetworkRepresentation>.SendRequest.ID) {
+      public init(requestID: InputFromTransport<ContentNetworkRepresentation>.SendRequest.ID) {
          self.requestID = requestID
       }
 
