@@ -21,6 +21,8 @@ public struct EntityID<Entity, UnderlyingValue: Hashable>: Hashable {
    private let value: UnderlyingValue
 }
 
+extension EntityID: Codable where UnderlyingValue: Codable {}
+
 extension Collection where Element: Entity {
    func snapshot() -> [Element.Snapshot] {
       map { $0.snapshot() }
