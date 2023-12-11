@@ -5,25 +5,12 @@
 //  Created by Vova on 12.11.2023.
 //
 
-protocol Entity: Identifiable {
-   associatedtype UnderlyingID: Hashable
-   var id: EntityID<Self, UnderlyingID> { get }
-
+protocol SnapshotProducer: AnyObject {
    associatedtype Snapshot: Hashable
    func snapshot() -> Snapshot
 }
 
-public struct EntityID<Entity, UnderlyingValue: Hashable>: Hashable {
-   public init(value: UnderlyingValue) {
-      self.value = value
-   }
-
-   private let value: UnderlyingValue
-}
-
-extension EntityID: Codable where UnderlyingValue: Codable {}
-
-extension Collection where Element: Entity {
+extension Collection where Element: SnapshotProducer {
    func snapshot() -> [Element.Snapshot] {
       map { $0.snapshot() }
    }

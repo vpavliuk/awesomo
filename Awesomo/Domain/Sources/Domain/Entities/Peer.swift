@@ -6,7 +6,7 @@
 //  Copyright © 2021 Volodymyr Pavliuk. All rights reserved.
 //
 
-public final class Peer: Entity {
+public final class Peer: AwesomelyIdentifiable {
    internal convenience init(id: ID, peerEmergence: PeerEmergence) {
       self.init(
          id: id,
@@ -110,7 +110,7 @@ public final class Peer: Entity {
    }
 }
 
-extension Peer {
+extension Peer: SnapshotProducer {
    public struct Snapshot: Hashable {
       public init(
          peerID: Peer.ID,

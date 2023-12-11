@@ -11,7 +11,7 @@ import Combine
 public final class CoreMessenger {
    public init() {}
 
-   // 'All peers' means currently active peers + offline peers related to the user
+   // 'All peers' means currently active peers + offline peers related to the user in some way
    private var allPeers: [Peer] = []
 
    public lazy var errors: some Publisher<DomainError, Never> = errorsInternal

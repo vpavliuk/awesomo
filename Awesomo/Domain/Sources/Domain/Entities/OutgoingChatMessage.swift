@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class OutgoingChatMessage: Entity {
+public final class OutgoingChatMessage: AwesomelyIdentifiable {
 
    init(id: ID, content: MessageContent, status: Status) {
       self.id = id
@@ -25,7 +25,7 @@ public final class OutgoingChatMessage: Entity {
    var status: Status
 }
 
-extension OutgoingChatMessage {
+extension OutgoingChatMessage: SnapshotProducer {
    public struct Snapshot: Hashable {
       public let timestamp: Date
       public let content: MessageContent
