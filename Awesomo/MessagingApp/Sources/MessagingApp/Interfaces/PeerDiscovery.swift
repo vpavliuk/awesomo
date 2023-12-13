@@ -7,7 +7,7 @@
 
 import Domain
 
-public enum PeerAvailabilityEvent: InputEvent {
+public enum PeerAvailabilityEvent: InputEvent, Hashable {
    case peersDidAppear([Peer.ID: PeerEmergence])
    case peersDidDisappear(Set<Peer.ID>)
 }

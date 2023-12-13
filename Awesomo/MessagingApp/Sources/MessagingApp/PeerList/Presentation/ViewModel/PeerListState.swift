@@ -15,15 +15,19 @@ enum PeerListState {
 }
 
 extension PeerListState: DomainDerivable {
-   init(domainState: [Peer.Snapshot]) {
-      let peerDisplayModels = domainState.map(PeerDisplayModel.init)
-      if let nonEmpty = NonEmpty(peerDisplayModels) {
-         self = .loaded(nonEmpty)
-      } else {
-         self = .loadedEmpty
+   static func fromDomainState(_ domainState: CoreMessenger.State) -> Self {
+      switch domainState {
+      case .loadingSavedChats:
+         return .loading
+      case .loaded(let peers):
+         let peerDisplayModels = peers.map(PeerDisplayModel.init)
+         if let nonEmpty = NonEmpty(peerDisplayModels) {
+            return .loaded(nonEmpty)
+         } else {
+            return .loadedEmpty
+         }
       }
    }
-   static var defaultValue: Self { .loading }
 }
 
 struct PeerDisplayModel: Hashable, Identifiable {

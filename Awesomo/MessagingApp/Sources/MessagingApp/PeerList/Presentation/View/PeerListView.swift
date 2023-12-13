@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 import Domain
 import Utils
 
@@ -59,14 +60,16 @@ private struct PeerView: View {
 
 #Preview("Loading") {
    PeerListView(
-      vm: PeerListViewModel(initialDomainState: nil)
+      vm: PeerListViewModel(
+         domainSource: CurrentValueSubject(.loadingSavedChats)
+      )
    )
 }
 
 #Preview("Loaded one peer") {
    PeerListView(
       vm: PeerListViewModel(
-         initialDomainState: [
+         domainSource: CurrentValueSubject(.loaded([
             Peer.Snapshot(
                peerID: EntityID(value: "1"),
                status: .online,
@@ -77,14 +80,16 @@ private struct PeerView: View {
                outgoingMessages: []
             )
          ]
+                                                   )
       )
-   )
+         )
+      )
 }
 
 #Preview("Loaded two peers") {
    PeerListView(
       vm: PeerListViewModel(
-         initialDomainState: [
+         domainSource: CurrentValueSubject(.loaded([
             Peer.Snapshot(
                peerID: EntityID(value: "1"),
                status: .online,
@@ -98,18 +103,22 @@ private struct PeerView: View {
                peerID: EntityID(value: "2"),
                status: .online,
                relation: .friend,
-               name: "Mary",
+               name: "Alice",
                networkAddress: NetworkAddress(value: "123"),
                incomingMessages: [],
                outgoingMessages: []
             )
          ]
+                                                   )
       )
-   )
+         )
+      )
 }
 
 #Preview("Loaded empty") {
    PeerListView(
-      vm: PeerListViewModel(initialDomainState: [])
+      vm: PeerListViewModel(
+         domainSource: CurrentValueSubject(.loaded([]))
+      )
    )
 }

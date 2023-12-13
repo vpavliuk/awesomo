@@ -8,7 +8,7 @@
 import Domain
 import Combine
 
-final class PeerListViewModel: ViewModel<[Peer.Snapshot], PeerListState> {
+final class PeerListViewModel: ViewModel<CoreMessenger.State, PeerListState> {
 
    var selectedPeerID: Peer.ID? {
       didSet {

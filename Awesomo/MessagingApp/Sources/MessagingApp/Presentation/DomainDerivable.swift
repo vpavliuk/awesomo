@@ -7,6 +7,5 @@
 
 protocol DomainDerivable {
    associatedtype DomainState
-   init(domainState: DomainState)
-   static var defaultValue: Self { get }
+   static func fromDomainState(_ domainState: DomainState) -> Self
 }

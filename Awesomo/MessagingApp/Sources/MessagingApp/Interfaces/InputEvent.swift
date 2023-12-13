@@ -6,3 +6,5 @@
 //
 
 public protocol InputEvent: Codable {}
+
+public enum CommonInput: InputEvent { case initial }
