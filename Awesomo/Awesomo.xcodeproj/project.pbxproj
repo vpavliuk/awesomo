@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0E92ED432B16240800692BBC /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED422B16240800692BBC /* Assembly.swift */; };
 		0E92ED462B162CF200692BBC /* Middleman.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED452B162CF200692BBC /* Middleman.swift */; };
+		0ED3422C2B21303A007B2DCD /* PeerDiscovery in Frameworks */ = {isa = PBXBuildFile; productRef = 0ED3422B2B21303A007B2DCD /* PeerDiscovery */; };
 		0ED5D7212698E3EC00265C2A /* AwesomoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */; };
 		0ED5D7232698E3EC00265C2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7222698E3EC00265C2A /* ContentView.swift */; };
 		0ED5D7252698E3ED00265C2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0ED5D7242698E3ED00265C2A /* Assets.xcassets */; };
@@ -63,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0EFF0B1426B4596300A350DC /* MessagingApp in Frameworks */,
+				0ED3422C2B21303A007B2DCD /* PeerDiscovery in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,6 +184,7 @@
 			name = Awesomo;
 			packageProductDependencies = (
 				0EFF0B1326B4596300A350DC /* MessagingApp */,
+				0ED3422B2B21303A007B2DCD /* PeerDiscovery */,
 			);
 			productName = Awesomo;
 			productReference = 0ED5D71D2698E3EC00265C2A /* Awesomo.app */;
@@ -644,6 +647,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0ED3422B2B21303A007B2DCD /* PeerDiscovery */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PeerDiscovery;
+		};
 		0EFF0B1326B4596300A350DC /* MessagingApp */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MessagingApp;
