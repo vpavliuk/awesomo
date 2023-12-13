@@ -8,6 +8,7 @@
 import Domain
 
 public enum PeerAvailabilityEvent: InputEvent, Hashable {
+   static public let eventTypeID = InputEventTypeID(value: "PeerAvailabilityEvent")
    case peersDidAppear([Peer.ID: PeerEmergence])
    case peersDidDisappear(Set<Peer.ID>)
 }

@@ -23,6 +23,7 @@ public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject 
    }
 
    private lazy var inputHandlers: [any InputHandler] = [
+      CommonInputHandler(),
       PeerAvailabilityHandler(coreMessenger: coreMessenger) { [weak self] state in self?.domainState = state },
       PeerListUserInputHandler { [weak self] peerID in self?.activeScreen = .selectedPeer(peerID) },
    ]
@@ -48,7 +49,6 @@ public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject 
 
    public lazy var input: some Subscriber<any InputEvent, Never> = inputInternal
    private let inputInternal: PublishingSubscriber<any InputEvent, Never>
-
 
    private let coreMessenger = CoreMessenger()
 
