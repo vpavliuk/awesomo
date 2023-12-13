@@ -6,12 +6,23 @@
 //
 
 import SwiftUI
+import Combine
+import Domain
+import MessagingApp
+import PeerDiscovery
 
 @main
 struct AwesomoApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+   @StateObject
+   var app = buildApp(
+      peerDiscoveryInput: PeerDiscovery().output,
+      peerListUserInput: Just(PeerListUserInput.didSelectPeer(Peer.ID(value: "123"))),
+      middleman: Player()
+   )
+
+   var body: some Scene {
+      WindowGroup {
+         app.entryPointView
+      }
+   }
 }

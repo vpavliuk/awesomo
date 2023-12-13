@@ -10,6 +10,10 @@
 		0E92ED432B16240800692BBC /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED422B16240800692BBC /* Assembly.swift */; };
 		0E92ED462B162CF200692BBC /* Middleman.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED452B162CF200692BBC /* Middleman.swift */; };
 		0ED3422C2B21303A007B2DCD /* PeerDiscovery in Frameworks */ = {isa = PBXBuildFile; productRef = 0ED3422B2B21303A007B2DCD /* PeerDiscovery */; };
+		0ED3422E2B29E1E3007B2DCD /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED3422D2B29E1E3007B2DCD /* Recorder.swift */; };
+		0ED342312B29E232007B2DCD /* LocalPersistor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED342302B29E232007B2DCD /* LocalPersistor.swift */; };
+		0ED342332B29E579007B2DCD /* StoredEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED342322B29E579007B2DCD /* StoredEvent.swift */; };
+		0ED342352B2A2B6B007B2DCD /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED342342B2A2B6B007B2DCD /* Player.swift */; };
 		0ED5D7212698E3EC00265C2A /* AwesomoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */; };
 		0ED5D7232698E3EC00265C2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7222698E3EC00265C2A /* ContentView.swift */; };
 		0ED5D7252698E3ED00265C2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0ED5D7242698E3ED00265C2A /* Assets.xcassets */; };
@@ -47,6 +51,10 @@
 		0E92ED452B162CF200692BBC /* Middleman.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Middleman.swift; sourceTree = "<group>"; };
 		0E9B296126A4622B00EE4C5C /* Utils */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Utils; sourceTree = "<group>"; };
 		0EBB70112814769900EC04C9 /* PeerDiscovery */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PeerDiscovery; sourceTree = "<group>"; };
+		0ED3422D2B29E1E3007B2DCD /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		0ED342302B29E232007B2DCD /* LocalPersistor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPersistor.swift; sourceTree = "<group>"; };
+		0ED342322B29E579007B2DCD /* StoredEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredEvent.swift; sourceTree = "<group>"; };
+		0ED342342B2A2B6B007B2DCD /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		0ED5D71D2698E3EC00265C2A /* Awesomo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Awesomo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwesomoApp.swift; sourceTree = "<group>"; };
 		0ED5D7222698E3EC00265C2A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -95,9 +103,21 @@
 		0E92ED442B162CE100692BBC /* Middleman */ = {
 			isa = PBXGroup;
 			children = (
+				0ED3422F2B29E1FB007B2DCD /* Persistor */,
 				0E92ED452B162CF200692BBC /* Middleman.swift */,
+				0ED3422D2B29E1E3007B2DCD /* Recorder.swift */,
+				0ED342322B29E579007B2DCD /* StoredEvent.swift */,
+				0ED342342B2A2B6B007B2DCD /* Player.swift */,
 			);
 			path = Middleman;
+			sourceTree = "<group>";
+		};
+		0ED3422F2B29E1FB007B2DCD /* Persistor */ = {
+			isa = PBXGroup;
+			children = (
+				0ED342302B29E232007B2DCD /* LocalPersistor.swift */,
+			);
+			path = Persistor;
 			sourceTree = "<group>";
 		};
 		0ED5D7142698E3EC00265C2A = {
@@ -300,10 +320,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0ED3422E2B29E1E3007B2DCD /* Recorder.swift in Sources */,
+				0ED342312B29E232007B2DCD /* LocalPersistor.swift in Sources */,
 				0ED5D7232698E3EC00265C2A /* ContentView.swift in Sources */,
 				0E92ED462B162CF200692BBC /* Middleman.swift in Sources */,
+				0ED342352B2A2B6B007B2DCD /* Player.swift in Sources */,
 				0E92ED432B16240800692BBC /* Assembly.swift in Sources */,
 				0ED5D7212698E3EC00265C2A /* AwesomoApp.swift in Sources */,
+				0ED342332B29E579007B2DCD /* StoredEvent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
