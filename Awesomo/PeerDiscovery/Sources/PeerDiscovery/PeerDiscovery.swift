@@ -19,30 +19,28 @@ public struct PeerDiscovery {
          .subscribe(outputInternal)
    }
 
-   typealias PeerID = Peer<String>.ID
-
    private func peerEventFromServiceEvent(_ serviceEvent: NetServiceAvailabilityEvent)
-         -> OutputForApp {
+         -> PeerAvailabilityEvent {
 
       let emergences = serviceEvent.services.map(peerEmergenceFromNetService)
       switch serviceEvent.change {
       case .found:
          let emergencesByID = Dictionary(uniqueKeysWithValues: emergences)
-         return OutputForApp(event: .peersDidAppear(emergencesByID))
+         return .peersDidAppear(emergencesByID)
       case .lost:
          let peerIDs = Set(emergences.map(\.id))
-         return OutputForApp(event: .peersDidDisappear(peerIDs))
+         return .peersDidDisappear(peerIDs)
       }
    }
 
    private func peerEmergenceFromNetService(_ service: NetService)
-         -> (id: PeerID, emergence: PeerEmergence<String>) {
+   -> (id: Peer.ID, emergence: PeerEmergence) {
 
       let attributes = bonjourNameComposer
          .peerAttributesFromServiceName(service.name)
       let emergence = PeerEmergence(
          peerName: attributes.peerName,
-         peerAddress: service.name
+         peerAddress: NetworkAddress(value: service.name)
       )
       return (id: attributes.id, emergence: emergence)
    }
@@ -50,9 +48,8 @@ public struct PeerDiscovery {
    private let inputInternal: PublishingSubscriber<NetServiceAvailabilityEvent, Never>
    public var input: some Subscriber<NetServiceAvailabilityEvent, Never> { inputInternal }
 
-   public typealias OutputForApp = PeerAvailabilityEvent<String>
-   public lazy var output: some Publisher<OutputForApp, Never> = outputInternal.publisher
-   private let outputInternal: PublishingSubscriber<OutputForApp, Never>
+   public var output: some Publisher<PeerAvailabilityEvent, Never> { outputInternal.publisher }
+   private let outputInternal: PublishingSubscriber<PeerAvailabilityEvent, Never>
 
    private let bonjourNameComposer: BonjourNameComposer
 }

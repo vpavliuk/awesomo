@@ -13,7 +13,7 @@ import Domain
 struct BonjourNameComposerMock: BonjourNameComposer {
 
    func peerAttributesFromServiceName(_ name: String)
-         -> (id: Peer<String>.ID, peerName: String) {
+         -> (id: Peer.ID, peerName: String) {
 
       let components = name.split(
          separator: separator,
@@ -22,7 +22,7 @@ struct BonjourNameComposerMock: BonjourNameComposer {
       )
 
       let idString = String(components[0])
-      let peerId = Peer<String>.ID(value: idString)
+      let peerId = Peer.ID(value: idString)
       return (
          id: peerId,
          peerName: String(components[1])

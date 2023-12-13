@@ -7,8 +7,6 @@ import MessagingApp
 import TestUtils
 
 final class PeerDiscoveryTests: XCTestCase {
-   typealias PeerEvent = PeerAvailabilityEvent<String>
-   typealias Peer = Domain.Peer<String>
 
    var sut: PeerDiscovery!
    var inputFromServiceBrowser: PassthroughSubject<NetServiceAvailabilityEvent, Never>!
@@ -39,11 +37,9 @@ final class PeerDiscoveryTests: XCTestCase {
       let expectedPeerId = Peer.ID(value: peerIDUUID.uuidString)
       let expectedPeer = PeerEmergence(
          peerName: peerName,
-         peerAddress: networkAddress
+         peerAddress: NetworkAddress(value: networkAddress)
       )
-      let expectedOutput = PeerEvent(
-         event: .peersDidAppear([expectedPeerId: expectedPeer])
-      )
+      let expectedOutput: PeerAvailabilityEvent = .peersDidAppear([expectedPeerId: expectedPeer])
 
       // Act
       inputFromServiceBrowser.send(serviceBrowserEvent)
@@ -68,9 +64,7 @@ final class PeerDiscoveryTests: XCTestCase {
          services: [foundService]
       )
       let expectedPeerId = Peer.ID(value: peerIDUUID.uuidString)
-      let expectedOutput = PeerEvent(
-         event: .peersDidDisappear([expectedPeerId])
-      )
+      let expectedOutput: PeerAvailabilityEvent = .peersDidDisappear([expectedPeerId])
 
       // Act
       inputFromServiceBrowser.send(serviceBrowserEvent)
