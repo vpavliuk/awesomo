@@ -5,7 +5,7 @@
 //  Created by Vova on 06.11.2023.
 //
 
-// NOTE: A domain always means there's a bug in the app
+// NOTE: A domain error always denotes broken invariant, i.e, there's a bug in the app
 public enum DomainError: Error, Equatable {
    case didNotReceiveInitialEvent
    case receivedInitialEventTwice

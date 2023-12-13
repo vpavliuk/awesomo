@@ -30,6 +30,11 @@ public final class CoreMessenger {
          }
       }
       allPeers += remaining.map(Peer.init)
+
+      #warning("Does not belong here")
+      if !allPeers.isEmpty {
+         isLoadingSavedChats = false
+      }
    }
 
    #warning("TODO: Should not throw after typed throws is added to Swift")
@@ -92,16 +97,21 @@ public final class CoreMessenger {
       try peer.declineInvitation()
    }
 
-   public typealias Snapshot = [Peer.Snapshot]
+   public enum State {
+      case loadingSavedChats
+      case loaded([Peer.Snapshot])
+   }
+
+   private var isLoadingSavedChats = true
 
    #warning("CQS violation")
-   public func add(_ input: InputEvent...) -> Snapshot {
-      var state: Snapshot = []
+   public func add(_ input: InputEvent...) -> State {
+      var state: State = .loadingSavedChats
       queue.sync {
          for event in input {
             handleInput(event)
          }
-         state = snapshot()
+         state = getState()
       }
       return state
    }
@@ -160,8 +170,8 @@ public final class CoreMessenger {
       }
    }
 
-   private func snapshot() -> Snapshot {
-      allPeers.snapshot()
+   private func getState() -> State {
+      isLoadingSavedChats ? .loadingSavedChats : .loaded(allPeers.snapshot())
    }
 
    #warning("Use actor?")
