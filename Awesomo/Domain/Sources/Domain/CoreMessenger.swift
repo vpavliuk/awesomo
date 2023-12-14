@@ -97,7 +97,7 @@ public final class CoreMessenger {
       try peer.declineInvitation()
    }
 
-   public enum State {
+   public enum State: Hashable {
       case loadingSavedChats
       case loaded([Peer.Snapshot])
    }
