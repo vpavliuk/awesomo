@@ -16,15 +16,15 @@ func buildApp(
 ) -> MessagingApp<Data> {
 
    let appInputSource: some Publisher<any InputEvent, Never> = peerDiscoveryInput.asAnyAppInput()
-      .merge(with: peerListUserInput.asAnyAppInput())
+      //.merge(with: peerListUserInput.asAnyAppInput())
       .merge(with: Just(CommonInput.initial).asAnyAppInput())
 
    let app = MessagingApp<Data>()
    app.wireUp()
 
    if let middleman {
-      appInputSource.subscribe(middleman.input)
       middleman.output.subscribe(app.input)
+      appInputSource.subscribe(middleman.input)
    } else {
       appInputSource.subscribe(app.input)
    }

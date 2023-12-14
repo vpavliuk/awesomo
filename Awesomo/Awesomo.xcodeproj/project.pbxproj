@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E84F7F92B2A58B100495814 /* PeerDiscoveryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E84F7F82B2A58B100495814 /* PeerDiscoveryMock.swift */; };
 		0E92ED432B16240800692BBC /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED422B16240800692BBC /* Assembly.swift */; };
 		0E92ED462B162CF200692BBC /* Middleman.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED452B162CF200692BBC /* Middleman.swift */; };
 		0ED3422C2B21303A007B2DCD /* PeerDiscovery in Frameworks */ = {isa = PBXBuildFile; productRef = 0ED3422B2B21303A007B2DCD /* PeerDiscovery */; };
@@ -47,6 +48,7 @@
 		0E32EAC326DBC0D500814E7D /* TestUtils */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestUtils; sourceTree = "<group>"; };
 		0E4FF3D626B4247A004784C6 /* MessagingApp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MessagingApp; sourceTree = "<group>"; };
 		0E7B5E8B26B47E4D005EF112 /* TCPTransfer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TCPTransfer; sourceTree = "<group>"; };
+		0E84F7F82B2A58B100495814 /* PeerDiscoveryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerDiscoveryMock.swift; sourceTree = "<group>"; };
 		0E92ED422B16240800692BBC /* Assembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assembly.swift; sourceTree = "<group>"; };
 		0E92ED452B162CF200692BBC /* Middleman.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Middleman.swift; sourceTree = "<group>"; };
 		0E9B296126A4622B00EE4C5C /* Utils */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Utils; sourceTree = "<group>"; };
@@ -98,6 +100,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0E84F7F72B2A589000495814 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				0E84F7F82B2A58B100495814 /* PeerDiscoveryMock.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 		0E92ED442B162CE100692BBC /* Middleman */ = {
@@ -152,6 +162,7 @@
 		0ED5D71F2698E3EC00265C2A /* Awesomo */ = {
 			isa = PBXGroup;
 			children = (
+				0E84F7F72B2A589000495814 /* Mocks */,
 				0E92ED442B162CE100692BBC /* Middleman */,
 				0E92ED422B16240800692BBC /* Assembly.swift */,
 				0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */,
@@ -325,6 +336,7 @@
 				0ED5D7232698E3EC00265C2A /* ContentView.swift in Sources */,
 				0E92ED462B162CF200692BBC /* Middleman.swift in Sources */,
 				0ED342352B2A2B6B007B2DCD /* Player.swift in Sources */,
+				0E84F7F92B2A58B100495814 /* PeerDiscoveryMock.swift in Sources */,
 				0E92ED432B16240800692BBC /* Assembly.swift in Sources */,
 				0ED5D7212698E3EC00265C2A /* AwesomoApp.swift in Sources */,
 				0ED342332B29E579007B2DCD /* StoredEvent.swift in Sources */,

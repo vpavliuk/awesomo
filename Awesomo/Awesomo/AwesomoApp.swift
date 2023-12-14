@@ -15,7 +15,7 @@ import PeerDiscovery
 struct AwesomoApp: App {
    @StateObject
    var app = buildApp(
-      peerDiscoveryInput: PeerDiscovery().output,
+      peerDiscoveryInput: PeerDiscoveryMock().output,
       peerListUserInput: Just(PeerListUserInput.didSelectPeer(Peer.ID(value: "123"))),
       middleman: Player()
    )
