@@ -13,13 +13,13 @@ import Foundation
 final class PeerDiscoveryMock {
    static var index = 0
    static var guys = [
-      "I1",
-      "K2",
-      "B3",
-      "K4"
+      "Ivan",
+      "Kate",
+      "Bob",
+      "Kent"
    ]
    var subscription: AnyCancellable?
-   let output: some Publisher<PeerAvailabilityEvent, Never> = Timer.publish(every: 150, on: .main, in: .default)
+   let output: some Publisher<PeerAvailabilityEvent, Never> = Timer.publish(every: 10, on: .main, in: .default)
       .autoconnect()
       .map { _ in
          index += 1

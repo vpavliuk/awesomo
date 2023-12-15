@@ -22,7 +22,7 @@ extension StoredEvent {
    }
 
    func decodeAppEvent() -> (any InputEvent)? {
-      guard let appEventType = eventTypeID.getEventType() else {
+      guard let appEventType = eventTypeID.getConcreteEventType() else {
          return nil
       }
       return try? JSONDecoder().decode(appEventType, from: eventData)

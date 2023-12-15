@@ -13,16 +13,15 @@ import PeerDiscovery
 
 @main
 struct AwesomoApp: App {
-   @StateObject
-   var app = buildApp(
+   #warning("StateObject?")
+   let app = buildApp(
       peerDiscoveryInput: PeerDiscoveryMock().output,
-      peerListUserInput: Just(PeerListUserInput.didSelectPeer(Peer.ID(value: "123"))),
       middleman: Player()
    )
 
    var body: some Scene {
       WindowGroup {
-         app.entryPointView
+         app.makeEntryPointView()
       }
    }
 }
