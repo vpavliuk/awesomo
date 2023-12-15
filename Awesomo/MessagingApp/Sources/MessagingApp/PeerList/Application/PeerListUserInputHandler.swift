@@ -8,16 +8,20 @@
 import Domain
 
 struct PeerListUserInputHandler: InputHandler {
-   init(completion: @escaping (Peer.ID) -> Void) {
+   init(coreMessenger: CoreMessenger, completion: @escaping (Peer.ID) -> Void) {
+      self.coreMessenger = coreMessenger
       self.completion = completion
    }
 
-   func on(_ event: PeerListUserInput) {
+   func on(_ event: PeerListUserInput) -> CoreMessenger.State {
+      print("Received PeerListUserInput: \(event)")
       switch event {
       case .didSelectPeer(let peerID):
-         completion(peerID)
+         #warning("Dirty hack")
+         return coreMessenger.add(.initial)
       }
    }
 
-   let completion: (Peer.ID) -> Void
+   private let coreMessenger: CoreMessenger
+   private let completion: (Peer.ID) -> Void
 }

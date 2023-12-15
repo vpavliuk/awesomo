@@ -14,10 +14,9 @@ public struct PeerAvailabilityHandler: InputHandler {
       self.completion = completion
    }
 
-   public func on(_ event: PeerAvailabilityEvent) {
+   public func on(_ event: PeerAvailabilityEvent) -> CoreMessenger.State {
       let domainEvent = Domain.InputEvent(peerAvailabilityEvent: event)
-      let state = coreMessenger.add(domainEvent)
-      completion(state)
+      return coreMessenger.add(domainEvent)
    }
 
    private let coreMessenger: CoreMessenger

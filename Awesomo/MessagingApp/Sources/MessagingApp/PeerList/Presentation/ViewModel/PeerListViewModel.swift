@@ -10,6 +10,14 @@ import Combine
 
 final class PeerListViewModel: ViewModel<CoreMessenger.State, PeerListState> {
 
+   required init(
+      domainSource: CurrentValueSubject<CoreMessenger.State, Never>,
+      userInputMerger: UserInputMergerProtocol
+   ) {
+      super.init(domainSource: domainSource, userInputMerger: userInputMerger)
+      userInputMerger.merge(publisher: userInput)
+   }
+
    var selectedPeerID: Peer.ID? {
       didSet {
          guard let selectedPeerID else { return }

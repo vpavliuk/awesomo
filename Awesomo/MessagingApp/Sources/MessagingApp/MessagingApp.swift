@@ -7,12 +7,44 @@ enum AppError: Error {
    case couldNotFindHandlerForInputEvent(any InputEvent)
 }
 
-public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject {
-   public init() {
-      inputInternal = PublishingSubscriber()
+public final class MessagingApp<ContentNetworkRepresentation> {
+
+   public convenience init() {
+      let userInputSink = PassthroughSubject<any UserInput, Never>()
+      let userInputMerger: UserInputMergerProtocol = UserInputMerger(userInputSink: userInputSink)
+      let initialState: CoreMessenger.State = .loadingSavedChats
+      let domainPublisher = CurrentValueSubject<CoreMessenger.State, Never>(initialState)
+      let viewModelBuilder: some ViewModelBuilderProtocol = ViewModelBuilder(
+         domainPublisher: domainPublisher,
+         userInputMerger: userInputMerger
+      )
+
+      self.init(
+         userInputSinkInternal: userInputSink,
+         userInputMerger: userInputMerger,
+         initialState: initialState,
+         domainPublisher: domainPublisher,
+         viewModelBuilder: viewModelBuilder
+      )
+   }
+
+   internal init(
+      userInputSinkInternal: PassthroughSubject<any UserInput, Never>,
+      userInputMerger: UserInputMergerProtocol,
+      initialState: CoreMessenger.State,
+      domainPublisher: CurrentValueSubject<CoreMessenger.State, Never>,
+      viewModelBuilder: some ViewModelBuilderProtocol
+   ) {
+      self.inputInternal = PublishingSubscriber()
+      self.userInputSinkInternal = userInputSinkInternal
+      self.userInputMerger = userInputMerger
+      self.domainState = initialState
+      self.domainPublisher = domainPublisher
+      self.viewModelBuilder = viewModelBuilder
    }
 
    private var subscription: AnyCancellable?
+
    public func wireUp() {
       subscription = inputInternal
          .publisher
@@ -23,9 +55,14 @@ public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject 
    }
 
    private lazy var inputHandlers: [any InputHandler] = [
-      CommonInputHandler(),
-      PeerAvailabilityHandler(coreMessenger: coreMessenger) { [weak self] state in self?.domainState = state },
-      PeerListUserInputHandler { [weak self] peerID in self?.activeScreen = .selectedPeer(peerID) },
+      CommonInputHandler(coreMessenger: coreMessenger),
+      PeerAvailabilityHandler(coreMessenger: coreMessenger) {
+         [weak self] state in
+         self?.domainState = state
+      },
+      PeerListUserInputHandler(coreMessenger: coreMessenger) { [weak self] peerID in
+         self?.activeScreen = .selectedPeer(peerID)
+      },
    ]
 
    private func on(event: some InputEvent) throws {
@@ -43,7 +80,7 @@ public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject 
       guard let event = event as? H.Event else {
          return false
       }
-      handler.on(event)
+      domainState = handler.on(event)
       return true
    }
 
@@ -55,14 +92,27 @@ public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject 
    @Published
    private(set) var activeScreen: ActiveScreen = .peerList
 
-   public private(set) var domainState: CoreMessenger.State = .loadingSavedChats
-
-   lazy var domainPublisher = CurrentValueSubject<CoreMessenger.State, Never>(domainState)
-
-   public var entryPointView: some View {
-      EntryPointView()
-         .environmentObject(self)
+   private var domainState: CoreMessenger.State {
+      didSet {
+         if domainState != oldValue {
+            domainPublisher.send(domainState)
+         }
+      }
    }
+
+   let domainPublisher: CurrentValueSubject<CoreMessenger.State, Never>
+
+   public func makeEntryPointView() -> some View {
+      AnyView(
+         EntryPointView()
+            .environmentObject(viewModelBuilder)
+      )
+   }
+
+   public lazy var userInputSink: some Publisher<any UserInput, Never> = userInputSinkInternal
+   private let userInputSinkInternal: PassthroughSubject<any UserInput, Never>
+   private let userInputMerger: UserInputMergerProtocol
+   private let viewModelBuilder: any ViewModelBuilderProtocol
 }
 
 enum ActiveScreen {

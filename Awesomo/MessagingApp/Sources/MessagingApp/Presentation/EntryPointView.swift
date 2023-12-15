@@ -9,11 +9,9 @@ import SwiftUI
 
 struct EntryPointView: View {
    @EnvironmentObject
-   var app: MessagingApp<Data>
+   var app: ViewModelBuilder
 
    var body: some View {
-      PeerListView(
-         vm: PeerListViewModel(domainSource: app.domainPublisher)
-      )
+      PeerListView(vm: app.buildViewModel())
    }
 }

@@ -42,8 +42,9 @@ private struct LoadedPeerList: View {
 
    var selection: Binding<Peer.ID?>
    let peers: NonEmpty<PeerDisplayModel>
+
    var body: some View {
-      List(peers) { peer in
+      List(peers, selection: selection) { peer in
          Text(peer.name)
       }
    }
@@ -61,7 +62,10 @@ private struct PeerView: View {
 #Preview("Loading") {
    PeerListView(
       vm: PeerListViewModel(
-         domainSource: CurrentValueSubject(.loadingSavedChats)
+         domainSource: CurrentValueSubject(.loadingSavedChats),
+         userInputMerger: UserInputMerger(
+            userInputSink: PassthroughSubject()
+         )
       )
    )
 }
@@ -69,56 +73,69 @@ private struct PeerView: View {
 #Preview("Loaded one peer") {
    PeerListView(
       vm: PeerListViewModel(
-         domainSource: CurrentValueSubject(.loaded([
-            Peer.Snapshot(
-               peerID: EntityID(value: "1"),
-               status: .online,
-               relation: .friend,
-               name: "John",
-               networkAddress: NetworkAddress(value: "123"),
-               incomingMessages: [],
-               outgoingMessages: []
+         domainSource: CurrentValueSubject(
+            .loaded(
+               [
+                  Peer.Snapshot(
+                     peerID: EntityID(value: "1"),
+                     status: .online,
+                     relation: .friend,
+                     name: "John",
+                     networkAddress: NetworkAddress(value: "123"),
+                     incomingMessages: [],
+                     outgoingMessages: []
+                  )
+               ]
             )
-         ]
-                                                   )
-      )
+         ),
+         userInputMerger: UserInputMerger(
+            userInputSink: PassthroughSubject()
          )
       )
+   )
 }
 
 #Preview("Loaded two peers") {
    PeerListView(
       vm: PeerListViewModel(
-         domainSource: CurrentValueSubject(.loaded([
-            Peer.Snapshot(
-               peerID: EntityID(value: "1"),
-               status: .online,
-               relation: .friend,
-               name: "John",
-               networkAddress: NetworkAddress(value: "123"),
-               incomingMessages: [],
-               outgoingMessages: []
-            ),
-            Peer.Snapshot(
-               peerID: EntityID(value: "2"),
-               status: .online,
-               relation: .friend,
-               name: "Alice",
-               networkAddress: NetworkAddress(value: "123"),
-               incomingMessages: [],
-               outgoingMessages: []
+         domainSource: CurrentValueSubject(
+            .loaded(
+               [
+                  Peer.Snapshot(
+                     peerID: EntityID(value: "1"),
+                     status: .online,
+                     relation: .friend,
+                     name: "John",
+                     networkAddress: NetworkAddress(value: "123"),
+                     incomingMessages: [],
+                     outgoingMessages: []
+                  ),
+                  Peer.Snapshot(
+                     peerID: EntityID(value: "2"),
+                     status: .online,
+                     relation: .friend,
+                     name: "Alice",
+                     networkAddress: NetworkAddress(value: "123"),
+                     incomingMessages: [],
+                     outgoingMessages: []
+                  )
+               ]
             )
-         ]
-                                                   )
-      )
+         ),
+         userInputMerger: UserInputMerger(
+            userInputSink: PassthroughSubject()
          )
       )
+   )
 }
 
 #Preview("Loaded empty") {
    PeerListView(
       vm: PeerListViewModel(
-         domainSource: CurrentValueSubject(.loaded([]))
+         domainSource: CurrentValueSubject(.loaded([])),
+         userInputMerger: UserInputMerger(
+            userInputSink: PassthroughSubject()
+         )
       )
    )
 }

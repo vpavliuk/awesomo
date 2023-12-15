@@ -14,8 +14,15 @@ public enum CommonInput: InputEvent {
    case initial
 }
 
+import Domain
+
 struct CommonInputHandler: InputHandler {
-   func on(_ event: CommonInput) {
-      print("Common input detected: \(event)")
+   init(coreMessenger: CoreMessenger) {
+      self.coreMessenger = coreMessenger
    }
+   func on(_ event: CommonInput) -> CoreMessenger.State {
+      print("Common input detected: \(event)")
+      return coreMessenger.add(.initial)
+   }
+   private let coreMessenger: CoreMessenger
 }

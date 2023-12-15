@@ -6,13 +6,15 @@
 //
 
 import Combine
-import Utils
 
 class ViewModel<DomainState, PresentationState: DomainDerivable>: ObservableObject
       where PresentationState.DomainState == DomainState {
 
-   init(domainSource: CurrentValueSubject<DomainState, Never>) {
-      state = .fromDomainState(domainSource.value)
+   required init(
+      domainSource: CurrentValueSubject<DomainState, Never>,
+      userInputMerger: UserInputMergerProtocol
+   ) {
+      self.state = .fromDomainState(domainSource.value)
 
       domainSource
          .map(PresentationState.fromDomainState)

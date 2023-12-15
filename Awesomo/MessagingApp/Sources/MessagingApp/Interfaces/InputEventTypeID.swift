@@ -9,10 +9,12 @@ public struct InputEventTypeID: Hashable, Codable {
    init(value: String) {
       self.value = value
    }
-
    private let value: String
+}
 
-   public func getEventType() -> InputEvent.Type? { Self.eventTypesByID[self] }
+extension InputEventTypeID {
+
+   public func getConcreteEventType() -> InputEvent.Type? { Self.eventTypesByID[self] }
 
    private static var eventTypesByID: [Self: InputEvent.Type] =
          Dictionary(uniqueKeysWithValues: eventTypes.map { ($0.eventTypeID, $0) })
