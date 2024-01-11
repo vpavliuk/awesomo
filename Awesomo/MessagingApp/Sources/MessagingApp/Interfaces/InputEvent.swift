@@ -9,8 +9,11 @@ public protocol InputEvent: Codable {
    static var eventTypeID: InputEventTypeID { get }
 }
 
+extension InputEvent {
+   public static var eventTypeID: InputEventTypeID { InputEventTypeID(Self.self) }
+}
+
 public enum CommonInput: InputEvent {
-   public static let eventTypeID = InputEventTypeID(value: "CommonInput")
    case initial
 }
 

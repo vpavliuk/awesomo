@@ -8,6 +8,5 @@
 import Domain
 
 enum PeerListUserInput: UserInput {
-   static public let eventTypeID = InputEventTypeID(value: "PeerListUserInput")
    case didSelectPeer(Peer.ID)
 }

@@ -41,6 +41,8 @@ public final class MessagingApp<ContentNetworkRepresentation> {
       self.domainState = initialState
       self.domainPublisher = domainPublisher
       self.viewModelBuilder = viewModelBuilder
+      self.router = ChatRouter()
+      self.destinationProvider = ChatViewProvider(domainSource: domainPublisher, userInputMerger: userInputMerger)
    }
 
    private var subscription: AnyCancellable?
@@ -60,10 +62,13 @@ public final class MessagingApp<ContentNetworkRepresentation> {
          [weak self] state in
          self?.domainState = state
       },
-      PeerListUserInputHandler(coreMessenger: coreMessenger) { [weak self] peerID in
-         self?.activeScreen = .selectedPeer(peerID)
-      },
+      PeerListUserInputHandler(coreMessenger: coreMessenger, chatRouter: router),
+      ChatFlowNavigationPopHandler(coreMessenger: coreMessenger, router: router)
    ]
+
+   #warning("Get the router from Chat flow")
+   private let router: ChatRouter
+   private let destinationProvider: ChatViewProvider
 
    private func on(event: some InputEvent) throws {
       var isHandled = false
@@ -85,12 +90,10 @@ public final class MessagingApp<ContentNetworkRepresentation> {
    }
 
    public lazy var input: some Subscriber<any InputEvent, Never> = inputInternal
+   #warning("A Sink subscriber might be sufficient")
    private let inputInternal: PublishingSubscriber<any InputEvent, Never>
 
    private let coreMessenger = CoreMessenger()
-
-   @Published
-   private(set) var activeScreen: ActiveScreen = .peerList
 
    private var domainState: CoreMessenger.State {
       didSet {
@@ -104,8 +107,10 @@ public final class MessagingApp<ContentNetworkRepresentation> {
 
    public func makeEntryPointView() -> some View {
       AnyView(
-         EntryPointView()
+         ChatEntryPointView()
             .environmentObject(viewModelBuilder)
+            .environmentObject(router)
+            .environmentObject(destinationProvider)
       )
    }
 
@@ -113,9 +118,4 @@ public final class MessagingApp<ContentNetworkRepresentation> {
    private let userInputSinkInternal: PassthroughSubject<any UserInput, Never>
    private let userInputMerger: UserInputMergerProtocol
    private let viewModelBuilder: any ViewModelBuilderProtocol
-}
-
-enum ActiveScreen {
-   case peerList
-   case selectedPeer(Peer.ID)
 }

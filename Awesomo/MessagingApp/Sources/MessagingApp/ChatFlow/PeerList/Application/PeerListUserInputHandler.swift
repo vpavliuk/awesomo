@@ -6,22 +6,24 @@
 //
 
 import Domain
+import Combine
 
-struct PeerListUserInputHandler: InputHandler {
-   init(coreMessenger: CoreMessenger, completion: @escaping (Peer.ID) -> Void) {
+struct PeerListUserInputHandler<Router: NavigationRouter>: InputHandler where Router.Entity == Peer.ID {
+
+   init(coreMessenger: CoreMessenger, chatRouter: Router) {
       self.coreMessenger = coreMessenger
-      self.completion = completion
+      self.chatRouter = chatRouter
    }
 
    func on(_ event: PeerListUserInput) -> CoreMessenger.State {
-      print("Received PeerListUserInput: \(event)")
       switch event {
       case .didSelectPeer(let peerID):
+         chatRouter.push(peerID)
          #warning("Dirty hack")
          return coreMessenger.add(.initial)
       }
    }
 
    private let coreMessenger: CoreMessenger
-   private let completion: (Peer.ID) -> Void
+   private let chatRouter: Router
 }

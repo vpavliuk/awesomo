@@ -17,11 +17,11 @@ extension InputEventTypeID {
    public func getConcreteEventType() -> InputEvent.Type? { Self.eventTypesByID[self] }
 
    private static var eventTypesByID: [Self: InputEvent.Type] =
-         Dictionary(uniqueKeysWithValues: eventTypes.map { ($0.eventTypeID, $0) })
+         Dictionary(uniqueKeysWithValues: allEventTypes.map { ($0.eventTypeID, $0) })
+}
 
-   private static let eventTypes: [any InputEvent.Type] = [
-      PeerAvailabilityEvent.self,
-      PeerListUserInput.self,
-      CommonInput.self,
-   ]
+extension InputEventTypeID {
+   init<T: InputEvent>(_ type: T.Type) {
+      self.init(value: String(describing: type))
+   }
 }
