@@ -9,18 +9,18 @@ import Domain
 
 public struct PeerAvailabilityHandler: InputHandler {
 
-   init(coreMessenger: CoreMessenger, completion: @escaping (CoreMessenger.State) -> Void) {
+   init(coreMessenger: CoreMessenger, domainStore: DomainStore<CoreMessenger.State>) {
       self.coreMessenger = coreMessenger
-      self.completion = completion
+      self.domainStore = domainStore
    }
 
-   public func on(_ event: PeerAvailabilityEvent) -> CoreMessenger.State {
+   public func on(_ event: PeerAvailabilityEvent) {
       let domainEvent = Domain.InputEvent(peerAvailabilityEvent: event)
-      return coreMessenger.add(domainEvent)
+      domainStore.state = coreMessenger.add(domainEvent)
    }
 
    private let coreMessenger: CoreMessenger
-   private let completion: (CoreMessenger.State) -> Void
+   private let domainStore: DomainStore<CoreMessenger.State>
 }
 
 private extension Domain.InputEvent {

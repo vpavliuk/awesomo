@@ -10,14 +10,13 @@ import Combine
 
 enum CommonFactory {
 
-   static let initialState: CoreMessenger.State = .loadingSavedChats
-   static let domainPublisher = CurrentValueSubject<CoreMessenger.State, Never>(initialState)
+   static let domainStore = DomainStore(initialState: CoreMessenger.State.loadingSavedChats)
    static let userInputSink = PassthroughSubject<any UserInput, Never>()
    static let userInputMerger: UserInputMergerProtocol = UserInputMerger(userInputSink: userInputSink)
 
    #warning("Make sure that static let is lazy")
    static let viewModelBuilder: any ViewModelBuilderProtocol = ViewModelBuilder(
-      domainPublisher: domainPublisher,
+      domainStore: domainStore,
       userInputMerger: userInputMerger,
       eventHandlerStore: eventHandlerStore
    )
@@ -26,10 +25,13 @@ enum CommonFactory {
 
    static let coreMessenger = CoreMessenger()
 
-   static let commonInputHandler: some InputHandler<CommonInput> = CommonInputHandler(coreMessenger: coreMessenger)
+   static let commonInputHandler: some InputHandler<CommonInput> = CommonInputHandler(
+      coreMessenger: coreMessenger,
+      domainStore: domainStore
+   )
 
-   static let peerAvailabilityHandler: some InputHandler<PeerAvailabilityEvent> = PeerAvailabilityHandler(coreMessenger: coreMessenger) { _ in
-//      [weak self] state in
-//      self?.domainState = state
-   }
+   static let peerAvailabilityHandler: some InputHandler<PeerAvailabilityEvent> = PeerAvailabilityHandler(
+      coreMessenger: coreMessenger,
+      domainStore: domainStore
+   )
 }

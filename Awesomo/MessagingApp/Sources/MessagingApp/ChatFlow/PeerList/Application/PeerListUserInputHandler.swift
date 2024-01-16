@@ -10,20 +10,16 @@ import Combine
 
 struct PeerListUserInputHandler<Router: NavigationRouter>: InputHandler where Router.Entity == Peer.ID {
 
-   init(coreMessenger: CoreMessenger, chatRouter: Router) {
-      self.coreMessenger = coreMessenger
+   init(chatRouter: Router) {
       self.chatRouter = chatRouter
    }
 
-   func on(_ event: PeerListUserInput) -> CoreMessenger.State {
+   func on(_ event: PeerListUserInput) {
       switch event {
       case .didSelectPeer(let peerID):
          chatRouter.push(peerID)
-         #warning("Dirty hack")
-         return coreMessenger.add(.initial)
       }
    }
 
-   private let coreMessenger: CoreMessenger
    private let chatRouter: Router
 }

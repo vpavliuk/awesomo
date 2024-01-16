@@ -123,7 +123,7 @@ private struct PeerView: View {
 
 private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {
    PeerListViewModel(
-      domainSource: CurrentValueSubject(state),
+      domainStore: DomainStore(initialState: .loadingSavedChats),
       userInputMerger: UserInputMerger(
          userInputSink: PassthroughSubject()
       ),
@@ -133,5 +133,5 @@ private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {
 }
 
 private class PreviewInputHandler: InputHandler {
-   func on(_ event: PeerListUserInput) -> CoreMessenger.State { .loadingSavedChats }
+   func on(_ event: PeerListUserInput) {}
 }

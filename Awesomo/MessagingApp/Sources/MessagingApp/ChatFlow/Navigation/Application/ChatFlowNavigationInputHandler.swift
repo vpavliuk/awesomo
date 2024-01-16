@@ -10,16 +10,13 @@ import Combine
 
 final class ChatFlowNavigationPopHandler<Router: NavigationRouter>: InputHandler where Router.Entity == Peer.ID {
 
-   init(coreMessenger: CoreMessenger, router: Router) {
-      self.coreMessenger = coreMessenger
+   init(router: Router) {
       self.router = router
    }
 
-   func on(_: ChatFlowNavigationPop) -> CoreMessenger.State {
+   func on(_: ChatFlowNavigationPop) {
       router.pop()
-      return coreMessenger.add(.initial)
    }
 
-   private let coreMessenger: CoreMessenger
    private var router: Router
 }

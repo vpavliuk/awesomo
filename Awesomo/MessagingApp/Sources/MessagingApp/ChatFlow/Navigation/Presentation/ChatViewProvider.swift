@@ -12,16 +12,17 @@ import SwiftUI
 final class ChatViewProvider: ObservableObject {
 
    init(
-      domainSource: CurrentValueSubject<CoreMessenger.State, Never>,
+      domainStore: DomainStore<CoreMessenger.State>,
       userInputMerger: UserInputMergerProtocol,
-      eventHandlerStore: EventHandlerStoreProtocol
+      eventHandlerStore: EventHandlerStoreProtocol,
+      navigationPopInputHandler: some InputHandler<ChatFlowNavigationPop>
    ) {
-      self.domainSource = domainSource
+      self.domainStore = domainStore
       self.eventHandlerStore = eventHandlerStore
 
       userInputMerger.merge(publisher: userInput)
       #warning("Handle error")
-      try! eventHandlerStore.registerHandler(ChatFactory.navigationPopInputHandler)
+      try! eventHandlerStore.registerHandler(navigationPopInputHandler)
    }
 
    deinit {
@@ -29,10 +30,10 @@ final class ChatViewProvider: ObservableObject {
       try! eventHandlerStore.unregisterHandler(for: ChatFlowNavigationPop.self)
    }
 
-   private let domainSource: CurrentValueSubject<CoreMessenger.State, Never>
+   private let domainStore: DomainStore<CoreMessenger.State>
 
    private var peers: [Peer.Snapshot] {
-      if case .loaded(let peers) = domainSource.value {
+      if case .loaded(let peers) = domainStore.state {
          return peers
       }
 

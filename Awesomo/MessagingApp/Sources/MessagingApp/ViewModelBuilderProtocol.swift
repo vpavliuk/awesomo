@@ -9,5 +9,11 @@ import Combine
 import Domain
 
 protocol ViewModelBuilderProtocol: ObservableObject {
-   func buildViewModel<PS, VM: ViewModel<CoreMessenger.State, PS>>() -> VM
+
+   func buildViewModel<PS, VM: ViewModel<CoreMessenger.State, PS>>(of _: VM.Type) -> VM
+
+   func buildInteractiveViewModel<PS, UI: UserInput, IVM: InteractiveViewModel<CoreMessenger.State, PS, UI>>(
+      of _: IVM.Type,
+      userInputHandler: some InputHandler<UI>
+   ) -> IVM
 }

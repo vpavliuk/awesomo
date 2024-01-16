@@ -6,9 +6,7 @@ import SwiftUI
 public final class MessagingApp<ContentNetworkRepresentation> {
 
    init(
-      initialState: CoreMessenger.State,
       coreMessenger: CoreMessenger,
-      domainPublisher: CurrentValueSubject<CoreMessenger.State, Never>,
       userInputSink: AnyPublisher<any UserInput, Never>,
       viewModelBuilder: some ViewModelBuilderProtocol,
       handlerStore: some EventHandlerStoreProtocol,
@@ -16,9 +14,7 @@ public final class MessagingApp<ContentNetworkRepresentation> {
       peerAvailabilityHandler: some InputHandler<PeerAvailabilityEvent>
    ) {
       self.inputInternal = PublishingSubscriber()
-      self.domainState = initialState
       self.coreMessenger = coreMessenger
-      self.domainPublisher = domainPublisher
       self.userInputSink = userInputSink
       self.viewModelBuilder = viewModelBuilder
       self.handlerStore = handlerStore
@@ -54,7 +50,7 @@ public final class MessagingApp<ContentNetworkRepresentation> {
       guard let event = event as? H.Event else {
          throw AppError.wrongHandlerForInputEvent(event, handler)
       }
-      domainState = handler.on(event)
+      handler.on(event)
    }
 
    public func makeEntryPointView() -> some View {
@@ -67,15 +63,6 @@ public final class MessagingApp<ContentNetworkRepresentation> {
    public lazy var input: some Subscriber<any InputEvent, Never> = inputInternal
    public let userInputSink: AnyPublisher<any UserInput, Never>
 
-   private var domainState: CoreMessenger.State {
-      didSet {
-         if domainState != oldValue {
-            domainPublisher.send(domainState)
-         }
-      }
-   }
-
-   private let domainPublisher: CurrentValueSubject<CoreMessenger.State, Never>
    private let viewModelBuilder: any ViewModelBuilderProtocol
    private let handlerStore: any EventHandlerStoreProtocol
    private var subscription: AnyCancellable?
@@ -89,9 +76,7 @@ public final class MessagingApp<ContentNetworkRepresentation> {
 extension MessagingApp {
    public convenience init() {
       self.init(
-         initialState: CommonFactory.initialState,
          coreMessenger: CommonFactory.coreMessenger,
-         domainPublisher: CommonFactory.domainPublisher,
          userInputSink: CommonFactory.userInputSink.eraseToAnyPublisher(),
          viewModelBuilder: CommonFactory.viewModelBuilder,
          handlerStore: CommonFactory.eventHandlerStore,

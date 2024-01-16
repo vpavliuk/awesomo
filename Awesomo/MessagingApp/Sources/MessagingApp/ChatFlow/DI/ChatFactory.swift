@@ -10,19 +10,17 @@ enum ChatFactory {
    #warning("Try to hide behind a protocol")
    static let router = ChatRouter()
 
-   static let peerListUserInputHandler = PeerListUserInputHandler(
-      coreMessenger: CommonFactory.coreMessenger,
-      chatRouter: router
-   )
+   static let peerListUserInputHandler = PeerListUserInputHandler(chatRouter: router)
 
-   static let destinationProvider = ChatViewProvider(
-      domainSource: CommonFactory.domainPublisher,
-      userInputMerger: CommonFactory.userInputMerger,
-      eventHandlerStore: CommonFactory.eventHandlerStore
-   )
+   static func getDestinationProvider() -> ChatViewProvider {
+      return ChatViewProvider(
+         domainStore: CommonFactory.domainStore,
+         userInputMerger: CommonFactory.userInputMerger,
+         eventHandlerStore: CommonFactory.eventHandlerStore,
+         navigationPopInputHandler: navigationPopInputHandler
+      )
+   }
 
-   static let navigationPopInputHandler: some InputHandler<ChatFlowNavigationPop> = ChatFlowNavigationPopHandler(
-      coreMessenger: CommonFactory.coreMessenger,
-      router: router
-   )
+   static let navigationPopInputHandler: some InputHandler<ChatFlowNavigationPop>
+         = ChatFlowNavigationPopHandler(router: router)
 }

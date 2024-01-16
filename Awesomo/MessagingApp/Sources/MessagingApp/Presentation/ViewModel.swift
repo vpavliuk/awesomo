@@ -10,10 +10,10 @@ import Combine
 class ViewModel<DomainState, PresentationState: DomainDerivable>: ObservableObject
       where PresentationState.DomainState == DomainState {
 
-   required init(domainSource: CurrentValueSubject<DomainState, Never>) {
-      self.state = .fromDomainState(domainSource.value)
+   required init(domainStore: DomainStore<DomainState>) {
+      self.state = .fromDomainState(domainStore.state)
 
-      domainSource
+      domainStore.$state
          .map(PresentationState.fromDomainState)
          .assign(to: &$state)
    }

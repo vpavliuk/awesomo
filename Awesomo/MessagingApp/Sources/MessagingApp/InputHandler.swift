@@ -9,5 +9,5 @@ import Domain
 
 protocol InputHandler<Event> {
    associatedtype Event: InputEvent
-   func on(_ event: Event) -> CoreMessenger.State
+   func on(_ event: Event)
 }

@@ -13,6 +13,8 @@ extension InputEvent {
    public static var eventTypeID: InputEventTypeID { InputEventTypeID(Self.self) }
 }
 
+
+#warning("Consider removing CommonInput")
 public enum CommonInput: InputEvent {
    case initial
 }
@@ -20,12 +22,16 @@ public enum CommonInput: InputEvent {
 import Domain
 
 struct CommonInputHandler: InputHandler {
-   init(coreMessenger: CoreMessenger) {
+   init(coreMessenger: CoreMessenger, domainStore: DomainStore<CoreMessenger.State>) {
       self.coreMessenger = coreMessenger
+      self.domainStore = domainStore
    }
-   func on(_ event: CommonInput) -> CoreMessenger.State {
+
+   func on(_ event: CommonInput) {
       print("Common input detected: \(event)")
-      return coreMessenger.add(.initial)
+      domainStore.state = coreMessenger.add(.initial)
    }
+
    private let coreMessenger: CoreMessenger
+   private let domainStore: DomainStore<CoreMessenger.State>
 }
