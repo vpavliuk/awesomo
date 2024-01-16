@@ -11,9 +11,22 @@ import SwiftUI
 
 final class ChatViewProvider: ObservableObject {
 
-   init(domainSource: CurrentValueSubject<CoreMessenger.State, Never>, userInputMerger: UserInputMergerProtocol) {
+   init(
+      domainSource: CurrentValueSubject<CoreMessenger.State, Never>,
+      userInputMerger: UserInputMergerProtocol,
+      eventHandlerStore: EventHandlerStoreProtocol
+   ) {
       self.domainSource = domainSource
+      self.eventHandlerStore = eventHandlerStore
+
       userInputMerger.merge(publisher: userInput)
+      #warning("Handle error")
+      try! eventHandlerStore.registerHandler(ChatFactory.navigationPopInputHandler)
+   }
+
+   deinit {
+      #warning("Handle error")
+      try! eventHandlerStore.unregisterHandler(for: ChatFlowNavigationPop.self)
    }
 
    private let domainSource: CurrentValueSubject<CoreMessenger.State, Never>
@@ -45,4 +58,6 @@ final class ChatViewProvider: ObservableObject {
 
    // An outgoing stream of app events
    private let userInput: some Subject<ChatFlowNavigationPop, Never> = PassthroughSubject()
+
+   private let eventHandlerStore: EventHandlerStoreProtocol
 }

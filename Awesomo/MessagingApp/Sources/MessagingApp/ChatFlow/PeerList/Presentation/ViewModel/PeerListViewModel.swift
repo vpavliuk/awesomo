@@ -8,15 +8,7 @@
 import Domain
 import Combine
 
-final class PeerListViewModel: ViewModel<CoreMessenger.State, PeerListState> {
-
-   required init(
-      domainSource: CurrentValueSubject<CoreMessenger.State, Never>,
-      userInputMerger: UserInputMergerProtocol
-   ) {
-      super.init(domainSource: domainSource, userInputMerger: userInputMerger)
-      userInputMerger.merge(publisher: userInput)
-   }
+final class PeerListViewModel: InteractiveViewModel<CoreMessenger.State, PeerListState, PeerListUserInput> {
 
    var selectedPeerID: Peer.ID? {
       didSet {
@@ -27,7 +19,4 @@ final class PeerListViewModel: ViewModel<CoreMessenger.State, PeerListState> {
          userInput.send(.didSelectPeer(selectedPeerID))
       }
    }
-
-   // An outgoing stream of app events
-   private let userInput: some Subject<PeerListUserInput, Never> = PassthroughSubject()
 }

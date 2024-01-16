@@ -126,6 +126,12 @@ private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {
       domainSource: CurrentValueSubject(state),
       userInputMerger: UserInputMerger(
          userInputSink: PassthroughSubject()
-      )
+      ),
+      eventHandlerStore: EventHandlerStore(),
+      userInputHandler: PreviewInputHandler()
    )
+}
+
+private class PreviewInputHandler: InputHandler {
+   func on(_ event: PeerListUserInput) -> CoreMessenger.State { .loadingSavedChats }
 }

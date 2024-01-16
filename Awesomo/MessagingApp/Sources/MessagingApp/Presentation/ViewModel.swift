@@ -10,10 +10,7 @@ import Combine
 class ViewModel<DomainState, PresentationState: DomainDerivable>: ObservableObject
       where PresentationState.DomainState == DomainState {
 
-   required init(
-      domainSource: CurrentValueSubject<DomainState, Never>,
-      userInputMerger: UserInputMergerProtocol
-   ) {
+   required init(domainSource: CurrentValueSubject<DomainState, Never>) {
       self.state = .fromDomainState(domainSource.value)
 
       domainSource

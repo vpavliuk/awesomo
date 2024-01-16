@@ -9,7 +9,7 @@ import SwiftUI
 import Domain
 
 final class ChatRouter: NavigationRouter {
-   
+
    @Published
    var path = NavigationPath()
 

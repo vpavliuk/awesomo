@@ -3,51 +3,38 @@ import Domain
 import Combine
 import SwiftUI
 
-enum AppError: Error {
-   case couldNotFindHandlerForInputEvent(any InputEvent)
-}
-
 public final class MessagingApp<ContentNetworkRepresentation> {
 
-   public convenience init() {
-      let userInputSink = PassthroughSubject<any UserInput, Never>()
-      let userInputMerger: UserInputMergerProtocol = UserInputMerger(userInputSink: userInputSink)
-      let initialState: CoreMessenger.State = .loadingSavedChats
-      let domainPublisher = CurrentValueSubject<CoreMessenger.State, Never>(initialState)
-      let viewModelBuilder: some ViewModelBuilderProtocol = ViewModelBuilder(
-         domainPublisher: domainPublisher,
-         userInputMerger: userInputMerger
-      )
-
-      self.init(
-         userInputSinkInternal: userInputSink,
-         userInputMerger: userInputMerger,
-         initialState: initialState,
-         domainPublisher: domainPublisher,
-         viewModelBuilder: viewModelBuilder
-      )
-   }
-
-   internal init(
-      userInputSinkInternal: PassthroughSubject<any UserInput, Never>,
-      userInputMerger: UserInputMergerProtocol,
+   init(
       initialState: CoreMessenger.State,
+      coreMessenger: CoreMessenger,
       domainPublisher: CurrentValueSubject<CoreMessenger.State, Never>,
-      viewModelBuilder: some ViewModelBuilderProtocol
+      userInputSink: AnyPublisher<any UserInput, Never>,
+      viewModelBuilder: some ViewModelBuilderProtocol,
+      handlerStore: some EventHandlerStoreProtocol,
+      commonInputHandler: some InputHandler<CommonInput>,
+      peerAvailabilityHandler: some InputHandler<PeerAvailabilityEvent>
    ) {
       self.inputInternal = PublishingSubscriber()
-      self.userInputSinkInternal = userInputSinkInternal
-      self.userInputMerger = userInputMerger
       self.domainState = initialState
+      self.coreMessenger = coreMessenger
       self.domainPublisher = domainPublisher
+      self.userInputSink = userInputSink
       self.viewModelBuilder = viewModelBuilder
-      self.router = ChatRouter()
-      self.destinationProvider = ChatViewProvider(domainSource: domainPublisher, userInputMerger: userInputMerger)
+      self.handlerStore = handlerStore
+      self.commonInputHandler = commonInputHandler
+      self.peerAvailabilityHandler = peerAvailabilityHandler
    }
 
-   private var subscription: AnyCancellable?
+   deinit {
+      try! handlerStore.unregisterHandler(for: CommonInput.self)
+      try! handlerStore.unregisterHandler(for: PeerAvailabilityEvent.self)
+   }
 
    public func wireUp() {
+      try! handlerStore.registerHandler(commonInputHandler)
+      try! handlerStore.registerHandler(peerAvailabilityHandler)
+
       subscription = inputInternal
          .publisher
          .sink { [weak self] appInput in
@@ -56,44 +43,29 @@ public final class MessagingApp<ContentNetworkRepresentation> {
          }
    }
 
-   private lazy var inputHandlers: [any InputHandler] = [
-      CommonInputHandler(coreMessenger: coreMessenger),
-      PeerAvailabilityHandler(coreMessenger: coreMessenger) {
-         [weak self] state in
-         self?.domainState = state
-      },
-      PeerListUserInputHandler(coreMessenger: coreMessenger, chatRouter: router),
-      ChatFlowNavigationPopHandler(coreMessenger: coreMessenger, router: router)
-   ]
-
-   #warning("Get the router from Chat flow")
-   private let router: ChatRouter
-   private let destinationProvider: ChatViewProvider
-
    private func on(event: some InputEvent) throws {
-      var isHandled = false
-      var iterator = inputHandlers.makeIterator()
-      while let handler = iterator.next(), !isHandled {
-         isHandled = tryHandle(event, with: handler)
-      }
-      if !isHandled {
+      guard let handler = handlerStore.getHandler(for: event) else {
          throw AppError.couldNotFindHandlerForInputEvent(event)
       }
+      try handle(event, with: handler)
    }
 
-   private func tryHandle<H: InputHandler>(_ event: some InputEvent, with handler: H) -> Bool {
+   private func handle<H: InputHandler>(_ event: some InputEvent, with handler: H) throws {
       guard let event = event as? H.Event else {
-         return false
+         throw AppError.wrongHandlerForInputEvent(event, handler)
       }
       domainState = handler.on(event)
-      return true
+   }
+
+   public func makeEntryPointView() -> some View {
+      AnyView(
+         ChatEntryPointView()
+            .environmentObject(viewModelBuilder)
+      )
    }
 
    public lazy var input: some Subscriber<any InputEvent, Never> = inputInternal
-   #warning("A Sink subscriber might be sufficient")
-   private let inputInternal: PublishingSubscriber<any InputEvent, Never>
-
-   private let coreMessenger = CoreMessenger()
+   public let userInputSink: AnyPublisher<any UserInput, Never>
 
    private var domainState: CoreMessenger.State {
       didSet {
@@ -103,19 +75,28 @@ public final class MessagingApp<ContentNetworkRepresentation> {
       }
    }
 
-   let domainPublisher: CurrentValueSubject<CoreMessenger.State, Never>
+   private let domainPublisher: CurrentValueSubject<CoreMessenger.State, Never>
+   private let viewModelBuilder: any ViewModelBuilderProtocol
+   private let handlerStore: any EventHandlerStoreProtocol
+   private var subscription: AnyCancellable?
+   #warning("A Sink subscriber might be sufficient")
+   private let inputInternal: PublishingSubscriber<any InputEvent, Never>
+   private let coreMessenger: CoreMessenger
+   private let commonInputHandler: any InputHandler<CommonInput>
+   private let peerAvailabilityHandler: any InputHandler<PeerAvailabilityEvent>
+}
 
-   public func makeEntryPointView() -> some View {
-      AnyView(
-         ChatEntryPointView()
-            .environmentObject(viewModelBuilder)
-            .environmentObject(router)
-            .environmentObject(destinationProvider)
+extension MessagingApp {
+   public convenience init() {
+      self.init(
+         initialState: CommonFactory.initialState,
+         coreMessenger: CommonFactory.coreMessenger,
+         domainPublisher: CommonFactory.domainPublisher,
+         userInputSink: CommonFactory.userInputSink.eraseToAnyPublisher(),
+         viewModelBuilder: CommonFactory.viewModelBuilder,
+         handlerStore: CommonFactory.eventHandlerStore,
+         commonInputHandler: CommonFactory.commonInputHandler,
+         peerAvailabilityHandler: CommonFactory.peerAvailabilityHandler
       )
    }
-
-   public lazy var userInputSink: some Publisher<any UserInput, Never> = userInputSinkInternal
-   private let userInputSinkInternal: PassthroughSubject<any UserInput, Never>
-   private let userInputMerger: UserInputMergerProtocol
-   private let viewModelBuilder: any ViewModelBuilderProtocol
 }
