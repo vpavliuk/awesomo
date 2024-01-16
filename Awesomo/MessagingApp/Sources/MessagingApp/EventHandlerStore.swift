@@ -7,11 +7,11 @@
 
 protocol EventHandlerStoreProtocol: AnyObject {
 
-   func registerHandler(_ handler: some InputHandler) throws
+   func registerHandler(_ handler: some InputEventHandler) throws
 
    func unregisterHandler<E: InputEvent>(for _: E.Type) throws
 
-   func getHandler(for _: some InputEvent) -> (any InputHandler)?
+   func getHandler(for _: some InputEvent) -> (any InputEventHandler)?
 }
 
 final class EventHandlerStore: EventHandlerStoreProtocol {
@@ -20,7 +20,7 @@ final class EventHandlerStore: EventHandlerStoreProtocol {
       handlers.keys.contains(E.eventTypeID)
    }
 
-   func registerHandler<E: InputEvent>(_ handler: some InputHandler<E>) throws {
+   func registerHandler<E: InputEvent>(_ handler: some InputEventHandler<E>) throws {
       guard !hasHandler(for: E.self) else {
          throw AppError.cannotRegisterAnotherHandlerForSameEventType(E.eventTypeID, handler)
       }
@@ -37,9 +37,9 @@ final class EventHandlerStore: EventHandlerStoreProtocol {
       handlers[E.eventTypeID] = nil
    }
 
-   func getHandler<E: InputEvent>(for _: E) -> (any InputHandler)? {
+   func getHandler<E: InputEvent>(for _: E) -> (any InputEventHandler)? {
       handlers[E.eventTypeID]
    }
 
-   private var handlers: [InputEventTypeID: any InputHandler] = [:]
+   private var handlers: [InputEventTypeID: any InputEventHandler] = [:]
 }

@@ -25,7 +25,7 @@ final class ViewModelBuilder: ViewModelBuilderProtocol, ObservableObject {
 
    func buildInteractiveViewModel<PS, UI: UserInput, IVM: InteractiveViewModel<CoreMessenger.State, PS, UI>>(
       of _: IVM.Type,
-      userInputHandler: some InputHandler<UI>
+      userInputHandler: some InputEventHandler<UI>
    ) -> IVM {
       return IVM(
          domainStore: domainStore,

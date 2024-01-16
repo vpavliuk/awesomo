@@ -25,12 +25,12 @@ enum CommonFactory {
 
    static let coreMessenger = CoreMessenger()
 
-   static let commonInputHandler: some InputHandler<CommonInput> = CommonInputHandler(
+   static let commonInputHandler: some InputEventHandler<CommonInput> = CommonInputHandler(
       coreMessenger: coreMessenger,
       domainStore: domainStore
    )
 
-   static let peerAvailabilityHandler: some InputHandler<PeerAvailabilityEvent> = PeerAvailabilityHandler(
+   static let peerAvailabilityHandler: some InputEventHandler<PeerAvailabilityEvent> = PeerAvailabilityHandler(
       coreMessenger: coreMessenger,
       domainStore: domainStore
    )

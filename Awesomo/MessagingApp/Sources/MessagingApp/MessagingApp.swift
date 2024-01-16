@@ -10,8 +10,8 @@ public final class MessagingApp<ContentNetworkRepresentation> {
       userInputSink: AnyPublisher<any UserInput, Never>,
       viewModelBuilder: some ViewModelBuilderProtocol,
       handlerStore: some EventHandlerStoreProtocol,
-      commonInputHandler: some InputHandler<CommonInput>,
-      peerAvailabilityHandler: some InputHandler<PeerAvailabilityEvent>
+      commonInputHandler: some InputEventHandler<CommonInput>,
+      peerAvailabilityHandler: some InputEventHandler<PeerAvailabilityEvent>
    ) {
       self.inputInternal = PublishingSubscriber()
       self.coreMessenger = coreMessenger
@@ -46,7 +46,7 @@ public final class MessagingApp<ContentNetworkRepresentation> {
       try handle(event, with: handler)
    }
 
-   private func handle<H: InputHandler>(_ event: some InputEvent, with handler: H) throws {
+   private func handle<H: InputEventHandler>(_ event: some InputEvent, with handler: H) throws {
       guard let event = event as? H.Event else {
          throw AppError.wrongHandlerForInputEvent(event, handler)
       }
@@ -69,8 +69,8 @@ public final class MessagingApp<ContentNetworkRepresentation> {
    #warning("A Sink subscriber might be sufficient")
    private let inputInternal: PublishingSubscriber<any InputEvent, Never>
    private let coreMessenger: CoreMessenger
-   private let commonInputHandler: any InputHandler<CommonInput>
-   private let peerAvailabilityHandler: any InputHandler<PeerAvailabilityEvent>
+   private let commonInputHandler: any InputEventHandler<CommonInput>
+   private let peerAvailabilityHandler: any InputEventHandler<PeerAvailabilityEvent>
 }
 
 extension MessagingApp {

@@ -21,6 +21,6 @@ enum ChatFactory {
       )
    }
 
-   static let navigationPopInputHandler: some InputHandler<ChatFlowNavigationPop>
+   static let navigationPopInputHandler: some InputEventHandler<ChatFlowNavigationPop>
          = ChatFlowNavigationPopHandler(router: router)
 }

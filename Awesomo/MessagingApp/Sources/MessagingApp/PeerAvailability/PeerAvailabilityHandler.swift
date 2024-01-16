@@ -7,7 +7,7 @@
 
 import Domain
 
-public struct PeerAvailabilityHandler: InputHandler {
+public struct PeerAvailabilityHandler: InputEventHandler {
 
    init(coreMessenger: CoreMessenger, domainStore: DomainStore<CoreMessenger.State>) {
       self.coreMessenger = coreMessenger

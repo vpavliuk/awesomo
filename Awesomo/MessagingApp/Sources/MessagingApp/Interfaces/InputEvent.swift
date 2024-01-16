@@ -21,7 +21,7 @@ public enum CommonInput: InputEvent {
 
 import Domain
 
-struct CommonInputHandler: InputHandler {
+struct CommonInputHandler: InputEventHandler {
    init(coreMessenger: CoreMessenger, domainStore: DomainStore<CoreMessenger.State>) {
       self.coreMessenger = coreMessenger
       self.domainStore = domainStore

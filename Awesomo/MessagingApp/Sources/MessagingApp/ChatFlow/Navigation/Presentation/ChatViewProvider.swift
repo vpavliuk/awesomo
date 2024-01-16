@@ -15,7 +15,7 @@ final class ChatViewProvider: ObservableObject {
       domainStore: DomainStore<CoreMessenger.State>,
       userInputMerger: UserInputMergerProtocol,
       eventHandlerStore: EventHandlerStoreProtocol,
-      navigationPopInputHandler: some InputHandler<ChatFlowNavigationPop>
+      navigationPopInputHandler: some InputEventHandler<ChatFlowNavigationPop>
    ) {
       self.domainStore = domainStore
       self.eventHandlerStore = eventHandlerStore

@@ -14,6 +14,6 @@ protocol ViewModelBuilderProtocol: ObservableObject {
 
    func buildInteractiveViewModel<PS, UI: UserInput, IVM: InteractiveViewModel<CoreMessenger.State, PS, UI>>(
       of _: IVM.Type,
-      userInputHandler: some InputHandler<UI>
+      userInputHandler: some InputEventHandler<UI>
    ) -> IVM
 }

@@ -14,7 +14,7 @@ class InteractiveViewModel<DomainState, PresentationState: DomainDerivable, Conc
       domainStore: DomainStore<DomainState>,
       userInputMerger: UserInputMergerProtocol,
       eventHandlerStore: EventHandlerStoreProtocol,
-      userInputHandler: some InputHandler<ConcreteUserInput>
+      userInputHandler: some InputEventHandler<ConcreteUserInput>
    ) {
       self.state = .fromDomainState(domainStore.state)
       self.eventHandlerStore = eventHandlerStore

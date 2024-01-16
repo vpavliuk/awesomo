@@ -132,6 +132,6 @@ private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {
    )
 }
 
-private class PreviewInputHandler: InputHandler {
+private class PreviewInputHandler: InputEventHandler {
    func on(_ event: PeerListUserInput) {}
 }

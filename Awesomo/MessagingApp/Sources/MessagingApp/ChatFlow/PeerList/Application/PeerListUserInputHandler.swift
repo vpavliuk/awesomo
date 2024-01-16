@@ -8,7 +8,7 @@
 import Domain
 import Combine
 
-struct PeerListUserInputHandler<Router: NavigationRouter>: InputHandler where Router.Entity == Peer.ID {
+struct PeerListUserInputHandler<Router: NavigationRouter>: InputEventHandler where Router.Entity == Peer.ID {
 
    init(chatRouter: Router) {
       self.chatRouter = chatRouter
