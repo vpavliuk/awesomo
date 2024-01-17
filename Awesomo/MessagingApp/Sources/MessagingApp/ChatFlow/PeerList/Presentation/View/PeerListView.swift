@@ -128,7 +128,7 @@ private struct PeerView: View {
 
 private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {
    PeerListViewModel(
-      domainStore: DomainStore(initialState: .loadingSavedChats),
+      domainStore: DomainStore(initialState: state),
       userInputMerger: UserInputMerger(
          userInputSink: PassthroughSubject()
       ),
