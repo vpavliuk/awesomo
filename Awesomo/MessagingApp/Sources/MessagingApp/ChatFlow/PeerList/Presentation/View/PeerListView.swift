@@ -11,7 +11,7 @@ import Domain
 import Utils
 
 struct PeerListView: View {
-   @ObservedObject
+   @EnvironmentObject
    var vm: PeerListViewModel
 
    var body: some View {
@@ -65,60 +65,65 @@ private struct PeerView: View {
 // MARK: - Previews
 
 #Preview("Loading") {
-   PeerListView(vm: makeViewModel(state: .loadingSavedChats))
+   PeerListView()
+      .environmentObject(makeViewModel(state: .loadingSavedChats))
 }
 
 #Preview("Loaded one peer") {
-   PeerListView(
-      vm: makeViewModel(
-         state: .loaded(
-            [
-               Peer.Snapshot(
-                  peerID: EntityID(value: "1"),
-                  status: .online,
-                  relation: .friend,
-                  name: "John",
-                  networkAddress: NetworkAddress(value: "123"),
-                  incomingMessages: [],
-                  outgoingMessages: []
-               )
-            ]
+   PeerListView()
+      .environmentObject(
+         makeViewModel(
+            state: .loaded(
+               [
+                  Peer.Snapshot(
+                     peerID: EntityID(value: "1"),
+                     status: .online,
+                     relation: .friend,
+                     name: "John",
+                     networkAddress: NetworkAddress(value: "123"),
+                     incomingMessages: [],
+                     outgoingMessages: []
+                  )
+               ]
+            )
          )
       )
-   )
 }
 
 #Preview("Loaded two peers") {
-   PeerListView(
-      vm: makeViewModel(
-         state: .loaded(
-            [
-               Peer.Snapshot(
-                  peerID: EntityID(value: "1"),
-                  status: .online,
-                  relation: .friend,
-                  name: "John",
-                  networkAddress: NetworkAddress(value: "123"),
-                  incomingMessages: [],
-                  outgoingMessages: []
-               ),
-               Peer.Snapshot(
-                  peerID: EntityID(value: "2"),
-                  status: .online,
-                  relation: .friend,
-                  name: "Alice",
-                  networkAddress: NetworkAddress(value: "123"),
-                  incomingMessages: [],
-                  outgoingMessages: []
-               )
-            ]
+   PeerListView()
+      .environmentObject(
+         makeViewModel(
+            state: .loaded(
+               [
+                  Peer.Snapshot(
+                     peerID: EntityID(value: "1"),
+                     status: .online,
+                     relation: .friend,
+                     name: "John",
+                     networkAddress: NetworkAddress(value: "123"),
+                     incomingMessages: [],
+                     outgoingMessages: []
+                  ),
+                  Peer.Snapshot(
+                     peerID: EntityID(value: "2"),
+                     status: .online,
+                     relation: .friend,
+                     name: "Alice",
+                     networkAddress: NetworkAddress(value: "123"),
+                     incomingMessages: [],
+                     outgoingMessages: []
+                  )
+               ]
+            )
          )
+
       )
-   )
 }
 
 #Preview("Loaded empty") {
-   PeerListView(vm: makeViewModel(state: .loaded([])))
+   PeerListView()
+      .environmentObject(makeViewModel(state: .loaded([])))
 }
 
 private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {

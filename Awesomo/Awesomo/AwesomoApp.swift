@@ -13,10 +13,11 @@ import PeerDiscovery
 
 @main
 struct AwesomoApp: App {
-   #warning("StateObject?")
-   let app = buildApp(
+
+   @StateObject
+   var app = buildApp(
       peerDiscoveryInput: PeerDiscoveryMock().output,
-      middleman: Player()
+      middleman: Recorder()
    )
 
    var body: some Scene {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-protocol NavigationRouter: ObservableObject {
+protocol NavigationRouter<Entity>: ObservableObject {
    associatedtype Entity
    func push(_ entity: Entity)
    func pop()

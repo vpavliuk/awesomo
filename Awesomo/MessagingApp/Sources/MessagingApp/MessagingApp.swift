@@ -3,33 +3,37 @@ import Domain
 import Combine
 import SwiftUI
 
-public final class MessagingApp<ContentNetworkRepresentation> {
+public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject {
 
    init(
-      coreMessenger: CoreMessenger,
       userInputSink: AnyPublisher<any UserInput, Never>,
-      viewModelBuilder: some ViewModelBuilderProtocol,
       handlerStore: some EventHandlerStoreProtocol,
-      commonInputHandler: some InputEventHandler<CommonInput>,
-      peerAvailabilityHandler: some InputEventHandler<PeerAvailabilityEvent>
+      commonHandlers: [any InputEventHandler]
    ) {
       self.inputInternal = PublishingSubscriber()
-      self.coreMessenger = coreMessenger
       self.userInputSink = userInputSink
-      self.viewModelBuilder = viewModelBuilder
       self.handlerStore = handlerStore
-      self.commonInputHandler = commonInputHandler
-      self.peerAvailabilityHandler = peerAvailabilityHandler
+      self.commonHandlers = commonHandlers
+   }
+
+   private func unregisterHandler(_ handler: some InputEventHandler) {
+      try! handlerStore.unregisterHandler(for: type(of: handler).Event)
    }
 
    deinit {
-      try! handlerStore.unregisterHandler(for: CommonInput.self)
-      try! handlerStore.unregisterHandler(for: PeerAvailabilityEvent.self)
+      func unregisterHandler(_ handler: some InputEventHandler) {
+         try! handlerStore.unregisterHandler(for: type(of: handler).Event)
+      }
+
+      for h in commonHandlers {
+         unregisterHandler(h)
+      }
    }
 
    public func wireUp() {
-      try! handlerStore.registerHandler(commonInputHandler)
-      try! handlerStore.registerHandler(peerAvailabilityHandler)
+      for h in commonHandlers {
+         try! handlerStore.registerHandler(h)
+      }
 
       subscription = inputInternal
          .publisher
@@ -54,34 +58,28 @@ public final class MessagingApp<ContentNetworkRepresentation> {
    }
 
    public func makeEntryPointView() -> some View {
-      AnyView(
-         ChatEntryPointView()
-            .environmentObject(viewModelBuilder)
-      )
+      ChatEntryPointView()
    }
 
    public lazy var input: some Subscriber<any InputEvent, Never> = inputInternal
    public let userInputSink: AnyPublisher<any UserInput, Never>
 
-   private let viewModelBuilder: any ViewModelBuilderProtocol
    private let handlerStore: any EventHandlerStoreProtocol
+   private let commonHandlers: [any InputEventHandler]
    private var subscription: AnyCancellable?
    #warning("A Sink subscriber might be sufficient")
    private let inputInternal: PublishingSubscriber<any InputEvent, Never>
-   private let coreMessenger: CoreMessenger
-   private let commonInputHandler: any InputEventHandler<CommonInput>
-   private let peerAvailabilityHandler: any InputEventHandler<PeerAvailabilityEvent>
 }
 
 extension MessagingApp {
    public convenience init() {
       self.init(
-         coreMessenger: CommonFactory.coreMessenger,
          userInputSink: CommonFactory.userInputSink.eraseToAnyPublisher(),
-         viewModelBuilder: CommonFactory.viewModelBuilder,
          handlerStore: CommonFactory.eventHandlerStore,
-         commonInputHandler: CommonFactory.commonInputHandler,
-         peerAvailabilityHandler: CommonFactory.peerAvailabilityHandler
+         commonHandlers: [
+            CommonFactory.commonInputHandler,
+            CommonFactory.peerAvailabilityHandler
+         ]
       )
    }
 }

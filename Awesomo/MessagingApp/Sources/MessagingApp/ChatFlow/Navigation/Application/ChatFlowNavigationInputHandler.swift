@@ -8,9 +8,9 @@
 import Domain
 import Combine
 
-final class ChatFlowNavigationPopHandler<Router: NavigationRouter>: InputEventHandler where Router.Entity == Peer.ID {
+struct ChatFlowNavigationPopHandler<Router: NavigationRouter>: InputEventHandler where Router.Entity == Peer.ID {
 
-   init(router: Router) {
+   internal init(router: Router) {
       self.router = router
    }
 
