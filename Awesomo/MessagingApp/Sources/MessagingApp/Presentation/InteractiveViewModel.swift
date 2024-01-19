@@ -11,15 +11,16 @@ class InteractiveViewModel<DomainState, PresentationState: DomainDerivable, Conc
       where PresentationState.DomainState == DomainState {
 
    required init(
-      domainStore: DomainStore<DomainState>,
+      initialState: DomainState,
+      domainSource: some Publisher<DomainState, Never>,
       userInputMerger: UserInputMergerProtocol,
       eventHandlerStore: EventHandlerStoreProtocol,
       userInputHandler: some InputEventHandler<ConcreteUserInput>
    ) {
-      self.state = .fromDomainState(domainStore.state)
+      self.state = .fromDomainState(initialState)
       self.eventHandlerStore = eventHandlerStore
 
-      domainStore.$state
+      domainSource
          .map(PresentationState.fromDomainState)
          .assign(to: &$state)
       userInputMerger.merge(publisher: userInput)

@@ -10,10 +10,34 @@ import Domain
 
 protocol ViewModelBuilderProtocol: ObservableObject {
 
-   func buildViewModel<PS, VM: ViewModel<CoreMessenger.State, PS>>(of _: VM.Type) -> VM
+   func buildViewModel<PresentationState, VM: ViewModel<CoreMessenger.State, PresentationState>>(of _: VM.Type) -> VM
 
-   func buildInteractiveViewModel<PS, UI: UserInput, IVM: InteractiveViewModel<CoreMessenger.State, PS, UI>>(
+   func buildViewModel<
+      ExtractedDomainState,
+      PresentationState,
+      VM: ViewModel<ExtractedDomainState, PresentationState>
+   >(
+      of _: VM.Type,
+      stateExtractor: @escaping (CoreMessenger.State) -> ExtractedDomainState
+   ) -> VM
+
+   func buildInteractiveViewModel<
+      PresentationState,
+      Input: UserInput,
+      IVM: InteractiveViewModel<CoreMessenger.State, PresentationState, Input>
+   >(
       of _: IVM.Type,
-      userInputHandler: some InputEventHandler<UI>
+      userInputHandler: some InputEventHandler<Input>
+   ) -> IVM
+
+   func buildInteractiveViewModel<
+      ExtractedDomainState,
+      PresentationState,
+      Input: UserInput,
+      IVM: InteractiveViewModel<ExtractedDomainState, PresentationState, Input>
+   >(
+      of _: IVM.Type,
+      userInputHandler: some InputEventHandler<Input>,
+      stateExtractor: @escaping (CoreMessenger.State) -> ExtractedDomainState
    ) -> IVM
 }
