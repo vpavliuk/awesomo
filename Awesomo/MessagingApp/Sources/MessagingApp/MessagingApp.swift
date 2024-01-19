@@ -58,7 +58,7 @@ public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject 
    }
 
    public func makeEntryPointView() -> some View {
-      ChatEntryPointView()
+      ChatFlowEntryPointView()
    }
 
    public lazy var input: some Subscriber<any InputEvent, Never> = inputInternal

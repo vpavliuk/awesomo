@@ -40,7 +40,7 @@ private struct EmptyPeerList: View {
 
 private struct LoadedPeerList: View {
    @EnvironmentObject
-   var destinationProvider: ChatViewProvider
+   var destinationProvider: ChatFlowViewProvider
 
    var selection: Binding<Peer.ID?>
    let peers: NonEmpty<PeerDisplayModel>
@@ -128,7 +128,8 @@ private struct PeerView: View {
 
 private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {
    PeerListViewModel(
-      domainStore: DomainStore(initialState: state),
+      initialState: state,
+      domainSource: PassthroughSubject(),
       userInputMerger: UserInputMerger(
          userInputSink: PassthroughSubject()
       ),

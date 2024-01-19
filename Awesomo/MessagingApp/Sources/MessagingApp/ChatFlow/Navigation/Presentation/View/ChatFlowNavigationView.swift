@@ -11,8 +11,8 @@ struct ChatFlowNavigationView: View {
 
    init(router: ChatRouter) {
       self.router = router
-      _peerListViewModel = StateObject(wrappedValue:  ChatFactory.getPeerListViewModel(router: router))
-      _destinationViewProvider = StateObject(wrappedValue: ChatFactory.getDestinationProvider(router: router))
+      _peerListViewModel = StateObject(wrappedValue:  PeerListFactory.getViewModel(router: router))
+      _destinationViewProvider = StateObject(wrappedValue: ChatFlowFactory.getDestinationProvider(router: router))
    }
 
    @ObservedObject
@@ -22,7 +22,7 @@ struct ChatFlowNavigationView: View {
    var peerListViewModel: PeerListViewModel
 
    @StateObject
-   var destinationViewProvider: ChatViewProvider
+   var destinationViewProvider: ChatFlowViewProvider
 
    var body: some View {
       NavigationStack(path: $router.path) {

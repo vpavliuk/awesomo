@@ -10,4 +10,5 @@ internal let allEventTypes: [any InputEvent.Type] = [
    PeerListUserInput.self,
    ChatFlowNavigationPop.self,
    CommonInput.self,
+   ChatUserInput.self,
 ]
