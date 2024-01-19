@@ -10,14 +10,9 @@ import Domain
 
 final class ViewModelBuilder: ViewModelBuilderProtocol, ObservableObject {
 
-   init(
-      domainStore: DomainStore<CoreMessenger.State>,
-      userInputMerger: UserInputMergerProtocol,
-      eventHandlerStore: EventHandlerStoreProtocol
-   ) {
+   init(domainStore: DomainStore<CoreMessenger.State>, userInputMerger: UserInputMergerProtocol) {
       self.domainStore = domainStore
       self.userInputMerger = userInputMerger
-      self.eventHandlerStore = eventHandlerStore
    }
 
    func buildViewModel<PresentationState, VM: ViewModel<CoreMessenger.State, PresentationState>>(of _: VM.Type) -> VM {
@@ -40,23 +35,16 @@ final class ViewModelBuilder: ViewModelBuilderProtocol, ObservableObject {
       )
    }
 
-   func buildInteractiveViewModel<
-      PresentationState,
-      Input: UserInput,
-      IVM: InteractiveViewModel<CoreMessenger.State, PresentationState, Input>
-   >(of _: IVM.Type, userInputHandler: some InputEventHandler<Input>) -> IVM {
+   func buildViewModel<PresentationState, Input: UserInput, IVM: InteractiveViewModel<CoreMessenger.State, PresentationState, Input>>(of _: IVM.Type)
+         -> IVM { buildViewModel(of: IVM.self, stateExtractor: { $0 }) }
 
-      return buildInteractiveViewModel(of: IVM.self, userInputHandler: userInputHandler, stateExtractor: { $0 })
-   }
-
-   func buildInteractiveViewModel<
+   func buildViewModel<
       ExtractedDomainState,
       PresentationState,
       Input: UserInput,
       IVM: InteractiveViewModel<ExtractedDomainState, PresentationState, Input>
    >(
       of _: IVM.Type,
-      userInputHandler: some InputEventHandler<Input>,
       stateExtractor: @escaping (CoreMessenger.State) -> ExtractedDomainState
    ) -> IVM {
       let initialState = stateExtractor(domainStore.state)
@@ -66,13 +54,10 @@ final class ViewModelBuilder: ViewModelBuilderProtocol, ObservableObject {
       return IVM(
          initialState: initialState,
          domainSource: domainSource,
-         userInputMerger: userInputMerger,
-         eventHandlerStore: eventHandlerStore,
-         userInputHandler: userInputHandler
+         userInputMerger: userInputMerger
       )
    }
 
    private let domainStore: DomainStore<CoreMessenger.State>
    private let userInputMerger: UserInputMergerProtocol
-   private let eventHandlerStore: EventHandlerStoreProtocol
 }

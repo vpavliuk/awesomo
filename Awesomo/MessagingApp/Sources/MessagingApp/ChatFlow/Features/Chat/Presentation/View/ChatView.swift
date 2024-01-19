@@ -11,7 +11,7 @@ import Domain
 
 struct ChatView: View {
    @EnvironmentObject
-   var vm: ChatViewModel
+   var vm: InteractiveViewModel<Peer.Snapshot, ChatState, ChatUserInput>
 
    var body: some View {
       switch vm.state {
@@ -46,7 +46,7 @@ private struct StrangerPeerChatView: View {
 #Preview {
    ChatView()
       .environmentObject(
-         ChatViewModel(
+         InteractiveViewModel<Peer.Snapshot, ChatState, ChatUserInput>(
             initialState: Peer.Snapshot(
                peerID: Peer.ID(value: ""),
                status: .online,
@@ -57,9 +57,7 @@ private struct StrangerPeerChatView: View {
                outgoingMessages: []
             ),
             domainSource: PassthroughSubject(),
-            userInputMerger: UserInputMerger(userInputSink: PassthroughSubject()),
-            eventHandlerStore: EventHandlerStore(),
-            userInputHandler: ChatUserInputHandler(coreMessenger: CoreMessenger())
+            userInputMerger: UserInputMerger(userInputSink: PassthroughSubject())
          )
       )
 }

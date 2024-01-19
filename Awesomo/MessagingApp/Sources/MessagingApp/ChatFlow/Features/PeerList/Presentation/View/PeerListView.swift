@@ -132,9 +132,7 @@ private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {
       domainSource: PassthroughSubject(),
       userInputMerger: UserInputMerger(
          userInputSink: PassthroughSubject()
-      ),
-      eventHandlerStore: EventHandlerStore(),
-      userInputHandler: PreviewInputHandler()
+      )
    )
 }
 

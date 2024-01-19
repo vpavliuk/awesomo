@@ -9,13 +9,18 @@ import Domain
 
 enum ChatFactory {
 
-   static func getViewModel(peerID: Peer.ID) -> ChatViewModel {
+   static func getViewModel(peerID: Peer.ID) -> InteractiveViewModel<Peer.Snapshot, ChatState, ChatUserInput> {
+      let handlerStore = CommonFactory.eventHandlerStore
+      let eventType = ChatUserInput.self
+
+      if !handlerStore.isHandlerRegistered(for: eventType) {
+         let handler = getUserInputHandler(witness: eventType)
+         handlerStore.registerHandler(handler)
+      }
+
       return CommonFactory
          .viewModelBuilder
-         .buildInteractiveViewModel(
-            of: ChatViewModel.self,
-            userInputHandler: getUserInputHandler()
-         ) { (biggerState: CoreMessenger.State) in
+         .buildViewModel(of: InteractiveViewModel.self) { (biggerState: CoreMessenger.State) in
             var peers: [Peer.Snapshot] = []
             if case .loaded(let loadedPeers) = biggerState {
                peers = loadedPeers
@@ -25,6 +30,6 @@ enum ChatFactory {
          }
    }
 
-   private static func getUserInputHandler()
+   private static func getUserInputHandler(witness _: ChatUserInput.Type)
          -> some InputEventHandler<ChatUserInput> { ChatUserInputHandler(coreMessenger: CommonFactory.coreMessenger) }
 }

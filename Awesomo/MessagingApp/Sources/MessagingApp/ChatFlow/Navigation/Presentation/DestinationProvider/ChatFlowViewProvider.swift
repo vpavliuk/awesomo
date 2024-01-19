@@ -13,21 +13,11 @@ final class ChatFlowViewProvider: ObservableObject {
 
    init(
       domainStore: DomainStore<CoreMessenger.State>,
-      userInputMerger: UserInputMergerProtocol,
-      eventHandlerStore: EventHandlerStoreProtocol,
-      navigationPopInputHandler: some InputEventHandler<ChatFlowNavigationPop>
+      userInputMerger: UserInputMergerProtocol
    ) {
       self.domainStore = domainStore
-      self.eventHandlerStore = eventHandlerStore
 
       userInputMerger.merge(publisher: userInput)
-      #warning("Handle error")
-      try! eventHandlerStore.registerHandler(navigationPopInputHandler)
-   }
-
-   deinit {
-      #warning("Handle error")
-      try! eventHandlerStore.unregisterHandler(for: ChatFlowNavigationPop.self)
    }
 
    private let domainStore: DomainStore<CoreMessenger.State>
@@ -60,6 +50,4 @@ final class ChatFlowViewProvider: ObservableObject {
 
    // An outgoing stream of app events
    private let userInput: some Subject<ChatFlowNavigationPop, Never> = PassthroughSubject()
-
-   private let eventHandlerStore: EventHandlerStoreProtocol
 }

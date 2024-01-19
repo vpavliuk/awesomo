@@ -8,5 +8,4 @@
 enum AppError: Error {
    case couldNotFindHandlerForInputEvent(any InputEvent)
    case wrongHandlerForInputEvent(any InputEvent, any InputEventHandler)
-   case cannotRegisterAnotherHandlerForSameEventType(InputEventTypeID, any InputEventHandler)
 }

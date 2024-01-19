@@ -21,23 +21,15 @@ protocol ViewModelBuilderProtocol: ObservableObject {
       stateExtractor: @escaping (CoreMessenger.State) -> ExtractedDomainState
    ) -> VM
 
-   func buildInteractiveViewModel<
-      PresentationState,
-      Input: UserInput,
-      IVM: InteractiveViewModel<CoreMessenger.State, PresentationState, Input>
-   >(
-      of _: IVM.Type,
-      userInputHandler: some InputEventHandler<Input>
-   ) -> IVM
+   func buildViewModel<PresentationState, Input: UserInput, IVM: InteractiveViewModel<CoreMessenger.State, PresentationState, Input>>(of _: IVM.Type) -> IVM
 
-   func buildInteractiveViewModel<
+   func buildViewModel<
       ExtractedDomainState,
       PresentationState,
       Input: UserInput,
       IVM: InteractiveViewModel<ExtractedDomainState, PresentationState, Input>
    >(
       of _: IVM.Type,
-      userInputHandler: some InputEventHandler<Input>,
       stateExtractor: @escaping (CoreMessenger.State) -> ExtractedDomainState
    ) -> IVM
 }

@@ -17,8 +17,7 @@ enum CommonFactory {
    #warning("Make sure that static let is lazy")
    static let viewModelBuilder: any ViewModelBuilderProtocol = ViewModelBuilder(
       domainStore: domainStore,
-      userInputMerger: userInputMerger,
-      eventHandlerStore: eventHandlerStore
+      userInputMerger: userInputMerger
    )
 
    static let eventHandlerStore: EventHandlerStoreProtocol = EventHandlerStore()

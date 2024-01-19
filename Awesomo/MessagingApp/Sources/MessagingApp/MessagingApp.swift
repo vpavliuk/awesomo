@@ -16,23 +16,9 @@ public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject 
       self.commonHandlers = commonHandlers
    }
 
-   private func unregisterHandler(_ handler: some InputEventHandler) {
-      try! handlerStore.unregisterHandler(for: type(of: handler).Event)
-   }
-
-   deinit {
-      func unregisterHandler(_ handler: some InputEventHandler) {
-         try! handlerStore.unregisterHandler(for: type(of: handler).Event)
-      }
-
-      for h in commonHandlers {
-         unregisterHandler(h)
-      }
-   }
-
    public func wireUp() {
       for h in commonHandlers {
-         try! handlerStore.registerHandler(h)
+         handlerStore.registerHandler(h)
       }
 
       subscription = inputInternal

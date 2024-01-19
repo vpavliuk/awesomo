@@ -10,14 +10,21 @@ import Domain
 enum PeerListFactory {
 
    static func getViewModel(router: some NavigationRouter<Peer.ID>) -> PeerListViewModel {
+      let handlerStore = CommonFactory.eventHandlerStore
+      let eventType = PeerListUserInput.self
+
+      if !handlerStore.isHandlerRegistered(for: eventType) {
+         let handler = getUserInputHandler(witness: eventType, router: router)
+         handlerStore.registerHandler(handler)
+      }
+
       return CommonFactory
          .viewModelBuilder
-         .buildInteractiveViewModel(
-            of: PeerListViewModel.self,
-            userInputHandler: getUserInputHandler(router: router)
-         )
+         .buildViewModel(of: PeerListViewModel.self)
    }
 
-   private static func getUserInputHandler(router: some NavigationRouter<Peer.ID>)
-      -> some InputEventHandler<PeerListUserInput> { PeerListUserInputHandler(chatRouter: router) }
+   private static func getUserInputHandler(
+      witness _: PeerListUserInput.Type,
+      router: some NavigationRouter<Peer.ID>
+   ) -> some InputEventHandler<PeerListUserInput> { PeerListUserInputHandler(chatRouter: router) }
 }
