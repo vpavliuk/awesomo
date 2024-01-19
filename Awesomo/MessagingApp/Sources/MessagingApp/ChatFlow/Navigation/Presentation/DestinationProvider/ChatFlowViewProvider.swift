@@ -11,12 +11,8 @@ import SwiftUI
 
 final class ChatFlowViewProvider: ObservableObject {
 
-   init(
-      domainStore: DomainStore<CoreMessenger.State>,
-      userInputMerger: UserInputMergerProtocol
-   ) {
+   init(domainStore: DomainStore<CoreMessenger.State>, userInputMerger: UserInputMergerProtocol) {
       self.domainStore = domainStore
-
       userInputMerger.merge(publisher: userInput)
    }
 
