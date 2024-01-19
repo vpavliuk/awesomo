@@ -13,7 +13,6 @@ final class PeerListViewModel: InteractiveViewModel<CoreMessenger.State, PeerLis
    var selectedPeerID: Peer.ID? {
       didSet {
          guard let selectedPeerID else {
-            assertionFailure("Unexpectedly received nil as selected peer id")
             return
          }
          userInput.send(.didSelectPeer(selectedPeerID))
