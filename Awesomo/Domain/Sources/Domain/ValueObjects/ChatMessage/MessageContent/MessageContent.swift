@@ -10,7 +10,13 @@ import Foundation
 import Combine
 
 public struct MessageContent {
+   public init(contentID: ContentID) {
+      self.contentID = contentID
+   }
    public struct ContentID: Hashable {
+      public init(value: String) {
+         self.value = value
+      }
       private let value: String
    }
    public let contentID: ContentID
