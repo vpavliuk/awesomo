@@ -13,7 +13,7 @@ enum ChatState {
    case friend([ChatMessageDisplayModel])
    case peerWasInvited
    case peerInvitedUs
-   case strangerPeer
+   case strangerPeer(StrangerPeerDisplayModel)
 }
 
 extension ChatState: DomainDerivable {
@@ -22,6 +22,9 @@ extension ChatState: DomainDerivable {
       case .friend:
          let displayModels = messageDisplayModels(from: domainState)
          return .friend(displayModels)
+
+      case .stranger:
+         return .strangerPeer(StrangerPeerDisplayModel(inviteButtonTitle: "Invite \(domainState.name)"))
 
       default:
          return .friend([])
@@ -62,4 +65,8 @@ extension ChatMessageDisplayModel {
       content = outgoingMessage.content
       timestamp = outgoingMessage.timestamp.formatted()
    }
+}
+
+struct StrangerPeerDisplayModel: Hashable {
+   let inviteButtonTitle: String
 }

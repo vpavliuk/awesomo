@@ -6,42 +6,60 @@
 //
 
 import SwiftUI
+import Combine
 import Domain
 
 struct ChatView: View {
    @EnvironmentObject
-   var vm: InteractiveViewModel<Peer.Snapshot, ChatState, ChatUserInput>
+   var vm: ChatViewModel
 
    var body: some View {
       switch vm.state {
       case .loading:
          ProgressView()
             .controlSize(.large)
-      case .strangerPeer:
-         StrangerPeerChatView()
+      case .strangerPeer(let peer):
+         StrangerPeerChatView(inviteText: peer.inviteButtonTitle) {
+            vm.userInput.send(.invite)
+         }
       case .friend(_):
-         StrangerPeerChatView()
+         StrangerPeerChatView(inviteText: "") {}
       case .peerInvitedUs:
-         StrangerPeerChatView()
+         StrangerPeerChatView(inviteText: "") {}
       case .peerWasInvited:
-         StrangerPeerChatView()
+         StrangerPeerChatView(inviteText: "") {}
       }
    }
 }
 
 private struct StrangerPeerChatView: View {
-   @EnvironmentObject
-   var vm: ChatViewModel
+   let inviteText: String
+   let onInvite: () -> Void
 
    var body: some View {
-      Button {
-         vm.userInput.send(.invite)
-      } label: {
-         Text("Invite")
+      Button(action: onInvite) {
+         Text(inviteText)
       }
    }
 }
 
 #Preview {
    ChatView()
+      .environmentObject(
+         ChatViewModel(
+            initialState: Peer.Snapshot(
+               peerID: Peer.ID(value: ""),
+               status: .online,
+               relation: .stranger,
+               name: "Po",
+               networkAddress: NetworkAddress(value: ""),
+               incomingMessages: [],
+               outgoingMessages: []
+            ),
+            domainSource: PassthroughSubject(),
+            userInputMerger: UserInputMerger(userInputSink: PassthroughSubject()),
+            eventHandlerStore: EventHandlerStore(),
+            userInputHandler: ChatUserInputHandler(coreMessenger: CoreMessenger())
+         )
+      )
 }
