@@ -8,5 +8,4 @@
 struct PeerInvitedUsDisplayModel {
    let text: String
    let acceptButtonTitle: String
-   let declineButtonTitle: String
 }

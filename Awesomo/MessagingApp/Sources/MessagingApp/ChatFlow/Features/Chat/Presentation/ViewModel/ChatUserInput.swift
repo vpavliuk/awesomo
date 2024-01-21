@@ -10,7 +10,6 @@ import Domain
 enum ChatUserInput {
    case didInvitePeer(Peer.ID)
    case didAcceptInvitation(Peer.ID)
-   case didDeclineInvitation(Peer.ID)
    case didSendMessage(MessageContent)
 }
 

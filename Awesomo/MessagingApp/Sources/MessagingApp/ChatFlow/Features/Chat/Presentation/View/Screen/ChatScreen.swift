@@ -30,8 +30,6 @@ struct ChatScreen: View {
       case .peerInvitedUs(let peerID, let displayModel):
          PeerInvitedUsChatView(displayModel) {
             vm.userInput.send(.didAcceptInvitation(peerID))
-         } onDeclineTapped: {
-            vm.userInput.send(.didDeclineInvitation(peerID))
          }
 
       case .peerWasInvited:

@@ -10,18 +10,14 @@ import SwiftUI
 struct PeerInvitedUsChatView: View {
    init(
       _ displayModel: PeerInvitedUsDisplayModel,
-      onAcceptTapped: @escaping () -> Void,
-      onDeclineTapped: @escaping () -> Void
+      onAcceptTapped: @escaping () -> Void
    ) {
       self.displayModel = displayModel
       self.onAcceptTapped = onAcceptTapped
-      self.onDeclineTapped = onDeclineTapped
    }
 
    let displayModel: PeerInvitedUsDisplayModel
-
    let onAcceptTapped: () -> Void
-   let onDeclineTapped: () -> Void
 
    var body: some View {
       VStack() {
@@ -29,23 +25,12 @@ struct PeerInvitedUsChatView: View {
 
          Text(displayModel.text)
             .font(.title)
+            .multilineTextAlignment(.center)
 
          Spacer()
 
-         HStack {
-            Spacer()
-
-            Button(action: onAcceptTapped) {
-               Text(displayModel.acceptButtonTitle)
-            }
-
-            Spacer()
-
-            Button(action: onDeclineTapped) {
-               Text(displayModel.declineButtonTitle)
-            }
-
-            Spacer()
+         Button(action: onAcceptTapped) {
+            Text(displayModel.acceptButtonTitle)
          }
       }
       .padding()
@@ -55,11 +40,9 @@ struct PeerInvitedUsChatView: View {
 #Preview {
    PeerInvitedUsChatView(
       PeerInvitedUsDisplayModel(
-         text: "Spooky wants to chat",
-         acceptButtonTitle: "Accept",
-         declineButtonTitle: "Decline"
+         text: "Spooky wants to chat. Accept their request?",
+         acceptButtonTitle: "Accept"
       ),
-      onAcceptTapped: {},
-      onDeclineTapped: {}
+      onAcceptTapped: {}
    )
 }
