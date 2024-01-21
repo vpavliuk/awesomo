@@ -42,7 +42,8 @@ extension ChatState: DomainDerivable {
             ChatState.peerInvitedUs(
                peer.peerID,
                PeerInvitedUsDisplayModel(
-                  text: "\(peer.name) wants to chat. Accept their request?",
+                  messageTitle: "\(peer.name) wants to chat",
+                  messageDescription: "\(peer.name) would like to connect. Accept their request?",
                   acceptButtonTitle: "Accept"
                )
             )

@@ -23,9 +23,15 @@ struct PeerInvitedUsChatView: View {
       VStack() {
          Spacer()
 
-         Text(displayModel.text)
-            .font(.title)
-            .multilineTextAlignment(.center)
+         VStack(alignment: .leading, spacing: 8) {
+            Text(displayModel.messageTitle)
+               .font(.title)
+               .foregroundStyle(Color(white: 0.1))
+            Text(displayModel.messageDescription)
+               .font(.body)
+               .foregroundStyle(Color(white: 0.4))
+         }
+         .frame(maxWidth: .infinity, alignment: .leading)
 
          Spacer()
 
@@ -40,7 +46,8 @@ struct PeerInvitedUsChatView: View {
 #Preview {
    PeerInvitedUsChatView(
       PeerInvitedUsDisplayModel(
-         text: "Spooky wants to chat. Accept their request?",
+         messageTitle: "Spooky wants to chat",
+         messageDescription: "Spooky would like to connect. Accept their request?",
          acceptButtonTitle: "Accept"
       ),
       onAcceptTapped: {}

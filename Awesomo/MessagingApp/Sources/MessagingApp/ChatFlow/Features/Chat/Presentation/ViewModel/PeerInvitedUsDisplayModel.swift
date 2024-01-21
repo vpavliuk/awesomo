@@ -6,6 +6,7 @@
 //
 
 struct PeerInvitedUsDisplayModel {
-   let text: String
+   let messageTitle: String
+   let messageDescription: String
    let acceptButtonTitle: String
 }

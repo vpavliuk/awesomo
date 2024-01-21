@@ -13,10 +13,7 @@ enum ChatUserInput {
    case didSendMessage(MessageContent)
 }
 
-extension ChatUserInput: UserInput {
-
-}
-
+extension ChatUserInput: UserInput {}
 
 extension MessageContent: Codable {
    public func encode(to encoder: Encoder) throws {
