@@ -41,7 +41,7 @@ public final class Peer: AwesomelyIdentifiable {
    private var status: Status
 
    // Relation to the local user
-   public enum Relation: Hashable { case stranger, friend, didInviteUs, invitationInitiated, wasInvited, declinedInvitation }
+   public enum Relation: Hashable { case stranger, friend, didInviteUs, invitationInitiated, wasInvited }
    private var relation: Relation
 
    private var name: String
@@ -67,7 +67,12 @@ public final class Peer: AwesomelyIdentifiable {
       guard status != .offline else {
          throw DomainError.cannotTakeOfflineAlreadyOfflinePeer(id)
       }
+
       status = .offline
+
+      if relation != .friend {
+         relation = .stranger
+      }
    }
 
    internal func initiateInvitation() throws {
@@ -98,15 +103,19 @@ public final class Peer: AwesomelyIdentifiable {
       relation = .friend
    }
 
-   internal func declineInvitation() throws {
-      guard relation == .wasInvited else {
-         throw DomainError.nonInvitedPeerCannotRespondToInvitation(id)
-      }
-      relation = .declinedInvitation
-   }
-
    internal var isIrrelevant: Bool {
       status == .offline && relation == .stranger
+   }
+
+   internal func invitationWasAcceptedByUs() throws {
+      guard relation == .didInviteUs else {
+         throw DomainError.cannotRespondToInvitationFromPeerWhoHadNotPreviouslyInviteUs(id)
+      }
+      guard status == .online else {
+         throw DomainError.cannotRespondToInvitationIfPeerIsOffline(id)
+      }
+
+      relation = .friend
    }
 }
 

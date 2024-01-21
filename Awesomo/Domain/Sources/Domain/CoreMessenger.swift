@@ -85,13 +85,6 @@ public final class CoreMessenger {
       try peer.acceptInvitation()
    }
 
-   private func onPeerDeclinedInvitation(_ peerID: Peer.ID) throws {
-      guard let peer = findPeer(by: peerID) else {
-         throw DomainError.unknownPeerCannotRespondToInvitation(peerID)
-      }
-      try peer.declineInvitation()
-   }
-
    public typealias State = [Peer.Snapshot]
 
    #warning("CQS violation")
@@ -151,8 +144,6 @@ public final class CoreMessenger {
             break
          case .peerAcceptedInvitation(let peerID):
             try onPeerAcceptedInvitation(peerID)
-         case .peerDeclinedInvitation(let peerID):
-            try onPeerDeclinedInvitation(peerID)
          }
       } catch let error as DomainError {
          errorsInternal.send(error)

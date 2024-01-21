@@ -153,33 +153,6 @@ final class CoreMessengerTest: XCTestCase {
       ])
    }
 
-   func testPeerDeclinedInvitation() {
-      // Arrange
-      let peerID = Peer.ID(value: "1")
-      let peerName = "Unknown peer"
-      let networkAddress = NetworkAddress(value: "123")
-      let expectedPeer = Peer.Snapshot(
-         peerID: peerID,
-         status: .online,
-         relation: .declinedInvitation,
-         name: peerName,
-         networkAddress: networkAddress,
-         incomingMessages: [],
-         outgoingMessages: []
-      )
-      let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
-      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
-      let invitation: InputEvent = .userDidInvitePeer(peerID)
-      let invitationSendSuccess: InputEvent = .invitationForPeerWasSentOverNetwork(peerID)
-      let rejection: InputEvent = .peerDeclinedInvitation(peerID)
-
-      // Act
-      let state = sut.add(.initial, emergenceEvent, invitation, invitationSendSuccess, rejection)
-
-      // Assert
-      XCTAssertEqual(state, [expectedPeer])
-   }
-
    func testFriendPeerWentOffline() {
       // Arrange
       let peerID = Peer.ID(value: "1")
@@ -238,5 +211,29 @@ final class CoreMessengerTest: XCTestCase {
       XCTAssertEqual(state, [
          .makeOnlineFriend(id: peerID, name: changedName, address: networkAddress)
       ])
+   }
+
+   func testInvitedPeerWentOffline() {
+      // Arrange
+      let peerID = Peer.ID(value: "1")
+      let peerName = "Unknown peer"
+      let networkAddress = NetworkAddress(value: "123")
+      let emergence = PeerEmergence(peerName: peerName, peerAddress: networkAddress)
+      let emergenceEvent: InputEvent = .peersDidAppear([peerID: emergence])
+      let invitation: InputEvent = .userDidInvitePeer(peerID)
+      let invitationSendSuccess: InputEvent = .invitationForPeerWasSentOverNetwork(peerID)
+      let disappearEvent: InputEvent = .peersDidDisappear([peerID])
+
+      // Act
+      let state = sut.add(
+         .initial,
+         emergenceEvent,
+         invitation,
+         invitationSendSuccess,
+         disappearEvent
+      )
+
+      // Assert
+      XCTAssertEqual(state, [])
    }
 }

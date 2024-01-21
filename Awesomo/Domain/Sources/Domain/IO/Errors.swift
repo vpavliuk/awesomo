@@ -18,4 +18,6 @@ public enum DomainError: Error, Equatable {
    case cannotHandleSendingResultForInvitationWhichHadNotBeenPreviouslyInitiated(Peer.ID)
    case unknownPeerCannotRespondToInvitation(Peer.ID)
    case nonInvitedPeerCannotRespondToInvitation(Peer.ID)
+   case cannotRespondToInvitationFromPeerWhoHadNotPreviouslyInviteUs(Peer.ID)
+   case cannotRespondToInvitationIfPeerIsOffline(Peer.ID)
 }
