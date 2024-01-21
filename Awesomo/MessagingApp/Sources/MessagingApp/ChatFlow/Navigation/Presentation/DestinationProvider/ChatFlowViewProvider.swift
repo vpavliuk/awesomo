@@ -11,19 +11,8 @@ import SwiftUI
 
 final class ChatFlowViewProvider: ObservableObject {
 
-   init(domainStore: DomainStore<CoreMessenger.State>, userInputMerger: UserInputMergerProtocol) {
-      self.domainStore = domainStore
+   init(userInputMerger: UserInputMergerProtocol) {
       userInputMerger.merge(publisher: userInput)
-   }
-
-   private let domainStore: DomainStore<CoreMessenger.State>
-
-   private var peers: [Peer.Snapshot] {
-      if case .loaded(let peers) = domainStore.state {
-         return peers
-      }
-
-      return []
    }
 
    func destinationView(for destinationObject: Peer.ID) -> some View {

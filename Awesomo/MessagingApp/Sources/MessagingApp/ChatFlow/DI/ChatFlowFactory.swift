@@ -23,10 +23,7 @@ enum ChatFlowFactory {
          handlerStore.registerHandler(handler)
       }
 
-      return ChatFlowViewProvider(
-         domainStore: CommonFactory.domainStore,
-         userInputMerger: CommonFactory.userInputMerger
-      )
+      return ChatFlowViewProvider(userInputMerger: CommonFactory.userInputMerger)
    }
 
    private static func getNavigationPopInputHandler(
