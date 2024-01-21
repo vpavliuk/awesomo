@@ -12,28 +12,45 @@ enum ChatState {
    case loading
    case friend([ChatMessageDisplayModel])
    case peerWasInvited
-   case peerInvitedUs
-   case strangerPeer(StrangerPeerDisplayModel)
-   case missingPeer
+   case peerInvitedUs(Peer.ID, PeerInvitedUsDisplayModel)
+   case strangerPeer(Peer.ID, StrangerPeerDisplayModel)
+   case missingPeer(String)
 }
 
 extension ChatState: DomainDerivable {
    static func fromDomainState(_ domainState: Peer.Snapshot?) -> Self {
       guard let domainState else {
-         return .missingPeer
+         return .missingPeer("The user is no longer available")
       }
-      switch domainState.relation {
-      case .friend:
-         let displayModels = messageDisplayModels(from: domainState)
-         return .friend(displayModels)
-
-      case .stranger:
-         return .strangerPeer(StrangerPeerDisplayModel(inviteButtonTitle: "Invite \(domainState.name)"))
-
-      default:
-         return .friend([])
-      }
+      return fromPeer(domainState)
    }
+
+      private static func fromPeer(_ peer: Peer.Snapshot) -> Self {
+         return switch peer.relation {
+         case .friend:
+            ChatState.friend(messageDisplayModels(from: peer))
+
+         case .stranger:
+            ChatState.strangerPeer(
+               peer.peerID,
+               StrangerPeerDisplayModel(
+                  inviteButtonTitle: "Invite \(peer.name)"
+               )
+            )
+
+         case .didInviteUs:
+            ChatState.peerInvitedUs(
+               peer.peerID,
+               PeerInvitedUsDisplayModel(
+                  text: "\(peer.name) wants to chat",
+                  acceptButtonTitle: "Accept",
+                  declineButtonTitle: "Decline")
+            )
+
+         default:
+            ChatState.friend([])
+         }
+      }
 
    private static func messageDisplayModels(from peer: Peer.Snapshot) -> [ChatMessageDisplayModel] {
       let incomingDisplayModels = peer

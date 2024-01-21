@@ -8,8 +8,10 @@
 import Domain
 
 enum ChatUserInput {
-   case invite
-   case sendMessage(MessageContent)
+   case didInvitePeer(Peer.ID)
+   case didAcceptInvitation(Peer.ID)
+   case didDeclineInvitation(Peer.ID)
+   case didSendMessage(MessageContent)
 }
 
 extension ChatUserInput: UserInput {

@@ -18,40 +18,32 @@ struct ChatScreen: View {
       case .loading:
          ProgressView()
             .controlSize(.large)
-      case .strangerPeer(let peer):
-         StrangerPeerChatView(inviteText: peer.inviteButtonTitle) {
-            vm.userInput.send(.invite)
+
+      case .strangerPeer(let peerID, let displayModel):
+         StrangerPeerChatView(displayModel) {
+            vm.userInput.send(.didInvitePeer(peerID))
          }
+
       case .friend(_):
-         StrangerPeerChatView(inviteText: "") {}
-      case .peerInvitedUs:
-         StrangerPeerChatView(inviteText: "") {}
+         StrangerPeerChatView(StrangerPeerDisplayModel(inviteButtonTitle: "")) {}
+
+      case .peerInvitedUs(let peerID, let displayModel):
+         PeerInvitedUsChatView(displayModel) {
+            vm.userInput.send(.didAcceptInvitation(peerID))
+         } onDeclineTapped: {
+            vm.userInput.send(.didDeclineInvitation(peerID))
+         }
+
       case .peerWasInvited:
-         StrangerPeerChatView(inviteText: "") {}
-      case .missingPeer:
-         MissingPeerView()
+         StrangerPeerChatView(StrangerPeerDisplayModel(inviteButtonTitle: "")) {}
+
+      case .missingPeer(let text):
+         MissingPeerChatView(text: text)
       }
    }
 }
 
-private struct MissingPeerView: View {
-   var body: some View {
-      Text("The user is no longer available")
-         .font(.title)
-         .multilineTextAlignment(.center)
-   }
-}
-
-private struct StrangerPeerChatView: View {
-   let inviteText: String
-   let onInvite: () -> Void
-
-   var body: some View {
-      Button(action: onInvite) {
-         Text(inviteText)
-      }
-   }
-}
+// MARK: - Previews
 
 #Preview {
    ChatScreen()
