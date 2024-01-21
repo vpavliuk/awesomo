@@ -18,8 +18,11 @@ struct PeerListScreen: View {
       switch vm.state {
       case .loading:
          LoadingPeerListView()
-      case .loadedEmpty:
-         EmptyPeerListView()
+      case .loadedEmpty(let title, let description):
+         EmptyPeerListView(
+            messageTitle: title,
+            messageDescription: description
+         )
       case .loaded(let peers):
          LoadedPeerListView(
             selection: $vm.selectedPeerID,

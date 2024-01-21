@@ -10,7 +10,7 @@ import Utils
 
 enum PeerListState {
    case loading
-   case loadedEmpty
+   case loadedEmpty(title: String, description: String)
    case loaded(NonEmpty<PeerDisplayModel>)
 }
 
@@ -20,7 +20,10 @@ extension PeerListState: DomainDerivable {
       if let nonEmpty = NonEmpty(peerDisplayModels) {
          return .loaded(nonEmpty)
       } else {
-         return .loadedEmpty
+         return .loadedEmpty(
+            title: "Looks like no one's nearby",
+            description: "Make sure that the two devices are connected to the same WiFi network."
+         )
       }
    }
 }
