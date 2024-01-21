@@ -30,11 +30,6 @@ public final class CoreMessenger {
          }
       }
       allPeers += remaining.map(Peer.init)
-
-      #warning("Does not belong here")
-      if !allPeers.isEmpty {
-         isLoadingSavedChats = false
-      }
    }
 
    #warning("TODO: Should not throw after typed throws is added to Swift")
@@ -97,16 +92,11 @@ public final class CoreMessenger {
       try peer.declineInvitation()
    }
 
-   public enum State: Hashable {
-      case loadingSavedChats
-      case loaded([Peer.Snapshot])
-   }
-
-   private var isLoadingSavedChats = true
+   public typealias State = [Peer.Snapshot]
 
    #warning("CQS violation")
    public func add(_ input: InputEvent...) -> State {
-      var state: State = .loadingSavedChats
+      var state: State = []
       queue.sync {
          for event in input {
             handleInput(event)
@@ -148,6 +138,8 @@ public final class CoreMessenger {
             try onInvitationSuccessfullySent(to: peerID)
          case .failedToSendInvitationOverNetwork(let peerID):
             try onFailedToSendInvitation(to: peerID)
+         case .userDidAcceptPeersInvitation(let peerID):
+            break
          case .messageArrived(_, _):
             // store message
             break
@@ -170,9 +162,7 @@ public final class CoreMessenger {
       }
    }
 
-   private func getState() -> State {
-      isLoadingSavedChats ? .loadingSavedChats : .loaded(allPeers.snapshot())
-   }
+   private func getState() -> State { allPeers.snapshot() }
 
    #warning("Use actor?")
    private let queue = DispatchQueue(label: "com.domainQueue", qos: .userInitiated)
