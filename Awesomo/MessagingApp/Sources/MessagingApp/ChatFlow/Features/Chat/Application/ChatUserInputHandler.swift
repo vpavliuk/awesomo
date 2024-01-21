@@ -21,11 +21,11 @@ struct ChatUserInputHandler: InputEventHandler {
    private static func domainEvent(from userInput: ChatUserInput) -> Domain.InputEvent {
       return switch userInput {
       case .didInvitePeer(let peerID):
-         Domain.InputEvent.userDidInvitePeer(peerID)
+         .userDidInvitePeer(peerID)
       case .didAcceptInvitation(let peerID):
-         Domain.InputEvent.userDidAcceptPeersInvitation(peerID)
+         .userDidAcceptPeersInvitation(peerID)
       default:
-         Domain.InputEvent.initial
+         .initial
       }
    }
 
