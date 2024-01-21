@@ -26,7 +26,7 @@ struct ChatFlowNavigationView: View {
 
    var body: some View {
       NavigationStack(path: $router.path) {
-         PeerListView()
+         PeerListScreen()
             .environmentObject(peerListViewModel)
             .environmentObject(destinationViewProvider)
       }

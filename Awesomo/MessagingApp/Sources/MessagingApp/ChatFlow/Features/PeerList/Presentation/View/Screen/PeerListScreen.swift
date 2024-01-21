@@ -1,5 +1,5 @@
 //
-//  PeerListView.swift
+//  PeerListScreen.swift
 //
 //
 //  Created by Vova on 26.11.2023.
@@ -10,19 +10,18 @@ import Combine
 import Domain
 import Utils
 
-struct PeerListView: View {
+struct PeerListScreen: View {
    @EnvironmentObject
    var vm: PeerListViewModel
 
    var body: some View {
       switch vm.state {
       case .loading:
-         ProgressView()
-            .controlSize(.large)
+         LoadingPeerListView()
       case .loadedEmpty:
-         EmptyPeerList()
+         EmptyPeerListView()
       case .loaded(let peers):
-         LoadedPeerList(
+         LoadedPeerListView(
             selection: $vm.selectedPeerID,
             peers: peers
          )
@@ -30,47 +29,15 @@ struct PeerListView: View {
    }
 }
 
-private struct EmptyPeerList: View {
-   var body: some View {
-      Text("Looks like no one's nearby")
-         .font(.title)
-         .multilineTextAlignment(.center)
-   }
-}
-
-private struct LoadedPeerList: View {
-   @EnvironmentObject
-   var destinationProvider: ChatFlowViewProvider
-
-   var selection: Binding<Peer.ID?>
-   let peers: NonEmpty<PeerDisplayModel>
-
-   var body: some View {
-      List(peers, selection: selection) { peer in
-         Text(peer.name)
-      }
-      .navigationDestination(for: Peer.ID.self) { peerID in
-         destinationProvider.destinationView(for: peerID)
-      }
-   }
-}
-
-private struct PeerView: View {
-   let peer: PeerDisplayModel
-   var body: some View {
-      Text(peer.name)
-   }
-}
-
 // MARK: - Previews
 
 #Preview("Loading") {
-   PeerListView()
+   PeerListScreen()
       .environmentObject(makeViewModel(state: .loadingSavedChats))
 }
 
 #Preview("Loaded one peer") {
-   PeerListView()
+   PeerListScreen()
       .environmentObject(
          makeViewModel(
             state: .loaded(
@@ -91,7 +58,7 @@ private struct PeerView: View {
 }
 
 #Preview("Loaded two peers") {
-   PeerListView()
+   PeerListScreen()
       .environmentObject(
          makeViewModel(
             state: .loaded(
@@ -122,7 +89,7 @@ private struct PeerView: View {
 }
 
 #Preview("Loaded empty") {
-   PeerListView()
+   PeerListScreen()
       .environmentObject(makeViewModel(state: .loaded([])))
 }
 

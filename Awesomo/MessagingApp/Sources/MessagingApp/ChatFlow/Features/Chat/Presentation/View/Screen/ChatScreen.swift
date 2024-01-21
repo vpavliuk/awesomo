@@ -1,5 +1,5 @@
 //
-//  ChatView.swift
+//  ChatScreen.swift
 //
 //
 //  Created by Vova on 20.12.2023.
@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 import Domain
 
-struct ChatView: View {
+struct ChatScreen: View {
    @EnvironmentObject
    var vm: InteractiveViewModel<Peer.Snapshot?, ChatState, ChatUserInput>
 
@@ -54,7 +54,7 @@ private struct StrangerPeerChatView: View {
 }
 
 #Preview {
-   ChatView()
+   ChatScreen()
       .environmentObject(
          InteractiveViewModel<Peer.Snapshot?, ChatState, ChatUserInput>(
             initialState: Peer.Snapshot(

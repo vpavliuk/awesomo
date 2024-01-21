@@ -17,7 +17,7 @@ final class ChatFlowViewProvider: ObservableObject {
 
    func destinationView(for destinationObject: Peer.ID) -> some View {
       #warning("Work out back title")
-      return ChatView()
+      return ChatScreen()
          .customBackButton(title: "Peers") { [weak self] in
             self?.userInput.send(ChatFlowNavigationPop())
          }
