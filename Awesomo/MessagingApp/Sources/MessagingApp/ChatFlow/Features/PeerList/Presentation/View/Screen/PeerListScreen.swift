@@ -31,28 +31,21 @@ struct PeerListScreen: View {
 
 // MARK: - Previews
 
-#Preview("Loading") {
-   PeerListScreen()
-      .environmentObject(makeViewModel(state: .loadingSavedChats))
-}
-
 #Preview("Loaded one peer") {
    PeerListScreen()
       .environmentObject(
          makeViewModel(
-            state: .loaded(
-               [
-                  Peer.Snapshot(
-                     peerID: EntityID(value: "1"),
-                     status: .online,
-                     relation: .friend,
-                     name: "John",
-                     networkAddress: NetworkAddress(value: "123"),
-                     incomingMessages: [],
-                     outgoingMessages: []
-                  )
-               ]
-            )
+            state: [
+               Peer.Snapshot(
+                  peerID: EntityID(value: "1"),
+                  status: .online,
+                  relation: .friend,
+                  name: "John",
+                  networkAddress: NetworkAddress(value: "123"),
+                  incomingMessages: [],
+                  outgoingMessages: []
+               )
+            ]
          )
       )
 }
@@ -61,36 +54,33 @@ struct PeerListScreen: View {
    PeerListScreen()
       .environmentObject(
          makeViewModel(
-            state: .loaded(
-               [
-                  Peer.Snapshot(
-                     peerID: EntityID(value: "1"),
-                     status: .online,
-                     relation: .friend,
-                     name: "John",
-                     networkAddress: NetworkAddress(value: "123"),
-                     incomingMessages: [],
-                     outgoingMessages: []
-                  ),
-                  Peer.Snapshot(
-                     peerID: EntityID(value: "2"),
-                     status: .online,
-                     relation: .friend,
-                     name: "Alice",
-                     networkAddress: NetworkAddress(value: "123"),
-                     incomingMessages: [],
-                     outgoingMessages: []
-                  )
-               ]
-            )
+            state: [
+               Peer.Snapshot(
+                  peerID: EntityID(value: "1"),
+                  status: .online,
+                  relation: .friend,
+                  name: "John",
+                  networkAddress: NetworkAddress(value: "123"),
+                  incomingMessages: [],
+                  outgoingMessages: []
+               ),
+               Peer.Snapshot(
+                  peerID: EntityID(value: "2"),
+                  status: .online,
+                  relation: .friend,
+                  name: "Alice",
+                  networkAddress: NetworkAddress(value: "123"),
+                  incomingMessages: [],
+                  outgoingMessages: []
+               )
+            ]
          )
-
       )
 }
 
 #Preview("Loaded empty") {
    PeerListScreen()
-      .environmentObject(makeViewModel(state: .loaded([])))
+      .environmentObject(makeViewModel(state: []))
 }
 
 private func makeViewModel(state: CoreMessenger.State) -> PeerListViewModel {

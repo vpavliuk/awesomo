@@ -13,3 +13,7 @@ struct LoadingPeerListView: View {
          .controlSize(.large)
    }
 }
+
+#Preview() {
+   LoadingPeerListView()
+}

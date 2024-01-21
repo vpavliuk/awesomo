@@ -10,7 +10,7 @@ import Combine
 
 enum CommonFactory {
 
-   static let domainStore = DomainStore(initialState: CoreMessenger.State.loadingSavedChats)
+   static let domainStore = DomainStore(initialState: CoreMessenger.State())
    static let userInputSink = PassthroughSubject<any UserInput, Never>()
    static let userInputMerger: UserInputMergerProtocol = UserInputMerger(userInputSink: userInputSink)
 

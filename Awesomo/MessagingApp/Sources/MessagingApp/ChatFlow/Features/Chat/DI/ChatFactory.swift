@@ -20,16 +20,13 @@ enum ChatFactory {
 
       return CommonFactory
          .viewModelBuilder
-         .buildViewModel(of: InteractiveViewModel.self) { (biggerState: CoreMessenger.State) in
-            var peers: [Peer.Snapshot] = []
-            if case .loaded(let loadedPeers) = biggerState {
-               peers = loadedPeers
-            }
-
-            return peers.first { $0.peerID == peerID }
-         }
+         .buildViewModel(of: InteractiveViewModel.self) { peers in peers.first { $0.peerID == peerID } }
    }
 
-   private static func getUserInputHandler(witness _: ChatUserInput.Type)
-         -> some InputEventHandler<ChatUserInput> { ChatUserInputHandler(coreMessenger: CommonFactory.coreMessenger) }
+   private static func getUserInputHandler(witness _: ChatUserInput.Type) -> some InputEventHandler<ChatUserInput> {
+      return ChatUserInputHandler(
+         coreMessenger: CommonFactory.coreMessenger,
+         domainStore: CommonFactory.domainStore
+      )
+   }
 }

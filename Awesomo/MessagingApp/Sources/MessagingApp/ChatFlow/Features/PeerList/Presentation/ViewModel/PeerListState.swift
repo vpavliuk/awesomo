@@ -16,16 +16,11 @@ enum PeerListState {
 
 extension PeerListState: DomainDerivable {
    static func fromDomainState(_ domainState: CoreMessenger.State) -> Self {
-      switch domainState {
-      case .loadingSavedChats:
-         return .loading
-      case .loaded(let peers):
-         let peerDisplayModels = peers.map(PeerDisplayModel.init)
-         if let nonEmpty = NonEmpty(peerDisplayModels) {
-            return .loaded(nonEmpty)
-         } else {
-            return .loadedEmpty
-         }
+      let peerDisplayModels = domainState.map(PeerDisplayModel.init)
+      if let nonEmpty = NonEmpty(peerDisplayModels) {
+         return .loaded(nonEmpty)
+      } else {
+         return .loadedEmpty
       }
    }
 }
