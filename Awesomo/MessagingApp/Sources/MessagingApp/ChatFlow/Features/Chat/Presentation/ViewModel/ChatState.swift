@@ -14,10 +14,14 @@ enum ChatState {
    case peerWasInvited
    case peerInvitedUs
    case strangerPeer(StrangerPeerDisplayModel)
+   case missingPeer
 }
 
 extension ChatState: DomainDerivable {
-   static func fromDomainState(_ domainState: Peer.Snapshot) -> Self {
+   static func fromDomainState(_ domainState: Peer.Snapshot?) -> Self {
+      guard let domainState else {
+         return .missingPeer
+      }
       switch domainState.relation {
       case .friend:
          let displayModels = messageDisplayModels(from: domainState)

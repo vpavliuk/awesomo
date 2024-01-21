@@ -9,7 +9,7 @@ import Domain
 
 enum ChatFactory {
 
-   static func getViewModel(peerID: Peer.ID) -> InteractiveViewModel<Peer.Snapshot, ChatState, ChatUserInput> {
+   static func getViewModel(peerID: Peer.ID) -> InteractiveViewModel<Peer.Snapshot?, ChatState, ChatUserInput> {
       let handlerStore = CommonFactory.eventHandlerStore
       let eventType = ChatUserInput.self
 
@@ -25,8 +25,8 @@ enum ChatFactory {
             if case .loaded(let loadedPeers) = biggerState {
                peers = loadedPeers
             }
-            #warning("Get rid of force unwrap")
-            return peers.first { $0.peerID == peerID }!
+
+            return peers.first { $0.peerID == peerID }
          }
    }
 

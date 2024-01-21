@@ -11,7 +11,7 @@ import Domain
 
 struct ChatView: View {
    @EnvironmentObject
-   var vm: InteractiveViewModel<Peer.Snapshot, ChatState, ChatUserInput>
+   var vm: InteractiveViewModel<Peer.Snapshot?, ChatState, ChatUserInput>
 
    var body: some View {
       switch vm.state {
@@ -28,7 +28,17 @@ struct ChatView: View {
          StrangerPeerChatView(inviteText: "") {}
       case .peerWasInvited:
          StrangerPeerChatView(inviteText: "") {}
+      case .missingPeer:
+         MissingPeerView()
       }
+   }
+}
+
+private struct MissingPeerView: View {
+   var body: some View {
+      Text("The user is no longer available")
+         .font(.title)
+         .multilineTextAlignment(.center)
    }
 }
 
@@ -46,7 +56,7 @@ private struct StrangerPeerChatView: View {
 #Preview {
    ChatView()
       .environmentObject(
-         InteractiveViewModel<Peer.Snapshot, ChatState, ChatUserInput>(
+         InteractiveViewModel<Peer.Snapshot?, ChatState, ChatUserInput>(
             initialState: Peer.Snapshot(
                peerID: Peer.ID(value: ""),
                status: .online,
