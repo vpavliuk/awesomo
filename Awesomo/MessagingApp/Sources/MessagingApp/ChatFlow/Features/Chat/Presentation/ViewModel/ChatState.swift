@@ -52,8 +52,8 @@ extension ChatState: DomainDerivable {
          case .wasInvited:
             ChatState.peerWasInvited("Waiting for \(peer.name) to accept the invitation…")
 
-         default:
-            ChatState.friend([])
+         case .invitationInitiated:
+            ChatState.peerWasInvited("Waiting for \(peer.name) to accept the invitation…")
          }
       }
 

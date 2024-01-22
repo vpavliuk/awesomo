@@ -17,7 +17,7 @@ struct PeerWasInvitedChatView: View {
    var body: some View {
       HStack {
          Text(message)
-            .font(.title)
+            .font(.title3)
             .foregroundStyle(Color(white: 0.1))
 
          Spacer()
