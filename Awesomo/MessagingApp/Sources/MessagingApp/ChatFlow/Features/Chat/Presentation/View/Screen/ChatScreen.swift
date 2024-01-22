@@ -33,8 +33,8 @@ struct ChatScreen: View {
             vm.userInput.send(.didAcceptInvitation(peerID))
          }
 
-      case .peerWasInvited:
-         StrangerPeerChatView(StrangerPeerDisplayModel(messageTitle: "", messageDescription: "", inviteButtonTitle: "")) {}
+      case .peerWasInvited(let message):
+         PeerWasInvitedChatView(message)
 
       case .missingPeer(let text):
          MissingPeerChatView(text: text)

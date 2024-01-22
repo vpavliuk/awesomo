@@ -6,12 +6,11 @@
 //
 
 import Domain
-import Foundation
 
 enum ChatState {
    case loading
    case friend([ChatMessageDisplayModel])
-   case peerWasInvited
+   case peerWasInvited(String)
    case peerInvitedUs(Peer.ID, PeerInvitedUsDisplayModel)
    case strangerPeer(Peer.ID, StrangerPeerDisplayModel)
    case missingPeer(String)
@@ -49,6 +48,9 @@ extension ChatState: DomainDerivable {
                   acceptButtonTitle: "Accept"
                )
             )
+
+         case .wasInvited:
+            ChatState.peerWasInvited("Waiting for \(peer.name) to accept the invitation…")
 
          default:
             ChatState.friend([])
