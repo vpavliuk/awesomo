@@ -36,8 +36,8 @@ struct ChatScreen: View {
       case .peerWasInvited(let message):
          PeerWasInvitedChatView(message)
 
-      case .missingPeer(let text):
-         MissingPeerChatView(text: text)
+      case .missingPeer(let message):
+         MissingPeerChatView(message)
       }
    }
 }

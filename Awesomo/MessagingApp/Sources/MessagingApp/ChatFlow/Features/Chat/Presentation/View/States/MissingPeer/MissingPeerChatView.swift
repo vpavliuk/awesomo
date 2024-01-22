@@ -8,11 +8,24 @@
 import SwiftUI
 
 struct MissingPeerChatView: View {
-   let text: String
+   init(_ message: String) {
+      self.message = message
+   }
+
+   let message: String
 
    var body: some View {
-      Text(text)
-         .font(.title)
-         .multilineTextAlignment(.center)
+      HStack {
+         Text(message)
+            .font(.title)
+            .foregroundStyle(Color(white: 0.1))
+
+         Spacer()
+      }
+      .padding()
    }
+}
+
+#Preview {
+   MissingPeerChatView("User is no longer available")
 }
