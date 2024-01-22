@@ -34,7 +34,9 @@ extension ChatState: DomainDerivable {
             ChatState.strangerPeer(
                peer.peerID,
                StrangerPeerDisplayModel(
-                  inviteButtonTitle: "Invite \(peer.name)"
+                  messageTitle: "\(peer.name) is online!",
+                  messageDescription: "Invite them to a chat where you can share text, photos, and more.",
+                  inviteButtonTitle: "Invite"
                )
             )
 
@@ -42,8 +44,8 @@ extension ChatState: DomainDerivable {
             ChatState.peerInvitedUs(
                peer.peerID,
                PeerInvitedUsDisplayModel(
-                  messageTitle: "\(peer.name) wants to chat",
-                  messageDescription: "\(peer.name) would like to connect. Accept their request?",
+                  messageTitle: "\(peer.name) wants to connect",
+                  messageDescription: "\(peer.name) would like to share something with you. Accept their request?",
                   acceptButtonTitle: "Accept"
                )
             )
@@ -90,5 +92,7 @@ extension ChatMessageDisplayModel {
 }
 
 struct StrangerPeerDisplayModel: Hashable {
+   let messageTitle: String
+   let messageDescription: String
    let inviteButtonTitle: String
 }

@@ -46,8 +46,8 @@ struct PeerInvitedUsChatView: View {
 #Preview {
    PeerInvitedUsChatView(
       PeerInvitedUsDisplayModel(
-         messageTitle: "Spooky wants to chat",
-         messageDescription: "Spooky would like to connect. Accept their request?",
+         messageTitle: "Spooky wants to connect",
+         messageDescription: "Spooky would like to share something with you. Accept their request?",
          acceptButtonTitle: "Accept"
       ),
       onAcceptTapped: {}

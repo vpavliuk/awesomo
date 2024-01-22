@@ -25,7 +25,8 @@ struct ChatScreen: View {
          }
 
       case .friend(_):
-         StrangerPeerChatView(StrangerPeerDisplayModel(inviteButtonTitle: "")) {}
+         StrangerPeerChatView(StrangerPeerDisplayModel(
+            messageTitle: "", messageDescription: "", inviteButtonTitle: "")) {}
 
       case .peerInvitedUs(let peerID, let displayModel):
          PeerInvitedUsChatView(displayModel) {
@@ -33,7 +34,7 @@ struct ChatScreen: View {
          }
 
       case .peerWasInvited:
-         StrangerPeerChatView(StrangerPeerDisplayModel(inviteButtonTitle: "")) {}
+         StrangerPeerChatView(StrangerPeerDisplayModel(messageTitle: "", messageDescription: "", inviteButtonTitle: "")) {}
 
       case .missingPeer(let text):
          MissingPeerChatView(text: text)
