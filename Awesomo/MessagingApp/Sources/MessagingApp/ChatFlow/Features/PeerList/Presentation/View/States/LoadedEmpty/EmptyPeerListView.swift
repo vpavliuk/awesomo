@@ -26,9 +26,16 @@ struct EmptyPeerListView: View {
    }
 }
 
-#Preview {
+#Preview("Actual message") {
    EmptyPeerListView(
-      messageTitle: "Looks like no one's nearby",
+      messageTitle: "No one's nearby :-(",
       messageDescription: "Make sure that the two devices are connected to the same WiFi network."
+   )
+}
+
+#Preview("Short message") {
+   EmptyPeerListView(
+      messageTitle: "No one here",
+      messageDescription: "Check your network settings."
    )
 }

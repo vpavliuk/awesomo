@@ -21,7 +21,7 @@ extension PeerListState: DomainDerivable {
          return .loaded(nonEmpty)
       } else {
          return .loadedEmpty(
-            title: "Looks like no one's nearby",
+            title: "No one's nearby :-(",
             description: "Make sure that the two devices are connected to the same WiFi network."
          )
       }
