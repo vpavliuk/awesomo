@@ -7,7 +7,7 @@ let package = Package(
    name: "PeerDiscovery",
    platforms: [
       .macOS(.v10_15),
-      .iOS(.v15),
+      .iOS(.v16),
    ],
    products: [
       .library(

@@ -6,7 +6,8 @@ import MessagingApp
 import BonjourBrowser
 
 public struct PeerDiscovery {
-   public init(bonjourNameComposer: BonjourNameComposer = BonjourNameComposerImpl()) {
+
+   public init(bonjourNameComposer: BonjourNameComposerProtocol) {
       self.bonjourNameComposer = bonjourNameComposer
       self.inputInternal = PublishingSubscriber()
       self.outputInternal = PublishingSubscriber()
@@ -19,25 +20,23 @@ public struct PeerDiscovery {
          .subscribe(outputInternal)
    }
 
-   private func peerEventFromServiceEvent(_ serviceEvent: NetServiceAvailabilityEvent)
-         -> PeerAvailabilityEvent {
-
+   private func peerEventFromServiceEvent(_ serviceEvent: NetServiceAvailabilityEvent) -> PeerAvailabilityEvent {
       let emergences = serviceEvent.services.map(peerEmergenceFromNetService)
+
       switch serviceEvent.change {
       case .found:
          let emergencesByID = Dictionary(uniqueKeysWithValues: emergences)
          return .peersDidAppear(emergencesByID)
+
       case .lost:
          let peerIDs = Set(emergences.map(\.id))
          return .peersDidDisappear(peerIDs)
       }
    }
 
-   private func peerEmergenceFromNetService(_ service: NetService)
-   -> (id: Peer.ID, emergence: PeerEmergence) {
-
-      let attributes = bonjourNameComposer
-         .peerAttributesFromServiceName(service.name)
+   private func peerEmergenceFromNetService(_ service: NetService) -> (id: Peer.ID, emergence: PeerEmergence) {
+      #warning("Handle error")
+      let attributes = try! bonjourNameComposer.peerAttributesFromServiceName(service.name)
       let emergence = PeerEmergence(
          peerName: attributes.peerName,
          peerAddress: NetworkAddress(value: service.name)
@@ -51,5 +50,5 @@ public struct PeerDiscovery {
    public var output: some Publisher<PeerAvailabilityEvent, Never> { outputInternal.publisher }
    private let outputInternal: PublishingSubscriber<PeerAvailabilityEvent, Never>
 
-   private let bonjourNameComposer: BonjourNameComposer
+   private let bonjourNameComposer: BonjourNameComposerProtocol
 }

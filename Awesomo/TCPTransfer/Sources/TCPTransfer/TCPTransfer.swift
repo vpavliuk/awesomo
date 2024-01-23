@@ -8,8 +8,9 @@
 
 import Utils
 import Combine
+import Foundation
 
-public final class TCPTransfer<ConcreteUpload: Upload> {
+public final class TCPTransfer {
    public init(localServiceName: String, serviceType: String) {
       self.localServiceName = localServiceName
       self.serviceType = serviceType
@@ -17,15 +18,15 @@ public final class TCPTransfer<ConcreteUpload: Upload> {
       interface = interfaceInternal.eraseToAny()
    }
 
-   public let interface: AnyTwoWayInterface<ConcreteUpload, Output>
+   public let interface: AnyTwoWayInterface<Upload, Output>
 
-   private let interfaceInternal: PassthroughTwoWayInterface<ConcreteUpload, Output>
+   private let interfaceInternal: PassthroughTwoWayInterface<Upload, Output>
 
    public enum Output {
-      case received(ConcreteUpload.Message)
+      case received(Data)
       #warning("Use result for sent/failure?")
-      case sent(ConcreteUpload.ID)
-      case failedSending(ConcreteUpload.ID)
+      case sent(Upload.ID)
+      case failedSending(Upload.ID)
    }
 
    public func wireUp() throws {
@@ -45,17 +46,17 @@ public final class TCPTransfer<ConcreteUpload: Upload> {
    private let localServiceName: String
    private let serviceType: String
 
-   private lazy var listener = TCPServer<ConcreteUpload>(
+   private lazy var listener = TCPServer(
       serviceName: localServiceName,
       serviceType: serviceType
    )
-   private lazy var client = TCPClient<ConcreteUpload>(bonjourServiceType: serviceType)
+   private lazy var client = TCPClient(bonjourServiceType: serviceType)
 }
 
 #warning("Make a struct")
 #warning("Investigate possibility of using a stream of data")
-public protocol Upload: Identifiable {
-   associatedtype Message: Codable
-   var message: Message { get }
-   var receiverServiceName: String { get }
+public struct Upload: Identifiable {
+   public let id: UUID
+   let message: Data
+   let receiverServiceName: String
 }

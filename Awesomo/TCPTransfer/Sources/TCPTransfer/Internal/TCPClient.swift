@@ -11,7 +11,7 @@ import Network
 import Combine
 import Utils
 
-final class TCPClient<ConcreteUpload: Upload> {
+final class TCPClient {
 
    init(bonjourServiceType: String) {
       self.serviceType = bonjourServiceType
@@ -33,7 +33,7 @@ final class TCPClient<ConcreteUpload: Upload> {
    private var interfaceSubscription: AnyCancellable?
 
    private func performUpload(
-      _ upload: ConcreteUpload,
+      _ upload: Upload,
       onDataTransferred: @escaping () -> Void
    ) {
       guard let tcpData = try? JSONEncoder().encode(upload.message) else {
@@ -61,5 +61,5 @@ final class TCPClient<ConcreteUpload: Upload> {
    }
 
    private let interfaceInternal =
-         PassthroughTwoWayInterface<ConcreteUpload, TCPTransfer<ConcreteUpload>.Output>()
+         PassthroughTwoWayInterface<Upload, TCPTransfer.Output>()
 }

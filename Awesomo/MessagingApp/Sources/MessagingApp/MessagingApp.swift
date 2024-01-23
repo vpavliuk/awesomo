@@ -56,16 +56,3 @@ public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject 
    #warning("A Sink subscriber might be sufficient")
    private let inputInternal: PublishingSubscriber<any InputEvent, Never>
 }
-
-extension MessagingApp {
-   public convenience init() {
-      self.init(
-         userInputSink: CommonFactory.userInputSink.eraseToAnyPublisher(),
-         handlerStore: CommonFactory.eventHandlerStore,
-         commonHandlers: [
-            CommonFactory.commonInputHandler,
-            CommonFactory.peerAvailabilityHandler
-         ]
-      )
-   }
-}

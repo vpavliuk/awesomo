@@ -10,8 +10,7 @@ import Network
 import Foundation
 import Combine
 
-final class TCPServer<ConcreteUpload: Upload> {
-   private typealias ConcreteMessage = ConcreteUpload.Message
+final class TCPServer {
 
    init(serviceName: String, serviceType: String) {
       self.serviceName = serviceName
@@ -43,7 +42,7 @@ final class TCPServer<ConcreteUpload: Upload> {
 
       receive(on: connection) { (tcpData: Data?) in
          guard let tcpData = tcpData,
-               let message = try? JSONDecoder().decode(ConcreteMessage.self, from: tcpData)
+               let message = try? JSONDecoder().decode(Data.self, from: tcpData)
          else {
             #warning("Handle decoding errors")
             return
@@ -83,5 +82,5 @@ final class TCPServer<ConcreteUpload: Upload> {
       }
    }
 
-   private let outputInternal = PassthroughSubject<TCPTransfer<ConcreteUpload>.Output, Never>()
+   private let outputInternal = PassthroughSubject<TCPTransfer.Output, Never>()
 }

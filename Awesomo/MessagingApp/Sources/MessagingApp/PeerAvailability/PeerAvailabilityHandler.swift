@@ -9,27 +9,43 @@ import Domain
 
 public struct PeerAvailabilityHandler: InputEventHandler {
 
-   init(coreMessenger: CoreMessenger, domainStore: DomainStore<CoreMessenger.State>) {
+   init(
+      appUserID: Peer.ID,
+      coreMessenger: CoreMessenger,
+      domainStore: DomainStore<CoreMessenger.State>
+   ) {
+      self.appUserID = appUserID
       self.coreMessenger = coreMessenger
       self.domainStore = domainStore
    }
 
    public func on(_ event: PeerAvailabilityEvent) {
-      let domainEvent = Domain.InputEvent(peerAvailabilityEvent: event)
+      guard let domainEvent = domainEvent(from: event) else {
+         return
+      }
       domainStore.state = coreMessenger.add(domainEvent)
    }
 
-   private let coreMessenger: CoreMessenger
-   private let domainStore: DomainStore<CoreMessenger.State>
-}
-
-private extension Domain.InputEvent {
-   init(peerAvailabilityEvent: PeerAvailabilityEvent) {
+   private func domainEvent(from peerAvailabilityEvent: PeerAvailabilityEvent) -> Domain.InputEvent? {
+      // Filter out records related to the app user
       switch peerAvailabilityEvent {
       case .peersDidAppear(let emergences):
-         self = .peersDidAppear(emergences)
+         let filteredEmergences = emergences.filter { $0.key != appUserID  }
+         if filteredEmergences.isEmpty {
+            return nil
+         }
+         return .peersDidAppear(filteredEmergences)
+
       case .peersDidDisappear(let peerIDs):
-         self = .peersDidDisappear(peerIDs)
+         let filteredPeerIDs = peerIDs.filter { $0 != appUserID }
+         if filteredPeerIDs.isEmpty {
+            return nil
+         }
+         return .peersDidDisappear(filteredPeerIDs)
       }
    }
+
+   private let appUserID: Peer.ID
+   private let coreMessenger: CoreMessenger
+   private let domainStore: DomainStore<CoreMessenger.State>
 }

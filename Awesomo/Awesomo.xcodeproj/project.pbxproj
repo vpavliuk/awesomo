@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0E84F7F92B2A58B100495814 /* PeerDiscoveryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E84F7F82B2A58B100495814 /* PeerDiscoveryMock.swift */; };
-		0E92ED432B16240800692BBC /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED422B16240800692BBC /* Assembly.swift */; };
+		0E92ED432B16240800692BBC /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED422B16240800692BBC /* Factory.swift */; };
 		0E92ED462B162CF200692BBC /* Middleman.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED452B162CF200692BBC /* Middleman.swift */; };
 		0ED3422C2B21303A007B2DCD /* PeerDiscovery in Frameworks */ = {isa = PBXBuildFile; productRef = 0ED3422B2B21303A007B2DCD /* PeerDiscovery */; };
 		0ED3422E2B29E1E3007B2DCD /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED3422D2B29E1E3007B2DCD /* Recorder.swift */; };
@@ -21,6 +21,8 @@
 		0ED5D7282698E3ED00265C2A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0ED5D7272698E3ED00265C2A /* Preview Assets.xcassets */; };
 		0ED5D7322698E3ED00265C2A /* AwesomoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D7312698E3ED00265C2A /* AwesomoTests.swift */; };
 		0ED5D73C2698E3ED00265C2A /* AwesomoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED5D73B2698E3ED00265C2A /* AwesomoUITests.swift */; };
+		0EFE83812B5EBE29001FCDA6 /* BonjourNameComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EFE83802B5EBE29001FCDA6 /* BonjourNameComposer.swift */; };
+		0EFE83B62B6061F4001FCDA6 /* TCPTransfer in Frameworks */ = {isa = PBXBuildFile; productRef = 0EFE83B52B6061F4001FCDA6 /* TCPTransfer */; };
 		0EFF0B1426B4596300A350DC /* MessagingApp in Frameworks */ = {isa = PBXBuildFile; productRef = 0EFF0B1326B4596300A350DC /* MessagingApp */; };
 /* End PBXBuildFile section */
 
@@ -49,7 +51,7 @@
 		0E4FF3D626B4247A004784C6 /* MessagingApp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MessagingApp; sourceTree = "<group>"; };
 		0E7B5E8B26B47E4D005EF112 /* TCPTransfer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TCPTransfer; sourceTree = "<group>"; };
 		0E84F7F82B2A58B100495814 /* PeerDiscoveryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerDiscoveryMock.swift; sourceTree = "<group>"; };
-		0E92ED422B16240800692BBC /* Assembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assembly.swift; sourceTree = "<group>"; };
+		0E92ED422B16240800692BBC /* Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
 		0E92ED452B162CF200692BBC /* Middleman.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Middleman.swift; sourceTree = "<group>"; };
 		0E9B296126A4622B00EE4C5C /* Utils */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Utils; sourceTree = "<group>"; };
 		0EBB70112814769900EC04C9 /* PeerDiscovery */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PeerDiscovery; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 		0ED5D7312698E3ED00265C2A /* AwesomoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwesomoTests.swift; sourceTree = "<group>"; };
 		0ED5D7372698E3ED00265C2A /* AwesomoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AwesomoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ED5D73B2698E3ED00265C2A /* AwesomoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwesomoUITests.swift; sourceTree = "<group>"; };
+		0EFE83802B5EBE29001FCDA6 /* BonjourNameComposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BonjourNameComposer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +77,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0EFF0B1426B4596300A350DC /* MessagingApp in Frameworks */,
+				0EFE83B62B6061F4001FCDA6 /* TCPTransfer in Frameworks */,
 				0ED3422C2B21303A007B2DCD /* PeerDiscovery in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -164,8 +168,9 @@
 			children = (
 				0E84F7F72B2A589000495814 /* Mocks */,
 				0E92ED442B162CE100692BBC /* Middleman */,
-				0E92ED422B16240800692BBC /* Assembly.swift */,
+				0E92ED422B16240800692BBC /* Factory.swift */,
 				0ED5D7202698E3EC00265C2A /* AwesomoApp.swift */,
+				0EFE83802B5EBE29001FCDA6 /* BonjourNameComposer.swift */,
 				0ED5D7222698E3EC00265C2A /* ContentView.swift */,
 				0ED5D7242698E3ED00265C2A /* Assets.xcassets */,
 				0ED5D7262698E3ED00265C2A /* Preview Content */,
@@ -216,6 +221,7 @@
 			packageProductDependencies = (
 				0EFF0B1326B4596300A350DC /* MessagingApp */,
 				0ED3422B2B21303A007B2DCD /* PeerDiscovery */,
+				0EFE83B52B6061F4001FCDA6 /* TCPTransfer */,
 			);
 			productName = Awesomo;
 			productReference = 0ED5D71D2698E3EC00265C2A /* Awesomo.app */;
@@ -337,7 +343,8 @@
 				0E92ED462B162CF200692BBC /* Middleman.swift in Sources */,
 				0ED342352B2A2B6B007B2DCD /* Player.swift in Sources */,
 				0E84F7F92B2A58B100495814 /* PeerDiscoveryMock.swift in Sources */,
-				0E92ED432B16240800692BBC /* Assembly.swift in Sources */,
+				0EFE83812B5EBE29001FCDA6 /* BonjourNameComposer.swift in Sources */,
+				0E92ED432B16240800692BBC /* Factory.swift in Sources */,
 				0ED5D7212698E3EC00265C2A /* AwesomoApp.swift in Sources */,
 				0ED342332B29E579007B2DCD /* StoredEvent.swift in Sources */,
 			);
@@ -686,6 +693,10 @@
 		0ED3422B2B21303A007B2DCD /* PeerDiscovery */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PeerDiscovery;
+		};
+		0EFE83B52B6061F4001FCDA6 /* TCPTransfer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TCPTransfer;
 		};
 		0EFF0B1326B4596300A350DC /* MessagingApp */ = {
 			isa = XCSwiftPackageProductDependency;

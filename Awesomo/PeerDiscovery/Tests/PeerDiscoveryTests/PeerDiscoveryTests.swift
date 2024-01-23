@@ -1,6 +1,7 @@
+@testable
+import PeerDiscovery
 import XCTest
 import Combine
-import PeerDiscovery
 import BonjourBrowser
 import Domain
 import MessagingApp

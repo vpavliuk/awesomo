@@ -8,13 +8,24 @@
 import Domain
 import Combine
 
-enum CommonFactory {
+public enum CommonFactory {
+   public static func buildApp<T>(appUserID: String) -> MessagingApp<T> {
+      let appUserPeerID = Peer.ID(value: appUserID)
+      return MessagingApp(
+         userInputSink: CommonFactory.userInputSink.eraseToAnyPublisher(),
+         handlerStore: CommonFactory.eventHandlerStore,
+         commonHandlers: [
+            CommonFactory.commonInputHandler,
+            getPeerAvailabilityHandler(appUserID: appUserPeerID),
+         ]
+      )
+   }
 
    static let domainStore = DomainStore(initialState: CoreMessenger.State())
    static let userInputSink = PassthroughSubject<any UserInput, Never>()
    static let userInputMerger: UserInputMergerProtocol = UserInputMerger(userInputSink: userInputSink)
 
-   #warning("Make sure that static let is lazy")
+#warning("Make sure that static let is lazy")
    static let viewModelBuilder: any ViewModelBuilderProtocol = ViewModelBuilder(
       domainStore: domainStore,
       userInputMerger: userInputMerger
@@ -29,8 +40,11 @@ enum CommonFactory {
       domainStore: domainStore
    )
 
-   static let peerAvailabilityHandler: some InputEventHandler<PeerAvailabilityEvent> = PeerAvailabilityHandler(
-      coreMessenger: coreMessenger,
-      domainStore: domainStore
-   )
+   private static func getPeerAvailabilityHandler(appUserID: Peer.ID) -> some InputEventHandler<PeerAvailabilityEvent> {
+      return PeerAvailabilityHandler(
+         appUserID: appUserID,
+         coreMessenger: coreMessenger,
+         domainStore: domainStore
+      )
+   }
 }

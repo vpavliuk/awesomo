@@ -1,16 +1,14 @@
 //
-//  BonjourNameComposerMock.swift
-//  Peer Discovery
+//  BonjourNameComposer.swift
+//  Awesomo
 //
-//  Created by Volodymyr Pavliuk on 25.04.2022.
-//  Copyright © 2022 Volodymyr Pavliuk. All rights reserved.
+//  Created by Vova on 22.01.2024.
 //
 
-@testable
 import PeerDiscovery
 import Domain
 
-struct BonjourNameComposerMock: BonjourNameComposerProtocol {
+struct BonjourNameComposer: BonjourNameComposerProtocol {
 
    func peerAttributesFromServiceName(_ name: String) -> PeerAttributes {
       let components = name.split(
@@ -21,13 +19,14 @@ struct BonjourNameComposerMock: BonjourNameComposerProtocol {
 
       let idString = String(components[0])
       let peerId = Peer.ID(value: idString)
+
       return PeerAttributes(
          id: peerId,
          peerName: String(components[1])
       )
    }
 
-   func serviceName(fromIdString id: String, peerName: String) -> String {
+   public func serviceName(fromIdString id: String, peerName: String) -> String {
       id + String(separator) + peerName
    }
 
