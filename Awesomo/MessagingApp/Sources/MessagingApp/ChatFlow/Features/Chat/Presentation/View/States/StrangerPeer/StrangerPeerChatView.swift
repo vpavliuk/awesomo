@@ -32,8 +32,15 @@ struct StrangerPeerChatView: View {
 
          Spacer()
 
-         Button(action: onInvite) {
-            Text(displayModel.inviteButtonTitle)
+         HStack(spacing: 8) {
+            Button(action: onInvite) {
+               Text(displayModel.inviteButtonTitle)
+            }
+            .disabled(displayModel.isInviteButtonDisabled)
+
+            if !displayModel.isProgressViewHidden {
+               ProgressView()
+            }
          }
       }
       .padding()
@@ -47,7 +54,9 @@ struct StrangerPeerChatView: View {
       StrangerPeerDisplayModel(
          messageTitle: "Spooky is online!",
          messageDescription: "Invite them to a chat where you can share text, photos, and more.",
-         inviteButtonTitle: "Invite"
+         inviteButtonTitle: "Invite",
+         isInviteButtonDisabled: false,
+         isProgressViewHidden: true
       )
    ) {}
 }
@@ -57,7 +66,21 @@ struct StrangerPeerChatView: View {
       StrangerPeerDisplayModel(
          messageTitle: "Spooky is online!",
          messageDescription: "Invite them.",
-         inviteButtonTitle: "Invite"
+         inviteButtonTitle: "Invite",
+         isInviteButtonDisabled: false,
+         isProgressViewHidden: true
+      )
+   ) {}
+}
+
+#Preview("Invite button tapped") {
+   StrangerPeerChatView(
+      StrangerPeerDisplayModel(
+         messageTitle: "Spooky is online!",
+         messageDescription: "Invite them to a chat where you can share text, photos, and more.",
+         inviteButtonTitle: "Invite",
+         isInviteButtonDisabled: true,
+         isProgressViewHidden: false
       )
    ) {}
 }
