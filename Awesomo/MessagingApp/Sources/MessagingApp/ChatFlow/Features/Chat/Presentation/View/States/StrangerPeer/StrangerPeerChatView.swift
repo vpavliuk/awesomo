@@ -53,7 +53,7 @@ struct StrangerPeerChatView: View {
    StrangerPeerChatView(
       StrangerPeerDisplayModel(
          messageTitle: "Spooky is online!",
-         messageDescription: "Invite them to a chat where you can share text, photos, and more.",
+         messageDescription: "Invite them to a chat where you can exchange text, photos, and more.",
          inviteButtonTitle: "Invite",
          isInviteButtonDisabled: false,
          isProgressViewHidden: true
@@ -77,7 +77,7 @@ struct StrangerPeerChatView: View {
    StrangerPeerChatView(
       StrangerPeerDisplayModel(
          messageTitle: "Spooky is online!",
-         messageDescription: "Invite them to a chat where you can share text, photos, and more.",
+         messageDescription: "Invite them to a chat where you can exchange text, photos, and more.",
          inviteButtonTitle: "Invite",
          isInviteButtonDisabled: true,
          isProgressViewHidden: false
