@@ -70,6 +70,7 @@
 		0ED5D73B2698E3ED00265C2A /* AwesomoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwesomoUITests.swift; sourceTree = "<group>"; };
 		0EFE83802B5EBE29001FCDA6 /* BonjourNameComposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BonjourNameComposer.swift; sourceTree = "<group>"; };
 		0EFE83B72B612E4C001FCDA6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0EFE83B92B61357D001FCDA6 /* Transport */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Transport; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +139,7 @@
 		0ED5D7142698E3EC00265C2A = {
 			isa = PBXGroup;
 			children = (
+				0EFE83B92B61357D001FCDA6 /* Transport */,
 				0E208FB9281EF58E00F28DDD /* BonjourBrowser */,
 				0EBB70112814769900EC04C9 /* PeerDiscovery */,
 				0E7B5E8B26B47E4D005EF112 /* TCPTransfer */,
