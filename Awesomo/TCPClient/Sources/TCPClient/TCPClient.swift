@@ -16,7 +16,7 @@ public final class TCPClient {
       serviceType = bonjourServiceType
    }
 
-   public func performUpload(_ data: Data, to networkAddress: String) async throws {
+   public func upload(_ data: Data, to networkAddress: String) async throws {
       return try await withCheckedThrowingContinuation { continuation in
          performUpload(data, to: networkAddress) { error in
             if let error {
