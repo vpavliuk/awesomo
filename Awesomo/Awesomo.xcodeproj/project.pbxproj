@@ -51,7 +51,6 @@
 		0E152EE42B699C3800A07DEF /* TCPClient */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TCPClient; sourceTree = "<group>"; };
 		0E208FB9281EF58E00F28DDD /* BonjourBrowser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BonjourBrowser; sourceTree = "<group>"; };
 		0E2BF36026A892390031D254 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Domain; sourceTree = "<group>"; };
-		0E2BF36126A979780031D254 /* TransportAdapter */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TransportAdapter; sourceTree = "<group>"; };
 		0E32EAC326DBC0D500814E7D /* TestUtils */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TestUtils; sourceTree = "<group>"; };
 		0E4FF3D626B4247A004784C6 /* MessagingApp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MessagingApp; sourceTree = "<group>"; };
 		0E84F7F82B2A58B100495814 /* PeerDiscoveryMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerDiscoveryMock.swift; sourceTree = "<group>"; };
@@ -153,7 +152,6 @@
 				0EBB70112814769900EC04C9 /* PeerDiscovery */,
 				0E4FF3D626B4247A004784C6 /* MessagingApp */,
 				0E2BF36026A892390031D254 /* Domain */,
-				0E2BF36126A979780031D254 /* TransportAdapter */,
 				0E9B296126A4622B00EE4C5C /* Utils */,
 				0E32EAC326DBC0D500814E7D /* TestUtils */,
 				0ED5D71F2698E3EC00265C2A /* Awesomo */,
