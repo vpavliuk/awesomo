@@ -1,11 +1,11 @@
 //
-//  EventHandlerStore.swift
+//  EventHandlerRegistry.swift
 //
 //
 //  Created by Vova on 14.01.2024.
 //
 
-protocol EventHandlerStoreProtocol: AnyObject {
+protocol EventHandlerRegistryProtocol: AnyObject {
 
    func isHandlerRegistered<E: InputEvent>(for _: E.Type) -> Bool
 
@@ -14,7 +14,7 @@ protocol EventHandlerStoreProtocol: AnyObject {
    func getHandler(for _: some InputEvent) -> (any InputEventHandler)?
 }
 
-final class EventHandlerStore: EventHandlerStoreProtocol {
+final class EventHandlerRegistry: EventHandlerRegistryProtocol {
 
    func isHandlerRegistered<E: InputEvent>(for _: E.Type) -> Bool {
       handlers.keys.contains(E.eventTypeID)

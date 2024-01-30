@@ -10,12 +10,12 @@ import Domain
 enum PeerListFactory {
 
    static func getViewModel(router: some NavigationRouter<Peer.ID>) -> PeerListViewModel {
-      let handlerStore = CommonFactory.eventHandlerStore
+      let handlerRegistry = CommonFactory.eventHandlerRegistry
       let eventType = PeerListUserInput.self
 
-      if !handlerStore.isHandlerRegistered(for: eventType) {
+      if !handlerRegistry.isHandlerRegistered(for: eventType) {
          let handler = getUserInputHandler(witness: eventType, router: router)
-         handlerStore.registerHandler(handler)
+         handlerRegistry.registerHandler(handler)
       }
 
       return CommonFactory

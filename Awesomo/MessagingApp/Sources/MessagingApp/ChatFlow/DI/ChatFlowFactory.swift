@@ -15,12 +15,12 @@ enum ChatFlowFactory {
    #warning("Try to hide behind a protocol")
    static func getDestinationProvider(router: some NavigationRouter<Peer.ID>) -> ChatFlowViewProvider {
 
-      let handlerStore = CommonFactory.eventHandlerStore
+      let handlerRegistry = CommonFactory.eventHandlerRegistry
       let eventType = ChatFlowNavigationPop.self
 
-      if !handlerStore.isHandlerRegistered(for: eventType) {
+      if !handlerRegistry.isHandlerRegistered(for: eventType) {
          let handler = getNavigationPopInputHandler(witness: eventType, router: router)
-         handlerStore.registerHandler(handler)
+         handlerRegistry.registerHandler(handler)
       }
 
       return ChatFlowViewProvider(userInputMerger: CommonFactory.userInputMerger)

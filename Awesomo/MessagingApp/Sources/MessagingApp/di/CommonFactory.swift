@@ -9,11 +9,12 @@ import Domain
 import Combine
 
 public enum CommonFactory {
-   public static func buildApp<T>(appUserID: String) -> App<T> {
+   public static func buildApp<T>(appUserID: String) -> App<T, CoreMessenger.State> {
       let appUserPeerID = Peer.ID(value: appUserID)
       return App(
          userInputSink: CommonFactory.userInputSink.eraseToAnyPublisher(),
-         handlerStore: CommonFactory.eventHandlerStore,
+         domainStore: domainStore,
+         handlerRegistry: CommonFactory.eventHandlerRegistry,
          commonHandlers: [
             CommonFactory.commonInputHandler,
             getPeerAvailabilityHandler(appUserID: appUserPeerID),
@@ -31,7 +32,7 @@ public enum CommonFactory {
       userInputMerger: userInputMerger
    )
 
-   static let eventHandlerStore: EventHandlerStoreProtocol = EventHandlerStore()
+   static let eventHandlerRegistry: EventHandlerRegistryProtocol = EventHandlerRegistry()
 
    static let coreMessenger = CoreMessenger()
 

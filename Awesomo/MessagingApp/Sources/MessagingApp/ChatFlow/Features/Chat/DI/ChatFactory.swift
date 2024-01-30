@@ -10,12 +10,12 @@ import Domain
 enum ChatFactory {
 
    static func getViewModel(peerID: Peer.ID) -> InteractiveViewModel<Peer.Snapshot?, ChatState, ChatUserInput> {
-      let handlerStore = CommonFactory.eventHandlerStore
+      let handlerRegistry = CommonFactory.eventHandlerRegistry
       let eventType = ChatUserInput.self
 
-      if !handlerStore.isHandlerRegistered(for: eventType) {
+      if !handlerRegistry.isHandlerRegistered(for: eventType) {
          let handler = getUserInputHandler(witness: eventType)
-         handlerStore.registerHandler(handler)
+         handlerRegistry.registerHandler(handler)
       }
 
       return CommonFactory

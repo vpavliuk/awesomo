@@ -2,22 +2,24 @@ import Utils
 import Combine
 import SwiftUI
 
-public final class App<ContentNetworkRepresentation>: ObservableObject {
+public final class App<ContentNetworkRepresentation, DomainState>: ObservableObject {
 
    init(
       userInputSink: AnyPublisher<any UserInput, Never>,
-      handlerStore: some EventHandlerStoreProtocol,
+      domainStore: DomainStore<DomainState>,
+      handlerRegistry: some EventHandlerRegistryProtocol,
       commonHandlers: [any InputEventHandler]
    ) {
       self.inputInternal = PublishingSubscriber()
+      self.domainStore = domainStore
       self.userInputSink = userInputSink
-      self.handlerStore = handlerStore
+      self.handlerRegistry = handlerRegistry
       self.commonHandlers = commonHandlers
    }
 
    public func wireUp() {
       for h in commonHandlers {
-         handlerStore.registerHandler(h)
+         handlerRegistry.registerHandler(h)
       }
 
       subscription = inputInternal
@@ -29,7 +31,7 @@ public final class App<ContentNetworkRepresentation>: ObservableObject {
    }
 
    private func on(event: some InputEvent) throws {
-      guard let handler = handlerStore.getHandler(for: event) else {
+      guard let handler = handlerRegistry.getHandler(for: event) else {
          throw AppError.couldNotFindHandlerForInputEvent(event)
       }
       try handle(event, with: handler)
@@ -48,8 +50,10 @@ public final class App<ContentNetworkRepresentation>: ObservableObject {
 
    public lazy var input: some Subscriber<any InputEvent, Never> = inputInternal
    public let userInputSink: AnyPublisher<any UserInput, Never>
+   public lazy var stateSource: some Publisher<DomainState, Never> = domainStore.$state
 
-   private let handlerStore: any EventHandlerStoreProtocol
+   private let domainStore: DomainStore<DomainState>
+   private let handlerRegistry: any EventHandlerRegistryProtocol
    private let commonHandlers: [any InputEventHandler]
    private var subscription: AnyCancellable?
    #warning("A Sink subscriber might be sufficient")
