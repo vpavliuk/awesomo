@@ -11,7 +11,7 @@ import Combine
 
 extension TCPClient {
 
-   func upload(_ data: Data, for peer: Peer.Snapshot) -> Future<Transport.Output, Never> {
+   func upload(_ data: Data, for peer: Peer.Snapshot) -> Future<TransportProcessor.Output, Never> {
       Future {
          do {
             try await upload(data, to: peer.networkAddress.value)

@@ -5,7 +5,7 @@ import Foundation
 import Utils
 
 
-public final class Transport {
+public final class TransportProcessor {
 
    public init(tcpClient: TCPClient) {
       self.tcpClient = tcpClient
@@ -31,7 +31,7 @@ public final class Transport {
          .publisher
          .flatMap(maxPublishers: .max(1)) { [weak self] domainState in
             guard let self else {
-               return Transport.justNilOutput
+               return TransportProcessor.justNilOutput
             }
 
             for peer in domainState {
@@ -44,7 +44,7 @@ public final class Transport {
                }
             }
 
-            return Transport.justNilOutput
+            return TransportProcessor.justNilOutput
          }
          .compactMap { $0 }
          .subscribe(outputInternal)
@@ -61,5 +61,5 @@ public final class Transport {
 
    private let tcpClient: TCPClient
 
-   private static let justNilOutput: AnyPublisher<Transport.Output?, Never> = Just(nil).eraseToAnyPublisher()
+   private static let justNilOutput: AnyPublisher<TransportProcessor.Output?, Never> = Just(nil).eraseToAnyPublisher()
 }
