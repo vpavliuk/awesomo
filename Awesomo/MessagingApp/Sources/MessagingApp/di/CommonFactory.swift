@@ -9,9 +9,9 @@ import Domain
 import Combine
 
 public enum CommonFactory {
-   public static func buildApp<T>(appUserID: String) -> MessagingApp<T> {
+   public static func buildApp<T>(appUserID: String) -> App<T> {
       let appUserPeerID = Peer.ID(value: appUserID)
-      return MessagingApp(
+      return App(
          userInputSink: CommonFactory.userInputSink.eraseToAnyPublisher(),
          handlerStore: CommonFactory.eventHandlerStore,
          commonHandlers: [

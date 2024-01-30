@@ -11,4 +11,5 @@ internal let allEventTypes: [any InputEvent.Type] = [
    ChatFlowNavigationPop.self,
    CommonInput.self,
    ChatUserInput.self,
+   InputFromTransport.self,
 ]

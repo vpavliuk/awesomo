@@ -1,9 +1,8 @@
 import Utils
-import Domain
 import Combine
 import SwiftUI
 
-public final class MessagingApp<ContentNetworkRepresentation>: ObservableObject {
+public final class App<ContentNetworkRepresentation>: ObservableObject {
 
    init(
       userInputSink: AnyPublisher<any UserInput, Never>,
