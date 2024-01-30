@@ -10,6 +10,7 @@
 		0E152EDE2B69285500A07DEF /* Transport in Frameworks */ = {isa = PBXBuildFile; productRef = 0E152EDD2B69285500A07DEF /* Transport */; };
 		0E152EE02B692AC600A07DEF /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 0E152EDF2B692AC600A07DEF /* Domain */; };
 		0E152EE32B699BB200A07DEF /* TCPListener in Frameworks */ = {isa = PBXBuildFile; productRef = 0E152EE22B699BB200A07DEF /* TCPListener */; };
+		0E152EE62B699D3100A07DEF /* TCPClient in Frameworks */ = {isa = PBXBuildFile; productRef = 0E152EE52B699D3100A07DEF /* TCPClient */; };
 		0E84F7F92B2A58B100495814 /* PeerDiscoveryMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E84F7F82B2A58B100495814 /* PeerDiscoveryMock.swift */; };
 		0E92ED432B16240800692BBC /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED422B16240800692BBC /* Factory.swift */; };
 		0E92ED462B162CF200692BBC /* Middleman.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E92ED452B162CF200692BBC /* Middleman.swift */; };
@@ -48,6 +49,7 @@
 
 /* Begin PBXFileReference section */
 		0E152EE12B6999DD00A07DEF /* TCPListener */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TCPListener; sourceTree = "<group>"; };
+		0E152EE42B699C3800A07DEF /* TCPClient */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TCPClient; sourceTree = "<group>"; };
 		0E208FB9281EF58E00F28DDD /* BonjourBrowser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BonjourBrowser; sourceTree = "<group>"; };
 		0E2BF36026A892390031D254 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Domain; sourceTree = "<group>"; };
 		0E2BF36126A979780031D254 /* TransportAdapter */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TransportAdapter; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E152EE62B699D3100A07DEF /* TCPClient in Frameworks */,
 				0E152EE02B692AC600A07DEF /* Domain in Frameworks */,
 				0EFF0B1426B4596300A350DC /* MessagingApp in Frameworks */,
 				0E152EE32B699BB200A07DEF /* TCPListener in Frameworks */,
@@ -146,6 +149,7 @@
 		0ED5D7142698E3EC00265C2A = {
 			isa = PBXGroup;
 			children = (
+				0E152EE42B699C3800A07DEF /* TCPClient */,
 				0E152EE12B6999DD00A07DEF /* TCPListener */,
 				0EFE83B92B61357D001FCDA6 /* Transport */,
 				0E208FB9281EF58E00F28DDD /* BonjourBrowser */,
@@ -237,6 +241,7 @@
 				0E152EDD2B69285500A07DEF /* Transport */,
 				0E152EDF2B692AC600A07DEF /* Domain */,
 				0E152EE22B699BB200A07DEF /* TCPListener */,
+				0E152EE52B699D3100A07DEF /* TCPClient */,
 			);
 			productName = Awesomo;
 			productReference = 0ED5D71D2698E3EC00265C2A /* Awesomo.app */;
@@ -718,6 +723,10 @@
 		0E152EE22B699BB200A07DEF /* TCPListener */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TCPListener;
+		};
+		0E152EE52B699D3100A07DEF /* TCPClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TCPClient;
 		};
 		0ED3422B2B21303A007B2DCD /* PeerDiscovery */ = {
 			isa = XCSwiftPackageProductDependency;
