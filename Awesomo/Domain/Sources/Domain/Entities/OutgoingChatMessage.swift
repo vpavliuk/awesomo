@@ -27,12 +27,13 @@ public final class OutgoingChatMessage: AwesomelyIdentifiable {
 
 extension OutgoingChatMessage: SnapshotProducer {
    public struct Snapshot: Hashable {
+      public let messageID: OutgoingChatMessage.ID
       public let timestamp: Date
       public let content: MessageContent
       public let status: Status
    }
 
    func snapshot() -> Snapshot {
-      Snapshot(timestamp: timestamp, content: content, status: status)
+      Snapshot(messageID: id, timestamp: timestamp, content: content, status: status)
    }
 }
