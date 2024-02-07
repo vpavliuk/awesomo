@@ -133,14 +133,18 @@ public final class CoreMessenger {
             try onFailedToSendInvitation(to: peerID)
          case .userDidAcceptPeersInvitation(let peerID):
             break
+         case .peerInvitedUs(let peerID):
+            break
          case .messageArrived(_, _):
             // store message
             break
          case .userAttemptedSendMessage(_, _):
             // store message
             break
-         case .outgoingMessageWasSentOverNetwork(_):
+         case .messageWasSentOverNetwork(_):
             // store message
+            break
+         case .failedToSendMessageOverNetwork(_):
             break
          case .peerAcceptedInvitation(let peerID):
             try onPeerAcceptedInvitation(peerID)
