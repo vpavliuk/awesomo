@@ -11,13 +11,18 @@ import Combine
 
 extension TCPClient {
 
-   func upload(_ data: Data, for peer: Peer.Snapshot) -> Future<TransportProcessor.Output, Never> {
+   func upload(
+      _ data: Data,
+      to networkAddress: NetworkAddress,
+      successResultValue: TransportProcessor.Output,
+      failureResultValue: TransportProcessor.Output
+   ) -> Future<TransportProcessor.Output, Never> {
       Future {
          do {
-            try await upload(data, to: peer.networkAddress.value)
-            return .invitationForPeerWasSentOverNetwork(peer.peerID)
+            try await upload(data, to: networkAddress.value)
+            return successResultValue
          } catch {
-            return .failedToSendInvitationOverNetwork(peer.peerID)
+            return failureResultValue
          }
       }
    }
