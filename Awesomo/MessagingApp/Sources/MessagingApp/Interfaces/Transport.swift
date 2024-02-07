@@ -18,4 +18,8 @@ public enum NetworkMessage<ContentNetworkRepresentation> {
 public enum InputFromTransport: InputEvent {
    case invitationForPeerWasSentOverNetwork(Peer.ID)
    case failedToSendInvitationOverNetwork(Peer.ID)
+   case peerAcceptedInvitation(Peer.ID)
+   case peerInvitedUs(Peer.ID)
+   case messageWasSentOverNetwork(OutgoingChatMessage.ID)
+   case failedToSendMessageOverNetwork(OutgoingChatMessage.ID)
 }

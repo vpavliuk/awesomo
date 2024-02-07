@@ -19,12 +19,24 @@ struct TransportInputHandler: InputEventHandler {
    }
 
    private static func domainEvent(from transportEvent: InputFromTransport) -> Domain.InputEvent {
-      switch transportEvent {
+      return switch transportEvent {
       case .invitationForPeerWasSentOverNetwork(let peerID):
-         return .invitationForPeerWasSentOverNetwork(peerID)
+         .invitationForPeerWasSentOverNetwork(peerID)
 
       case .failedToSendInvitationOverNetwork(let peerID):
-         return .failedToSendInvitationOverNetwork(peerID)
+         .failedToSendInvitationOverNetwork(peerID)
+
+      case .peerInvitedUs(let peerID):
+         .peerInvitedUs(peerID)
+
+      case .peerAcceptedInvitation(let peerID):
+         .peerAcceptedInvitation(peerID)
+
+      case .messageWasSentOverNetwork(let messageID):
+         .failedToSendMessageOverNetwork(messageID)
+
+      case .failedToSendMessageOverNetwork(let messageID):
+         .failedToSendMessageOverNetwork(messageID)
       }
    }
 
