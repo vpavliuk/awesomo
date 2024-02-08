@@ -14,13 +14,3 @@ enum ChatUserInput {
 }
 
 extension ChatUserInput: UserInput {}
-
-extension MessageContent: Codable {
-   public func encode(to encoder: Encoder) throws {
-
-   }
-   
-   public init(from decoder: Decoder) throws {
-      self.init(contentID: ContentID(value: "Text"))
-   }
-}

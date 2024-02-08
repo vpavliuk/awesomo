@@ -37,6 +37,9 @@ struct TransportInputHandler: InputEventHandler {
 
       case .failedToSendMessageOverNetwork(let messageID):
          .failedToSendMessageOverNetwork(messageID)
+
+      case .messageArrived(let senderID, let message):
+         .messageArrived(senderID, message)
       }
    }
 

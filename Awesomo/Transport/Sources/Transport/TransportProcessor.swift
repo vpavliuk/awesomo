@@ -7,8 +7,9 @@ import Utils
 
 public final class TransportProcessor {
 
-   public init(tcpClient: TCPClient) {
+   public init(tcpClient: TCPClient, localUserID: Peer.ID) {
       self.tcpClient = tcpClient
+      self.localUserID = localUserID
    }
 
    public typealias InputFromApp = CoreMessenger.State
@@ -52,7 +53,7 @@ public final class TransportProcessor {
 
       return tcpClient
          .upload(
-            "IVova Invites".data(using: .utf8)!,
+            try! JSONEncoder().encode(TCPMessage.invitation(sender: localUserID)),
             to: peer.networkAddress,
             successResultValue: .invitationForPeerWasSentOverNetwork(peer.peerID),
             failureResultValue: .failedToSendInvitationOverNetwork(peer.peerID)
@@ -72,7 +73,7 @@ public final class TransportProcessor {
    }
 
    private func isUpdatedOutgoingMessageStatus(_ message: OutgoingChatMessage.Snapshot) -> Bool {
-      let allPreviousOutgoingMessages = previousState?.reduce([]) { $0 + $1.outgoingMessages }
+      let allPreviousOutgoingMessages = previousState?.flatMap { $0.outgoingMessages }
       guard let oldMessage = allPreviousOutgoingMessages?.first(where: { $0.messageID == message.messageID }) else {
          return true
       }
@@ -84,8 +85,20 @@ public final class TransportProcessor {
       for peer: Peer.Snapshot
    ) -> some Publisher<Output, Never> {
 
+      #warning("To implement")
+      let textData = "Vova sends his regards \(Int.random(in: 0...100))".data(using: .utf8)!
+      let messageContent = MessageContent(
+         contentID: MessageContent.ContentID(value: "text"),
+         content: textData
+      )
+
       return tcpClient.upload(
-         "IVova sends his regards".data(using: .utf8)!,
+         try! JSONEncoder().encode(
+            TCPMessage.message(
+               sender: localUserID,
+               payload: try! JSONEncoder().encode(messageContent)
+            )
+         ),
          to: peer.networkAddress,
          successResultValue: .messageWasSentOverNetwork(message.messageID),
          failureResultValue: .failedToSendMessageOverNetwork(message.messageID)
@@ -94,7 +107,23 @@ public final class TransportProcessor {
 
    private static func outputFromTCPData(tcpData: Data) -> Output? {
       #warning("To implement")
-      return .peerInvitedUs(Peer.ID(value: ""))
+      guard let tcpMessage = try? JSONDecoder().decode(TCPMessage.self, from: tcpData) else {
+         return nil
+      }
+
+      return switch tcpMessage {
+      case .invitation(let senderID):
+         .peerInvitedUs(senderID)
+      case .message(let senderID, let payload):
+         .messageArrived(
+            senderID,
+            IncomingChatMessage(
+               timestamp: Date(),
+               content: try! JSONDecoder().decode(MessageContent.self, from: payload
+            )
+         )
+      )
+      }
    }
 
    private var incomingTrafficOutput: some Publisher<Output, Never> {
@@ -113,4 +142,5 @@ public final class TransportProcessor {
    }
 
    private let tcpClient: TCPClient
+   private let localUserID: Peer.ID
 }

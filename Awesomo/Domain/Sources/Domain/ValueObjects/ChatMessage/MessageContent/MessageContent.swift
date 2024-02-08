@@ -10,19 +10,19 @@ import Foundation
 import Combine
 
 public struct MessageContent {
-   public init(contentID: ContentID) {
+   public init(contentID: ContentID, content: Data) {
       self.contentID = contentID
+      self.content = content
    }
-   public struct ContentID: Hashable {
+   public struct ContentID: Hashable, Codable {
       public init(value: String) {
          self.value = value
       }
       private let value: String
    }
    public let contentID: ContentID
-   public let dataPublisher: some Publisher<Data, Never> = "Hello"
-      .data(using: .utf8)
-      .publisher
+   private let content: Data
+   public var dataPublisher: some Publisher<Publishers.Sequence<Data, Never>.Output, Never> { content.publisher }
 }
 
 #warning("Equatable problem with MessageContent")
@@ -35,5 +35,12 @@ extension MessageContent: Equatable {
 extension MessageContent: Hashable {
    public func hash(into hasher: inout Hasher) {
       hasher.combine(contentID)
+   }
+}
+
+extension MessageContent: Codable {
+   enum CodingKeys: String, CodingKey {
+      case contentID
+      case content
    }
 }
