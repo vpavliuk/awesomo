@@ -33,14 +33,14 @@ public final class TCPListener {
       connection.start(queue: queue)
 
       receive(on: connection) { (tcpData: Data?) in
-         guard let tcpData = tcpData,
-               let message = try? JSONDecoder().decode(Data.self, from: tcpData)
+         guard let tcpData
+               //let message = try? JSONDecoder().decode(Data.self, from: tcpData)
          else {
             #warning("Handle decoding errors")
             return
          }
 
-         self.outputInternal.send(message)
+         self.outputInternal.send(tcpData)
       }
    }
 
