@@ -47,14 +47,16 @@ extension ChatState: DomainDerivable {
                PeerInvitedUsDisplayModel(
                   messageTitle: "\(peer.name) wants to connect",
                   messageDescription: "\(peer.name) would like to share something with you. Accept their request?",
-                  acceptButtonTitle: "Accept"
+                  acceptButtonTitle: "Accept",
+                  isAcceptButtonDisabled: false,
+                  isProgressViewHidden: true
                )
             )
 
-         case .wasInvited:
+         case .wasInvitedByUs:
             ChatState.peerWasInvited("Waiting for \(peer.name) to accept the invitation…")
 
-         case .invitationInitiated:
+         case .invitationInitiatedByUs:
                ChatState.strangerPeer(
                   peer.peerID,
                   StrangerPeerDisplayModel(
@@ -65,6 +67,19 @@ extension ChatState: DomainDerivable {
                      isProgressViewHidden: false
                   )
                )
+
+         case .invitationAcceptanceInitiatedByUs:
+            ChatState.peerInvitedUs(
+               peer.peerID,
+               PeerInvitedUsDisplayModel(
+                  messageTitle: "\(peer.name) wants to connect",
+                  messageDescription: "\(peer.name) would like to share something with you. Accept their request?",
+                  acceptButtonTitle: "Accept",
+                  isAcceptButtonDisabled: true,
+                  isProgressViewHidden: false
+               )
+            )
+
          }
       }
 

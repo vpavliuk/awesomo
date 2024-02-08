@@ -5,6 +5,7 @@
 //  Created by Vova on 27.11.2023.
 //
 
+import Foundation
 import Combine
 
 class ViewModel<DomainState, PresentationState: DomainDerivable>: ObservableObject
@@ -15,6 +16,7 @@ class ViewModel<DomainState, PresentationState: DomainDerivable>: ObservableObje
 
       domainSource
          .map(PresentationState.fromDomainState)
+         .receive(on: RunLoop.main)
          .assign(to: &$state)
    }
 

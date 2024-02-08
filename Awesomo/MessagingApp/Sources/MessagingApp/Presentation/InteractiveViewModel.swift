@@ -5,6 +5,7 @@
 //  Created by Vova on 16.01.2024.
 //
 
+import Foundation
 import Combine
 
 class InteractiveViewModel<DomainState, PresentationState: DomainDerivable, ConcreteUserInput: UserInput>: ObservableObject
@@ -19,6 +20,7 @@ class InteractiveViewModel<DomainState, PresentationState: DomainDerivable, Conc
 
       domainSource
          .map(PresentationState.fromDomainState)
+         .receive(on: RunLoop.main)
          .assign(to: &$state)
       userInputMerger.merge(publisher: userInput)
    }

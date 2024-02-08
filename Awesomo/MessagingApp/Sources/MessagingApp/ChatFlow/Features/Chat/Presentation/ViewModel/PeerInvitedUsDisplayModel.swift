@@ -9,4 +9,6 @@ struct PeerInvitedUsDisplayModel {
    let messageTitle: String
    let messageDescription: String
    let acceptButtonTitle: String
+   let isAcceptButtonDisabled: Bool
+   let isProgressViewHidden: Bool
 }

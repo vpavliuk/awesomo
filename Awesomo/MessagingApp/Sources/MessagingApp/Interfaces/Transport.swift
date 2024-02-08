@@ -23,4 +23,6 @@ public enum InputFromTransport: InputEvent {
    case messageWasSentOverNetwork(OutgoingChatMessage.ID)
    case failedToSendMessageOverNetwork(OutgoingChatMessage.ID)
    case messageArrived(Peer.ID, IncomingChatMessage)
+   case invitationAcceptanceWasSentOverNetwork(Peer.ID)
+   case failedToSendInvitationAcceptance(Peer.ID)
 }

@@ -40,7 +40,7 @@ final class TransportTest: XCTestCase {
 
 private extension Peer{
    static func peer(name: String) -> Peer.Snapshot {
-      Peer.Snapshot(peerID: Peer.ID(value: ""), status: .online, relation: .invitationInitiated, name: name, networkAddress: NetworkAddress(value: "123"), incomingMessages: [], outgoingMessages: [])
+      Peer.Snapshot(peerID: Peer.ID(value: ""), status: .online, relation: .invitationInitiatedByUs, name: name, networkAddress: NetworkAddress(value: "123"), incomingMessages: [], outgoingMessages: [])
    }
 }
 

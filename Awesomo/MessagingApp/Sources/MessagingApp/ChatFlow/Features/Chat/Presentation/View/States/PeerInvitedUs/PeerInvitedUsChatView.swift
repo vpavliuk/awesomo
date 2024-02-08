@@ -35,20 +35,42 @@ struct PeerInvitedUsChatView: View {
 
          Spacer()
 
-         Button(action: onAcceptTapped) {
-            Text(displayModel.acceptButtonTitle)
+         HStack(spacing: 8) {
+            Button(action: onAcceptTapped) {
+               Text(displayModel.acceptButtonTitle)
+            }
+            .disabled(displayModel.isAcceptButtonDisabled)
+
+            if !displayModel.isProgressViewHidden {
+               ProgressView()
+            }
          }
       }
       .padding()
    }
 }
 
-#Preview {
+#Preview("Initial") {
    PeerInvitedUsChatView(
       PeerInvitedUsDisplayModel(
          messageTitle: "Spooky wants to connect",
          messageDescription: "Spooky would like to share something with you. Accept their request?",
-         acceptButtonTitle: "Accept"
+         acceptButtonTitle: "Accept",
+         isAcceptButtonDisabled: false,
+         isProgressViewHidden: true
+      ),
+      onAcceptTapped: {}
+   )
+}
+
+#Preview("Accept tapped") {
+   PeerInvitedUsChatView(
+      PeerInvitedUsDisplayModel(
+         messageTitle: "Spooky wants to connect",
+         messageDescription: "Spooky would like to share something with you. Accept their request?",
+         acceptButtonTitle: "Accept",
+         isAcceptButtonDisabled: true,
+         isProgressViewHidden: false
       ),
       onAcceptTapped: {}
    )

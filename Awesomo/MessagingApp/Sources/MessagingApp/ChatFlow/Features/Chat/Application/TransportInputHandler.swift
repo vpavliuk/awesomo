@@ -40,6 +40,12 @@ struct TransportInputHandler: InputEventHandler {
 
       case .messageArrived(let senderID, let message):
          .messageArrived(senderID, message)
+
+      case .invitationAcceptanceWasSentOverNetwork(let peerID):
+         .invitationAcceptanceForPeerWasSentOverNetwork(peerID)
+
+      case .failedToSendInvitationAcceptance(let peerID):
+         .failedToSendInvitationAcceptanceOverNetwork(peerID)
       }
    }
 

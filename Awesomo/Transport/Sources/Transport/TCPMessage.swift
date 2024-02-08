@@ -10,5 +10,6 @@ import Domain
 
 enum TCPMessage: Codable {
    case invitation(sender: Peer.ID)
+   case invitationAcceptance(sender: Peer.ID)
    case message(sender: Peer.ID, payload: Data)
 }

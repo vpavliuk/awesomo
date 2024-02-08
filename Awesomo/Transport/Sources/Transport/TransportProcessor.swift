@@ -41,13 +41,16 @@ public final class TransportProcessor {
    private func outputPublisherFromPeer(peer: Peer.Snapshot) -> some Publisher<Output, Never> {
       return sendInvitationPublisher(for: peer)
          .concatenate(
+            sendInvitationAcceptancePublisher(for: peer)
+         )
+         .concatenate(
             sendMessagesPublisher(for: peer)
          )
    }
 
    private func sendInvitationPublisher(for peer: Peer.Snapshot) -> some Publisher<Output, Never> {
       guard isUpdatedPeerRelation(peer)
-               && peer.relation == .invitationInitiated else {
+               && peer.relation == .invitationInitiatedByUs else {
          return Empty().eraseToAnyPublisher()
       }
 
@@ -57,6 +60,22 @@ public final class TransportProcessor {
             to: peer.networkAddress,
             successResultValue: .invitationForPeerWasSentOverNetwork(peer.peerID),
             failureResultValue: .failedToSendInvitationOverNetwork(peer.peerID)
+         )
+         .eraseToAnyPublisher()
+   }
+
+   private func sendInvitationAcceptancePublisher(for peer: Peer.Snapshot) -> some Publisher<Output, Never> {
+      guard isUpdatedPeerRelation(peer)
+               && peer.relation == .invitationAcceptanceInitiatedByUs else {
+         return Empty().eraseToAnyPublisher()
+      }
+
+      return tcpClient
+         .upload(
+            try! JSONEncoder().encode(TCPMessage.invitationAcceptance(sender: localUserID)),
+            to: peer.networkAddress,
+            successResultValue: .invitationAcceptanceWasSentOverNetwork(peer.peerID),
+            failureResultValue: .failedToSendInvitationAcceptance(peer.peerID)
          )
          .eraseToAnyPublisher()
    }
@@ -114,6 +133,7 @@ public final class TransportProcessor {
       return switch tcpMessage {
       case .invitation(let senderID):
          .peerInvitedUs(senderID)
+
       case .message(let senderID, let payload):
          .messageArrived(
             senderID,
@@ -123,6 +143,9 @@ public final class TransportProcessor {
             )
          )
       )
+
+      case .invitationAcceptance(let senderID):
+         .peerAcceptedInvitation(senderID)
       }
    }
 
