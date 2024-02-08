@@ -41,7 +41,7 @@ public final class Peer: AwesomelyIdentifiable {
    private var status: Status
 
    // Relation to the local user
-   public enum Relation: Hashable { case stranger, friend, didInviteUs, invitationInitiated, wasInvited }
+   public enum Relation: Hashable { case stranger, friend, didInviteUs, invitationAcceptanceInitiatedByUs, invitationInitiatedByUs, wasInvitedByUs }
    private var relation: Relation
 
    private var name: String
@@ -79,25 +79,25 @@ public final class Peer: AwesomelyIdentifiable {
       guard relation == .stranger else {
          throw DomainError.cannotInviteNonStranger(id)
       }
-      relation = .invitationInitiated
+      relation = .invitationInitiatedByUs
    }
 
    internal func onInvitationSuccesfullySent() throws {
-      guard relation == .invitationInitiated else {
+      guard relation == .invitationInitiatedByUs else {
          throw DomainError.cannotHandleSendingResultForInvitationWhichHadNotBeenPreviouslyInitiated(id)
       }
-      relation = .wasInvited
+      relation = .wasInvitedByUs
    }
 
    internal func onFailedToSendInvitation() throws {
-      guard relation == .invitationInitiated else {
+      guard relation == .invitationInitiatedByUs else {
          throw DomainError.cannotHandleSendingResultForInvitationWhichHadNotBeenPreviouslyInitiated(id)
       }
       relation = .stranger
    }
 
    internal func acceptInvitation() throws {
-      guard relation == .wasInvited else {
+      guard relation == .wasInvitedByUs else {
          throw DomainError.nonInvitedPeerCannotRespondToInvitation(id)
       }
       relation = .friend
@@ -107,7 +107,15 @@ public final class Peer: AwesomelyIdentifiable {
       status == .offline && relation == .stranger
    }
 
-   internal func invitationWasAcceptedByUs() throws {
+   internal func inviteUs() throws {
+      guard relation == .stranger else {
+         throw DomainError.cannotReceiveInvitationFromNonStrangerPeer(id)
+      }
+
+      relation = .didInviteUs
+   }
+
+   internal func onInvitationAcceptedByUs() throws {
       guard relation == .didInviteUs else {
          throw DomainError.cannotRespondToInvitationFromPeerWhoHadNotPreviouslyInviteUs(id)
       }
@@ -115,7 +123,21 @@ public final class Peer: AwesomelyIdentifiable {
          throw DomainError.cannotRespondToInvitationIfPeerIsOffline(id)
       }
 
+      relation = .invitationAcceptanceInitiatedByUs
+   }
+
+   internal func onInvitationAcceptanceSuccessfullySent() throws {
+      guard relation == .invitationAcceptanceInitiatedByUs else {
+         throw DomainError.cannotHandleSendingResultForAcceptanceWhichHadNotBeenPreviouslyInitiated(id)
+      }
       relation = .friend
+   }
+
+   internal func onFailedToSendInvitationAcceptance() throws {
+      guard relation == .invitationAcceptanceInitiatedByUs else {
+         throw DomainError.cannotHandleSendingResultForAcceptanceWhichHadNotBeenPreviouslyInitiated(id)
+      }
+      relation = .stranger
    }
 }
 

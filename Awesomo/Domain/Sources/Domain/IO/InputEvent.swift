@@ -20,4 +20,6 @@ public enum InputEvent {
    case userAttemptedSendMessage(Peer.ID, OutgoingChatMessage)
    case messageWasSentOverNetwork(OutgoingChatMessage.ID)
    case failedToSendMessageOverNetwork(OutgoingChatMessage.ID)
+   case invitationAcceptanceForPeerWasSentOverNetwork(Peer.ID)
+   case failedToSendInvitationAcceptanceOverNetwork(Peer.ID)
 }

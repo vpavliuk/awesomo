@@ -78,11 +78,39 @@ public final class CoreMessenger {
       try peer.onFailedToSendInvitation()
    }
 
+   private func onPeerInvitedUs(_ peerID: Peer.ID) throws {
+      guard let peer = findPeer(by: peerID) else {
+         throw DomainError.cannotHandleInvitationFromUnknownPeer(peerID)
+      }
+      try peer.inviteUs()
+   }
+
    private func onPeerAcceptedInvitation(_ peerID: Peer.ID) throws {
       guard let peer = findPeer(by: peerID) else {
          throw DomainError.unknownPeerCannotRespondToInvitation(peerID)
       }
       try peer.acceptInvitation()
+   }
+
+   private func onInvitationAcceptedByUs(_ peerID: Peer.ID) throws {
+      guard let peer = findPeer(by: peerID) else {
+         throw DomainError.cannotAcceptInvitationFromUnknownPeer(peerID)
+      }
+      try peer.onInvitationAcceptedByUs()
+   }
+
+   private func onInvitationAcceptanceSuccessfullySent(_ peerID: Peer.ID) throws {
+      guard let peer = findPeer(by: peerID) else {
+         throw DomainError.cannotHandleAcceptanceSendingResultForUnknownPeer(peerID)
+      }
+      try peer.onInvitationAcceptanceSuccessfullySent()
+   }
+
+   private func onFailedToSendAcceptance(to peerID: Peer.ID) throws {
+      guard let peer = findPeer(by: peerID) else {
+         throw DomainError.cannotHandleAcceptanceSendingResultForUnknownPeer(peerID)
+      }
+      try peer.onFailedToSendInvitationAcceptance()
    }
 
    public typealias State = [Peer.Snapshot]
@@ -132,9 +160,13 @@ public final class CoreMessenger {
          case .failedToSendInvitationOverNetwork(let peerID):
             try onFailedToSendInvitation(to: peerID)
          case .userDidAcceptPeersInvitation(let peerID):
-            break
+            try onInvitationAcceptedByUs(peerID)
+         case .invitationAcceptanceForPeerWasSentOverNetwork(let peerID):
+            try onInvitationAcceptanceSuccessfullySent(peerID)
+         case .failedToSendInvitationAcceptanceOverNetwork(let peerID):
+            try onFailedToSendAcceptance(to: peerID)
          case .peerInvitedUs(let peerID):
-            break
+            try onPeerInvitedUs(peerID)
          case .messageArrived(_, _):
             // store message
             break

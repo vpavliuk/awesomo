@@ -64,7 +64,7 @@ final class CoreMessengerTest: XCTestCase {
       let expectedPeer = Peer.Snapshot(
          peerID: peerID,
          status: .online,
-         relation: .invitationInitiated,
+         relation: .invitationInitiatedByUs,
          name: peerName,
          networkAddress: networkAddress,
          incomingMessages: [],
@@ -89,7 +89,7 @@ final class CoreMessengerTest: XCTestCase {
       let expectedPeer = Peer.Snapshot(
          peerID: peerID,
          status: .online,
-         relation: .wasInvited,
+         relation: .wasInvitedByUs,
          name: peerName,
          networkAddress: networkAddress,
          incomingMessages: [],
