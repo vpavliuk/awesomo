@@ -47,7 +47,7 @@ public final class Peer: AwesomelyIdentifiable {
    private var name: String
 
    #warning("Revise whether NetworkAddress belongs here from cohesion perspective")
-   private let networkAddress: NetworkAddress
+   private var networkAddress: NetworkAddress
 
    // Messages from this peer to us
    private var incomingMessages: [IncomingChatMessage]
@@ -61,6 +61,7 @@ public final class Peer: AwesomelyIdentifiable {
       }
       status = .online
       name = emergence.peerName
+      networkAddress = emergence.peerAddress
    }
 
    internal func takeOffline() throws {
