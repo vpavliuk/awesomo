@@ -18,10 +18,10 @@ struct BonjourNameComposer: BonjourNameComposerProtocol {
       )
 
       let idString = String(components[0])
-      let peerId = Peer.ID(value: idString)
+      let peerID = Peer.ID(value: idString)
 
       return PeerAttributes(
-         id: peerId,
+         id: peerID,
          peerName: String(components[1])
       )
    }
