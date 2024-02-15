@@ -143,6 +143,7 @@ public final class Peer: AwesomelyIdentifiable {
 }
 
 extension Peer: SnapshotProducer {
+   #warning("Try to get rid of snaphots. Let's just treat entities as state")
    public struct Snapshot: Hashable {
       public init(
          peerID: Peer.ID,
