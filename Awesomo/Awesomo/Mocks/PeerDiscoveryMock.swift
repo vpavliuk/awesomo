@@ -16,11 +16,13 @@ final class PeerDiscoveryMock {
       "Ivan",
       "Kate",
       "Bob",
-      "Kent"
+      "Kent",
+      "Jesse"
    ]
    var subscription: AnyCancellable?
    let output: some Publisher<PeerAvailabilityEvent, Never> = Timer.publish(every: 10, on: .main, in: .default)
       .autoconnect()
+      .zip(["one", "two", "three", "four", "five"].publisher)
       .map { _ in
          index += 1
          return PeerAvailabilityEvent.peersDidAppear(
