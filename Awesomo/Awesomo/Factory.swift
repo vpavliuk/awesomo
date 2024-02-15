@@ -49,7 +49,7 @@ enum Factory {
    }
 
    private static let localUserID = UIDevice.current.identifierForVendor!.uuidString
-   private static let localUserName = "User \(Int.random(in: 0...1000))"
+   private static let localUserName = "iPhone user"
    private static let localServiceName = getBonjourNameComposer().serviceName(
       fromIdString: localUserID,
       peerName: localUserName
