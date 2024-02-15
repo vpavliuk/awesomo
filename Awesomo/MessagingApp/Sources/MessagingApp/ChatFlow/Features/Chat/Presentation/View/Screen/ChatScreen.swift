@@ -25,8 +25,7 @@ struct ChatScreen: View {
          }
 
       case .friend(_):
-         StrangerPeerChatView(StrangerPeerDisplayModel(
-            messageTitle: "", messageDescription: "", inviteButtonTitle: "", isInviteButtonDisabled: false, isProgressViewHidden: true)) {}
+         FriendChatView()
 
       case .peerInvitedUs(let peerID, let displayModel):
          PeerInvitedUsChatView(displayModel) {
