@@ -103,9 +103,7 @@ public final class TransportProcessor {
       _ message: OutgoingChatMessage.Snapshot,
       for peer: Peer.Snapshot
    ) -> some Publisher<Output, Never> {
-
-      #warning("To implement")
-      let textData = "Vova sends his regards \(Int.random(in: 0...100))".data(using: .utf8)!
+      let textData = "Test text message".data(using: .utf8)!
       let messageContent = MessageContent(
          contentID: MessageContent.ContentID(value: "text"),
          content: textData
@@ -125,7 +123,6 @@ public final class TransportProcessor {
    }
 
    private static func outputFromTCPData(tcpData: Data) -> Output? {
-      #warning("To implement")
       guard let tcpMessage = try? JSONDecoder().decode(TCPMessage.self, from: tcpData) else {
          return nil
       }
@@ -155,6 +152,7 @@ public final class TransportProcessor {
          .compactMap(Self.outputFromTCPData)
    }
 
+   #warning("Implement setting 'previousState'")
    private var previousState: InputFromApp?
 
    private func isUpdatedPeerRelation(_ peer: Peer.Snapshot) -> Bool {

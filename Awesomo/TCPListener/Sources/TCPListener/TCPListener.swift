@@ -61,6 +61,8 @@ public final class TCPListener {
             #warning("Handle errors here")
             return
          }
+
+         #warning("Revise")
          assert(!isComplete)
 
          var nextResult = intermediateResult ?? Data()
