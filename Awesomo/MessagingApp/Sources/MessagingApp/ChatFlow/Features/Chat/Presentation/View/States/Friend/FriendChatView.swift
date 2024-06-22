@@ -9,6 +9,6 @@ import SwiftUI
 
 struct FriendChatView: View {
    var body: some View {
-      Text("💋")
+      Text("🤝")
    }
 }
