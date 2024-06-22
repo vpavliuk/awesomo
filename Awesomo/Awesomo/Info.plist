@@ -4,7 +4,7 @@
 <dict>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_usp._tcp</string>
+		<string>_pulsar._tcp</string>
 	</array>
 </dict>
 </plist>
